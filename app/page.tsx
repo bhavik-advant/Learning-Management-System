@@ -1,7 +1,10 @@
 import Image from "next/image";
-
+import HeroSection from "./components/landingPage/HeroSection";
 export default function Home() {
   return (
-   <h1>Hello LMS App </h1>
+   <>
+
+   <HeroSection />
+   </>
   );
 }
