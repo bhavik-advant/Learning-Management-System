@@ -1,6 +1,7 @@
 import Image from "next/image"
 import Button from "../ui/button"
-export default function heroSection() {
+
+export default function HeroSection() {
     return (
         <>
             <div className="grid sm:grid-cols-2 min-h-screen max-w-screen w-full items-center z-10 px-4">

@@ -9,7 +9,7 @@ function Navbar() {
 
   return (
     <nav className="w-full border-b bg-white/80 backdrop-blur-md sticky top-0 z-50">
-      <div className="max-w-7xl mx-auto px-4 sm:px-16 py-3 flex items-center justify-between">
+      <div className="mx-4 xxl:mx-70 sm:mx-8 lg:mx-14 xl:mx-52 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3 cursor-pointer">
           <Image src={logo} alt="logo" width={42} height={42} />
           <h1 className="text-xl font-semibold tracking-tight">
