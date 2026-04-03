@@ -1,12 +1,8 @@
-'use client';
 import Image from 'next/image';
 import logo from '@/assets/education.png';
-import { FiSun, FiMoon } from 'react-icons/fi';
-import { useState } from 'react';
+import ThemeButton from './ui/ThemeButton';
 
 function Navbar() {
-  const [dark, setDark] = useState(false);
-
   return (
     <nav className="w-full border-b border-gray-300 bg-white/80 backdrop-blur-md sticky top-0 z-50">
       <div className="mx-4 xxl:mx-70 sm:mx-8 lg:mx-14 xl:mx-52 py-3 flex items-center justify-between">
@@ -24,13 +20,7 @@ function Navbar() {
         </ul>
 
         <div className="flex items-center gap-4">
-          <button
-            onClick={() => setDark(!dark)}
-            className="p-2 rounded-md border hover:bg-gray-100 transition"
-          >
-            {dark ? <FiSun size={18} /> : <FiMoon size={18} />}
-          </button>
-
+          <ThemeButton />
           <button className="px-4 py-1.5 text-sm font-medium rounded-md bg-black text-white hover:bg-gray-800 transition shadow-sm">
             Sign in
           </button>
