@@ -1,14 +1,13 @@
-import TechTeams from '@/components/landingPage/TechTeams';
 import Navbar from '@/components/Navbar';
 import HeroSection from '../components/landingPage/HeroSection';
-import { Workflow } from '@/components/landingPage/WorkFlow';
+import TechTeams from '@/components/landingPage/TechTeams';
 import Roles from '@/components/landingPage/Roles';
-
+import { Workflow } from '@/components/landingPage/WorkFlow';
 export default function Home() {
   return (
     <>
       <Navbar />
-      <div className="mx-4 sm:mx-8 lg:mx-14 xl:mx-24 space-y-10">
+      <div className="mx-20">
         <HeroSection />
         <Workflow />
         <TechTeams />
