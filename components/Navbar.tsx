@@ -8,7 +8,7 @@ function Navbar() {
   const [dark, setDark] = useState(false);
 
   return (
-    <nav className="w-full border-b bg-white/80 backdrop-blur-md sticky top-0 z-50">
+    <nav className="w-full border-b border-gray-300 bg-white/80 backdrop-blur-md sticky top-0 z-50">
       <div className="mx-4 xxl:mx-70 sm:mx-8 lg:mx-14 xl:mx-52 py-3 flex items-center justify-between">
         <div className="flex items-center gap-3 cursor-pointer">
           <Image src={logo} alt="logo" width={42} height={42} />

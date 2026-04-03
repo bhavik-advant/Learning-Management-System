@@ -7,14 +7,14 @@ import adminRoleImg from '@/assets/admin-role.png';
 
 function Roles() {
   return (
-    <div className="flex flex-col  justify-center items-center space-y-5 ">
+    <div className="flex flex-col  justify-center items-center py-14">
       <h2 className="mb-4  text-center text-4xl font-bold">
         Designed for{' '}
         <span className="bg-linear-to-r from-[#828bf8] to-[#5d447f] bg-clip-text text-transparent font-bold">
           Every Role
         </span>
       </h2>
-      <p className="text-lg text-muted-foreground text-center">
+      <p className="text-lg text-muted-foreground text-center pb-8">
         Customized interfaces that provide exactly what each user needs to succeed.
       </p>
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">

@@ -3,6 +3,7 @@ import Navbar from '@/components/Navbar';
 import HeroSection from '../components/landingPage/HeroSection';
 import { Workflow } from '@/components/landingPage/WorkFlow';
 import Roles from '@/components/landingPage/Roles';
+import Footer from '@/components/landingPage/Footer';
 
 export default function Home() {
   return (
@@ -14,6 +15,7 @@ export default function Home() {
         <TechTeams />
         <Roles />
       </div>
+        <Footer />
     </>
   );
 }

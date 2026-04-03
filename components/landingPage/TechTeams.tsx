@@ -6,14 +6,14 @@ import { AiFillControl } from 'react-icons/ai';
 
 function TechTeams() {
   return (
-    <div className="flex flex-col  justify-center items-center space-y-5">
+    <div className="flex flex-col  justify-center items-center py-14">
       <h2 className="mb-4  text-center text-4xl font-bold">
         Engineered For{' '}
         <span className="bg-linear-to-r from-[#828bf8] to-[#5d447f] bg-clip-text text-transparent font-bold">
           Tech Teams
         </span>
       </h2>
-      <p className="text-lg text-muted-foreground text-center">
+      <p className="text-lg text-muted-foreground text-center pb-8">
         Everything you need to upskill your engineering, product, and design teams in one powerful
         platform.
       </p>
