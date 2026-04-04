@@ -1,6 +1,6 @@
 import Image from 'next/image';
 import logo from '@/assets/education.png';
-import { BsTwitter } from 'react-icons/bs';
+import { BsInstagram, BsTwitter } from 'react-icons/bs';
 import { LiaLinkedin } from 'react-icons/lia';
 export default function Footer() {
 
@@ -32,22 +32,21 @@ export default function Footer() {
                 <div>
                     <p className='font-semibold text-lg pb-1'>Connect</p>
                     <div className='flex gap-4'>
-                    <div className='bg-gray-300 p-2 rounded-md cursor-pointer'>
+                    <div className='bg-gray-300 dark:bg-gray-600 p-2 rounded-md cursor-pointer'>
                         <BsTwitter />
                     </div>
-                    <div className='bg-gray-300 p-2 rounded-md cursor-pointer'>
+                    <div className='bg-gray-300 dark:bg-gray-600 p-2 rounded-md cursor-pointer'>
                         <LiaLinkedin />
                     </div>
-                    <div className='bg-gray-300 p-2 rounded-md cursor-pointer'>
-                        <BsTwitter />
+                    <div className='bg-gray-300 dark:bg-gray-600 p-2 rounded-md cursor-pointer'>
+                        <BsInstagram />
                     </div>
                     </div>
                 </div>
                 
             </div>
-            <div className='py-6 px-4 xxl:px-70 sm:px-8 lg:px-14 xl:px-52 border-t border-gray-300 text-gray-500'>
+            <div className='py-6 px-4 xxl:px-70 sm:px-8 lg:px-14 xl:px-52 border-t border-gray-300 text-gray-500 '>
                 @2026 TechLMS , All Rights Reserved
-                
             </div>
         </>
     )

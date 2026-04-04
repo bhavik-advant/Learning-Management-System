@@ -25,7 +25,7 @@ function ThemeButton() {
   };
   return (
     <button
-      className="p-2 rounded-md border hover:bg-gray-100 transition"
+      className="p-2 rounded-full border cursor-pointer hover:bg-gray-300 dark:hover:bg-gray-50/20 transition"
       onClick={handleToggleTheme}
     >
       {theme == 'dark' ? <FiSun size={18} /> : <FiMoon size={18} />}
