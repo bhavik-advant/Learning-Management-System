@@ -59,7 +59,7 @@ export function Workflow() {
               >
                 <div className={`flex-1 ${index % 2 === 0 ? "text-right" : "text-left"}`}>
                   <div
-                    className={`group inline-block rounded-2xl border border-white shadow-2xl shadow-gray-400 p-7 backdrop-blur-sm transition-all hover:border-purple-500/30 hover:shadow-md hover:shadow-purple-500/10 ${
+                    className={`group inline-block rounded-2xl border border-white dark:border-[#828bf8]/50 shadow-2xl shadow-gray-400 dark:shadow-none p-7 backdrop-blur-sm transition-all hover:border-purple-500/30 hover:shadow-md hover:shadow-purple-500/10 ${
                       index % 2 === 0 ? "sm:ml-auto" : "sm:mr-auto"
                     }`}
                     style={{ maxWidth: "520px" }}

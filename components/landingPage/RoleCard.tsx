@@ -9,7 +9,7 @@ const RoleCard: React.FC<{
   image: StaticImageData;
 }> = ({ title, description, svg, text, image }) => {
   return (
-    <div className=" rounded-2xl border border-white shadow-2xl shadow-gray-400 backdrop-blur-sm transition-all hover:border-purple-500/30 hover:shadow-md hover:shadow-purple-500/10 space-y-5">
+    <div className=" rounded-2xl border border-white dark:border-[#828bf8]/50  shadow-2xl shadow-gray-400 dark:shadow-none backdrop-blur-sm transition-all hover:border-purple-500/30 hover:shadow-md hover:shadow-purple-500/10 space-y-5">
       <div className="p-7 space-y-5">
         <div className="flex items-center gap-4 ">
           <div className="inline-flex h-12 w-12 items-center justify-center rounded-lg bg-linear-to-br from-blue-500/20 to-purple-500/20 ring-1 ring-white/10">
@@ -22,7 +22,7 @@ const RoleCard: React.FC<{
         </div>
         <p className="text-lg">{text}</p>
       </div>
-      <div className="relative invert-90 h-48 rounded-b-2xl">
+      <div className="relative invert-90 dark:invert-0 h-48 rounded-b-2xl">
         <Image className="rounded-b-2xl" src={image} alt={'role image'} fill />
       </div>
     </div>
