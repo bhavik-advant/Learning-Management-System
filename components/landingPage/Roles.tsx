@@ -26,16 +26,16 @@ function Roles() {
           image={traineeRoleImg}
         />
         <RoleCard
-          title="Trainee View"
-          description="Focus on learning"
-          text="Clean interface focusing on current courses, upcoming assignments, and progress tracking."
+          title="Mentor View"
+          description="Focus on guiding"
+          text="Tools for reviewing code submissions, scheduling 1-on-1s, and providing structured feedback."
           svg={<FaChalkboardUser className="text-purple-400 h-6 w-6" />}
           image={mentorRoleImg}
         />
         <RoleCard
-          title="Trainee View"
-          description="Focus on learning"
-          text="Clean interface focusing on current courses, upcoming assignments, and progress tracking."
+          title="Admin View"
+          description="Focus on metrics"
+          text="High-level dashboards showing completion rates, engagement metrics, and resource allocation."
           svg={<FaChartPie className="text-purple-400 h-6 w-6" />}
           image={adminRoleImg}
         />
