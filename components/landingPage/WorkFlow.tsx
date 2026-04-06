@@ -40,14 +40,14 @@ export function Workflow() {
               Works
             </span>
           </h2>
-          <p className="text-lg text-muted-foreground">
+          <p className="text-lg  ">
             A seamless workflow from onboarding to mastery
           </p>
         </div>
 
         <div className="relative">
 
-          <div className="absolute left-1/2 top-0  h-full w-0.5 -translate-x-1/2 bg-linear-to-b from-blue-500 via-purple-500 to-indigo-500 opacity-20 hidden sm:block" />
+          <div className="absolute left-1/2 top-0  h-full w-0.5  bg-linear-to-b from-blue-500 via-purple-500 to-indigo-500 opacity-20 hidden sm:block" />
 
           <div className="space-y-8">
             {steps.map((step, index) => (
@@ -68,7 +68,7 @@ export function Workflow() {
                       <step.icon className="h-6 w-6 text-purple-400" />
                     </div>
                     <h3 className="mb-2 font-semibold">{step.title}</h3>
-                    <p className="text-sm text-muted-foreground">{step.description}</p>
+                    <p className="text-sm  ">{step.description}</p>
                   </div>
                 </div>
 

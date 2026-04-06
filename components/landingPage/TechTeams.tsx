@@ -13,7 +13,7 @@ function TechTeams() {
           Tech Teams
         </span>
       </h2>
-      <p className="text-lg text-muted-foreground text-center pb-8">
+      <p className="text-lg   text-center pb-8">
         Everything you need to upskill your engineering, product, and design teams in one powerful
         platform.
       </p>

@@ -14,7 +14,7 @@ function Roles() {
           Every Role
         </span>
       </h2>
-      <p className="text-lg text-muted-foreground text-center pb-8">
+      <p className="text-lg   text-center pb-8">
         Customized interfaces that provide exactly what each user needs to succeed.
       </p>
       <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
