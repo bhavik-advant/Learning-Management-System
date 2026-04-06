@@ -1,32 +1,17 @@
 'use client';
 import { FiSun, FiMoon } from 'react-icons/fi';
-import { useDispatch, useSelector } from 'react-redux';
-import { useEffect } from 'react';
-import { themeActions } from '@/store/slice/theme-slice';
-import { AppDispatch, RootState } from '@/store/store';
+
+import { useTheme } from 'next-themes';
 function ThemeButton() {
-  const { theme } = useSelector((state: RootState) => state.theme);
-  const dispatch = useDispatch<AppDispatch>();
+  const { theme, setTheme } = useTheme();
 
-  useEffect(() => {
-    const userTheme = (localStorage.getItem('theme') || 'light') as 'light' | 'dark';
-    dispatch(themeActions.setTheme(userTheme));
-    if (userTheme === 'dark') {
-      document.documentElement.classList.add('dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-    }
-  }, [theme, dispatch]);
-
-  const handleToggleTheme = () => {
-    const newTheme = theme === 'dark' ? 'light' : 'dark';
-    localStorage.setItem('theme', newTheme);
-    dispatch(themeActions.toggleTheme());
+  const handleToggkeTheme = () => {
+    setTheme(theme == 'dark' ? 'light' : 'dark');
   };
   return (
     <button
+      onClick={handleToggkeTheme}
       className="p-2 rounded-full border cursor-pointer hover:bg-gray-300 dark:hover:bg-gray-50/20 transition"
-      onClick={handleToggleTheme}
     >
       {theme == 'dark' ? <FiSun size={18} /> : <FiMoon size={18} />}
     </button>
