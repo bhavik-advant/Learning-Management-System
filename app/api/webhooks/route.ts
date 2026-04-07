@@ -1,18 +1,47 @@
-import { verifyWebhook } from '@clerk/nextjs/webhooks'
-import { NextRequest } from 'next/server'
+import { verifyWebhook } from '@clerk/nextjs/webhooks';
+import type { WebhookEvent } from '@clerk/nextjs/server';
+import { NextRequest, NextResponse } from 'next/server';
+import { prisma } from '@/utils/prisma-client';
 
 export async function POST(req: NextRequest) {
   try {
-    const evt = await verifyWebhook(req)
+    const evt: WebhookEvent = await verifyWebhook(req);
+    const { type, data } = evt;
 
-    const { id } = evt.data
-    const eventType = evt.type
-    console.log(`Received webhook with ID ${id} and event type of ${eventType}`)
-    console.log('Webhook payload:', evt.data)
+    if (type === 'user.created') {
+      const { id, image_url, email_addresses, username } = data;
 
-    return new Response('Webhook received', { status: 200 })
-  } catch (err) {
-    console.error('Error verifying webhook:', err)
-    return new Response('Error verifying webhook', { status: 400 })
+      const email = email_addresses?.[0]?.email_address;
+
+      if (!id || !email) {
+        return NextResponse.json(
+          { success: false, message: 'Missing required user data' },
+          { status: 400 }
+        );
+      }
+
+      await prisma.user.create({
+        data: {
+          clerkId: id!,
+          email,
+          image: image_url,
+          name: username,
+        },
+      });
+
+      return NextResponse.json(
+        { success: true, message: 'User synced successfully' },
+        { status: 200 }
+      );
+    }
+
+    return NextResponse.json({ success: true, message: 'Unhandled event type' }, { status: 200 });
+  } catch (error) {
+    console.error('Webhook Error:', error);
+
+    return NextResponse.json(
+      { success: false, message: 'Webhook verification failed' },
+      { status: 400 }
+    );
   }
 }
