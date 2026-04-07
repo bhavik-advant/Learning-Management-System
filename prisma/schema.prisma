@@ -12,23 +12,19 @@ datasource db {
   provider  = "postgresql"
 }
 enum Role {
-  STUDENT
+  USER
+  TRAINEE
   MENTOR
   ADMIN
 }
-enum ApprovalStatus {
-  PENDING
-  APPROVED
-  REJECTED
-}
 
 model User {
-  id             String         @id @default(uuid())
+  id             String         @id @default(uuid())   // internal ID
+  clerkId        String         @unique               // external ID
   name           String
   email          String         @unique
-  password       String
-  role           Role
-  approvalStatus ApprovalStatus @default(PENDING)
+  image          String?
+  role           Role           @default(USER)  
   createdAt      DateTime       @default(now())
   updatedAt      DateTime       @updatedAt
 }
