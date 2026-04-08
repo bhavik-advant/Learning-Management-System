@@ -1,11 +1,5 @@
-import Sidebar from '@/components/Sidebar';
-
 function DashBoard() {
-  return (
-    <div >
-      <Sidebar />
-    </div>
-  );
+  return <div>dashBoard</div>;
 }
 
 export default DashBoard;
