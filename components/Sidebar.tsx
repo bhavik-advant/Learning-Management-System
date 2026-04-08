@@ -9,15 +9,17 @@ import { CgClose } from 'react-icons/cg';
 const Sidebar: React.FC<{ show: boolean; onClick: () => void }> = ({ show, onClick }) => {
   return (
     <div
-      className={`fixed top-0 left-0 z-50 min-h-screen bg-gray-800 w-76 border-r border-gray-300 transform transition-transform duration-300 ease-in-out ${show ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}
+      className={`top-0 left-0 z-50 min-h-screen bg-gray-800 w-76 border-r border-gray-300 fixed lg:relative transform transition-transform duration-300 ease-in-out ${show ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 `}
     >
       <div className="flex justify-between items-center p-4 gap-3 h-18 cursor-pointer border-b border-gray-300">
-        <Image src={logo} alt="logo" width={42} height={42} />
-        <h1 className="text-xl font-semibold tracking-tight">
-          Tech<span className="text-blue-600">LMS</span>
-        </h1>
+        <div className='flex justify-center items-center'>
+          <Image src={logo} alt="logo" width={42} height={42} />
+          <h1 className="text-xl font-semibold tracking-tight">
+            Tech<span className="text-blue-600">LMS</span>
+          </h1>
+        </div>
 
-        <button onClick={onClick}>
+        <button onClick={onClick} className="lg:hidden">
           <CgClose />
         </button>
       </div>
