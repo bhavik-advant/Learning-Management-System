@@ -1,6 +1,7 @@
 import Image from 'next/image';
 import logo from '@/assets/education.png';
-import ThemeButton from './ui/ThemeButton';
+import ThemeButton from '../ui/ThemeButton';
+import Link from 'next/link';
 
 function Navbar() {
   return (
@@ -14,16 +15,25 @@ function Navbar() {
         </div>
 
         <ul className="hidden sm:flex items-center gap-8 text-sm font-medium text-gray-600 dark:text-gray-300">
-          <li className="hover:text-black dark:hover:text-white cursor-pointer transition">Features</li>
-          <li className="hover:text-black dark:hover:text-white cursor-pointer transition">Workflow</li>
-          <li className="hover:text-black dark:hover:text-white cursor-pointer transition">Roles</li>
+          <li className="hover:text-black dark:hover:text-white cursor-pointer transition">
+            Features
+          </li>
+          <li className="hover:text-black dark:hover:text-white cursor-pointer transition">
+            Workflow
+          </li>
+          <li className="hover:text-black dark:hover:text-white cursor-pointer transition">
+            Roles
+          </li>
         </ul>
 
         <div className="flex items-center gap-4">
           <ThemeButton />
-          <button className="px-4 py-1.5 text-sm font-medium rounded-md bg-black text-white hover:bg-gray-800 transition shadow-sm">
+          <Link
+            href="/auth/signup"
+            className="px-4 py-1.5 text-sm font-medium rounded-md bg-black text-white hover:bg-gray-800 transition shadow-sm"
+          >
             Sign in
-          </button>
+          </Link>
         </div>
       </div>
     </nav>
