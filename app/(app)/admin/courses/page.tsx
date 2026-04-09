@@ -1,9 +1,15 @@
-import React from 'react'
+import Courses from '@/components/ui/Courses';
+import { getAllCourses } from '@/services/apis/courses';
+import React from 'react';
 
-function page() {
+async function page() {
+ const allCourses = getAllCourses();
   return (
-    <div>page</div>
-  )
+    <div className="mx-8 space-y-5">
+      <h2>Your Courses</h2>
+      <Courses btnText="Manage Course" courses={allCourses} />
+    </div>
+  );
 }
 
-export default page
+export default page;

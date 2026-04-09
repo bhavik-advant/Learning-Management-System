@@ -1,4 +1,5 @@
-import Course from "./dashboard/Course";
+import React from 'react';
+import Course from './Course';
 
 type Course = {
   id: string;
@@ -6,17 +7,11 @@ type Course = {
   description: string;
   thumbnail: string;
   author: string;
-  btnText: string;
 };
 
-const Courses: React.FC<{ courses: Course[] }> = ({ courses }) => {
+const Courses: React.FC<{ courses: Course[], btnText : string }> = ({ courses,btnText }) => {
   return (
     <section className="space-y-5">
-      <div className="flex justify-between items-center">
-        <h2 className="text-3xl font-bold">Your Courses</h2>
-        <p className="text-blue-500">View all</p>
-      </div>
-
       {courses.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 text-center text-gray-500">
           <p className="text-lg font-medium">No courses found</p>
@@ -24,7 +19,7 @@ const Courses: React.FC<{ courses: Course[] }> = ({ courses }) => {
       ) : (
         <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           {courses.map(course => (
-            <Course key={course.id} {...course} />
+            <Course btnText={btnText} key={course.id} {...course} />
           ))}
         </div>
       )}

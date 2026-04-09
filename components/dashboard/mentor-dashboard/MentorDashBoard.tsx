@@ -2,7 +2,7 @@ import { BiBook } from 'react-icons/bi';
 import DashBoardCard from './DashboardCard';
 import { PiStudent } from 'react-icons/pi';
 import { IoDocumentTextOutline } from 'react-icons/io5';
-import Courses from '@/components/Courses';
+import Courses from '@/components/ui/Courses';
 
 function MentorDashBoard() {
   return (
@@ -27,7 +27,13 @@ function MentorDashBoard() {
           />
         </div>
       </section>
-      <Courses courses={[]} />
+      <section>
+        <div className="flex justify-between items-center">
+          <h2 className="text-3xl font-bold">Your Courses</h2>
+          <p className="text-blue-500">View all</p>
+        </div>
+        <Courses btnText="Manage Course" courses={[]} />
+      </section>
     </div>
   );
 }

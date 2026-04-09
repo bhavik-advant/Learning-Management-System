@@ -9,9 +9,9 @@ export default clerkMiddleware(async (auth, req) => {
   if (!userId && isProtectedRoute(req)) {
     return NextResponse.redirect(new URL('/auth/signin', req.url));
   }
-  if (userId && isPublicRoutes(req)) {
-    return NextResponse.redirect(new URL('/dashboard', req.url));
-  }
+  // if (userId && isPublicRoutes(req)) {
+  //   return NextResponse.redirect(new URL('/dashboard', req.url));
+  // }
 });
 
 export const config = {
