@@ -1,9 +1,9 @@
 import Navbar from '@/components/landingPage/Navbar';
-import HeroSection from '../components/landingPage/HeroSection';
 import TechTeams from '@/components/landingPage/TechTeams';
 import Roles from '@/components/landingPage/Roles';
 import Footer from '@/components/landingPage/Footer';
 import { Workflow } from '@/components/landingPage/WorkFlow';
+import HeroSection from '@/components/landingPage/HeroSection';
 
 export default function Home() {
   return (

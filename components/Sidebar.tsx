@@ -26,11 +26,11 @@ const Sidebar: React.FC<{ show: boolean; onClick: () => void }> = ({ show, onCli
       </div>
 
       <ul className="p-4 space-y-2">
-        <NavLink href="/dashboard">
+        <NavLink href="dashboard">
           <RiDashboard2Line className="text-xl" />
           <p className="font-semibold">DashBoard</p>
         </NavLink>
-        <NavLink href="/users">
+        <NavLink href="users">
           <HiUserGroup className="text-xl" />
           <p className="font-semibold">Users</p>
         </NavLink>
@@ -44,7 +44,7 @@ const Sidebar: React.FC<{ show: boolean; onClick: () => void }> = ({ show, onCli
           <p className="font-semibold">Notification</p>
         </NavLink>
 
-        <NavLink href="/profile">
+        <NavLink href="profile">
           <FiUser className="text-xl" />
           <p className="font-semibold">Profile</p>
         </NavLink>
