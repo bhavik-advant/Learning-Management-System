@@ -5,6 +5,7 @@ import { RiDashboard2Line } from 'react-icons/ri';
 import { BiBell, BiBook } from 'react-icons/bi';
 import { HiUserGroup } from 'react-icons/hi';
 import { CgClose } from 'react-icons/cg';
+import NavLink from './NavLink';
 
 const Sidebar: React.FC<{ show: boolean; onClick: () => void }> = ({ show, onClick }) => {
   return (
@@ -25,26 +26,28 @@ const Sidebar: React.FC<{ show: boolean; onClick: () => void }> = ({ show, onCli
       </div>
 
       <ul className="p-4 space-y-2">
-        <li className="flex items-center rounded-md gap-4 p-4">
+        <NavLink href="/dashboard">
           <RiDashboard2Line className="text-xl" />
           <p className="font-semibold">DashBoard</p>
-        </li>
-        <li className="flex items-center rounded-md gap-4 p-4">
+        </NavLink>
+        <NavLink href="/users">
           <HiUserGroup className="text-xl" />
           <p className="font-semibold">Users</p>
-        </li>
-        <li className="flex items-center rounded-md gap-4 p-4">
+        </NavLink>
+        <NavLink href="courses">
           <BiBook className="text-xl" />
-          <p className="font-semibold">Course</p>
-        </li>
-        <li className="flex items-center rounded-md gap-4 p-4">
+          <p className="font-semibold">Courses</p>
+        </NavLink>
+
+        <NavLink href="notification">
           <BiBell className="text-xl" />
           <p className="font-semibold">Notification</p>
-        </li>
-        <li className="flex items-center rounded-md gap-4 p-4 bg-blue-300">
+        </NavLink>
+
+        <NavLink href="/profile">
           <FiUser className="text-xl" />
           <p className="font-semibold">Profile</p>
-        </li>
+        </NavLink>
       </ul>
     </div>
   );
