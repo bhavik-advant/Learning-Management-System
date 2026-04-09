@@ -4,7 +4,7 @@ import { GiHamburgerMenu } from 'react-icons/gi';
 
 const NavBar: React.FC<{ onClick: () => void }> = ({ onClick }) => {
   return (
-    <nav className=" flex justify-between items-center border-b w-full lg:px-8  p-4 h-18 border-gray-300  gap-4">
+    <nav className="flex justify-between items-center border-b w-full lg:px-8  p-4 h-18 border-gray-300  gap-4">
       <GiHamburgerMenu className="lg:hidden text-2xl" onClick={onClick} />
       <div className="flex flex-1  items-center ">
         <input
@@ -14,7 +14,7 @@ const NavBar: React.FC<{ onClick: () => void }> = ({ onClick }) => {
         <button className="bg-gray-300 dark:bg-gray-600 p-3 rounded-r-md">
           <BiSearch />
         </button>
-      </div>
+      </div>``
       <ThemeButton />
     </nav>
   );

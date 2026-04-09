@@ -12,11 +12,11 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) 
 
   return (
     <>
-      <div className="flex relative">
+      <div className="flex h-screen overflow-hidden">
         <Sidebar show={showSidebar} onClick={handleToggle} />
-        <div className="flex-1">
+        <div className="flex-1 flex flex-col min-w-0">
           <NavBar onClick={handleToggle} />
-          {children}
+          <main className="flex-1 overflow-y-auto">{children}</main>
         </div>
       </div>
     </>
