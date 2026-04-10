@@ -1,5 +1,7 @@
 import img from '@/assets/image.png';
-type Course = {
+import { getAssignmentsByCourse } from './Assignments';
+// TYPES
+export type Course = {
   id: string;
   title: string;
   description: string;
@@ -7,71 +9,175 @@ type Course = {
   author: string;
 };
 
+export type Lesson = {
+  id: string;
+  moduleId: string;
+  title: string;
+  duration: string;
+  videoUrl?: string;
+  videoLink?: string;
+  isCompleted: boolean;
+};
+
+export type Module = {
+  id: string;
+  courseId: string;
+  title: string;
+};
+
+// COURSES (5+)
 export const DUMMY_COURSES: Course[] = [
   {
     id: 'c1',
     title: 'Introduction to React',
-    description:
-      'Learn the fundamentals of React, including components, props, state, and hooks to build dynamic user interfaces.',
+    description: 'Learn React fundamentals.',
     thumbnail: img.src,
     author: 'John Doe',
   },
   {
     id: 'c2',
     title: 'Mastering Next.js',
-    description:
-      'Dive deep into Next.js features such as routing, server components, API routes, and performance optimization.',
+    description: 'Deep dive into Next.js.',
     thumbnail: img.src,
     author: 'Jane Smith',
   },
   {
     id: 'c3',
-    title: 'TypeScript for Beginners',
-    description:
-      'Understand TypeScript basics, including types, interfaces, generics, and how to integrate it with modern JavaScript projects.',
+    title: 'TypeScript Basics',
+    description: 'Learn TypeScript from scratch.',
     thumbnail: img.src,
     author: 'Alex Johnson',
   },
   {
     id: 'c4',
-    title: 'Full-Stack Development with MERN',
-    description:
-      'Build scalable full-stack applications using MongoDB, Express, React, and Node.js.',
+    title: 'Node.js Backend',
+    description: 'Build APIs with Node.js.',
     thumbnail: img.src,
     author: 'Emily Davis',
   },
   {
     id: 'c5',
-    title: 'Prisma & Database Management',
-    description:
-      'Learn how to design databases and interact with them efficiently using Prisma ORM.',
+    title: 'UI/UX Design',
+    description: 'Design beautiful interfaces.',
     thumbnail: img.src,
     author: 'Michael Brown',
   },
+];
+
+// MODULES
+export const DUMMY_MODULES: Module[] = [
+  // React
+  { id: 'm1', courseId: 'c1', title: 'React Basics' },
+  { id: 'm2', courseId: 'c1', title: 'Advanced React' },
+
+  // Next.js
+  { id: 'm3', courseId: 'c2', title: 'Next.js Core' },
+  { id: 'm4', courseId: 'c2', title: 'Routing & APIs' },
+
+  // TS
+  { id: 'm5', courseId: 'c3', title: 'TS Fundamentals' },
+
+  // Node
+  { id: 'm6', courseId: 'c4', title: 'Node Basics' },
+
+  // UI
+  { id: 'm7', courseId: 'c5', title: 'Design Principles' },
+];
+
+// LESSONS
+export const DUMMY_LESSONS: Lesson[] = [
+  // React Lessons
   {
-    id: 'c6',
-    title: 'Authentication with Clerk',
-    description:
-      'Implement secure authentication and user management in your applications using Clerk.',
-    thumbnail: img.src,
-    author: 'Sarah Wilson',
+    id: 'l1',
+    moduleId: 'm1',
+    title: 'Intro to React',
+    duration: '10:00',
+    videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
+    isCompleted: true,
   },
   {
-    id: 'c7',
-    title: 'Tailwind CSS from Scratch',
-    description:
-      'Create beautiful and responsive user interfaces using the utility-first Tailwind CSS framework.',
-    thumbnail: img.src,
-    author: 'David Lee',
+    id: 'l2',
+    moduleId: 'm1',
+    title: 'JSX Explained',
+    duration: '15:00',
+    videoLink: 'https://www.youtube.com/watch?v=Ke90Tje7VS0',
+    isCompleted: false,
   },
   {
-    id: 'c8',
-    title: 'Building RESTful APIs with Node.js',
-    description: 'Learn how to design and develop robust RESTful APIs using Node.js and Express.',
-    thumbnail: img.src,
-    author: 'Olivia Martinez',
+    id: 'l3',
+    moduleId: 'm2',
+    title: 'React Hooks',
+    duration: '20:00',
+    videoUrl: 'https://www.w3schools.com/html/movie.mp4',
+    isCompleted: false,
+  },
+
+  // Next.js
+  {
+    id: 'l4',
+    moduleId: 'm3',
+    title: 'Next.js Intro',
+    duration: '12:00',
+    videoLink: 'https://www.youtube.com/watch?v=1WmNXEVia8I',
+    isCompleted: true,
+  },
+  {
+    id: 'l5',
+    moduleId: 'm4',
+    title: 'API Routes',
+    duration: '18:00',
+    videoUrl: 'https://www.w3schools.com/html/mov_bbb.mp4',
+    isCompleted: false,
+  },
+
+  // TS
+  {
+    id: 'l6',
+    moduleId: 'm5',
+    title: 'Types in TS',
+    duration: '14:00',
+    videoLink: 'https://www.youtube.com/watch?v=30LWjhZzg50',
+    isCompleted: false,
+  },
+
+  // Node
+  {
+    id: 'l7',
+    moduleId: 'm6',
+    title: 'Node Intro',
+    duration: '11:00',
+    videoUrl: 'https://www.w3schools.com/html/movie.mp4',
+    isCompleted: true,
+  },
+
+  // UI
+  {
+    id: 'l8',
+    moduleId: 'm7',
+    title: 'Design Basics',
+    duration: '16:00',
+    videoLink: 'https://www.youtube.com/watch?v=3YjWnq7F3qI',
+    isCompleted: false,
   },
 ];
-export const getAllCourses = () => {
-  return DUMMY_COURSES;
+
+// FUNCTIONS
+export const getAllCourses = () => DUMMY_COURSES;
+
+export const getCoursesById = (id: string) => DUMMY_COURSES.find(c => c.id === id);
+
+export const getCourseFullDetails = (courseId: string) => {
+  const modules = DUMMY_MODULES.filter(m => m.courseId === courseId);
+
+  const structuredModules = modules.map(module => ({
+    ...module,
+    lessons: DUMMY_LESSONS.filter(l => l.moduleId === module.id),
+  }));
+
+  const assignments = getAssignmentsByCourse(courseId);
+
+  return {
+    modules: structuredModules,
+    assignments,
+  };
 };

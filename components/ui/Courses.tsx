@@ -9,9 +9,9 @@ type Course = {
   author: string;
 };
 
-const Courses: React.FC<{ courses: Course[], btnText : string }> = ({ courses,btnText }) => {
+const Courses: React.FC<{ courses: Course[]; btnText: string }> = ({ courses, btnText }) => {
   return (
-    <section className="space-y-5">
+    <section className="space-y-5 my-5">
       {courses.length === 0 ? (
         <div className="flex flex-col items-center justify-center py-16 text-center text-gray-500">
           <p className="text-lg font-medium">No courses found</p>
