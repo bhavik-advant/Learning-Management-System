@@ -11,22 +11,111 @@ generator client {
 datasource db {
   provider  = "postgresql"
 }
+// Enums
 enum Role {
-  USER
   TRAINEE
   MENTOR
   ADMIN
 }
 
+enum CourseStatus {
+  DRAFT
+  PENDING
+  APPROVED
+}
+
+enum FileType {
+  IMAGE
+  VIDEO
+  DOCUMENT
+  OTHER
+}
+
+// User Model
 model User {
-  id             String         @id @default(uuid())   // internal ID
-  clerkId        String         @unique               // external ID
-  name           String
-  email          String         @unique
-  image          String?
-  role           Role           @default(USER)  
-  createdAt      DateTime       @default(now())
-  updatedAt      DateTime       @updatedAt
+  id         String   @id @default(uuid())
+  clerkId    String   @unique
+  username   String   @unique
+  email      String   @unique
+  image      String?
+  role       Role     @default(TRAINEE)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  courses    Course[] @relation("MentorCourses")
+  files      File[]   @relation("UploadedFiles")
+}
+
+// Course Model
+model Course {
+  id           String        @id @default(uuid())
+  title        String
+  description  String
+  thumbnailId  String?
+  status       CourseStatus  @default(DRAFT)
+  authorId     String
+  createdAt    DateTime      @default(now())
+  updatedAt    DateTime      @updatedAt
+
+  author       User          @relation("MentorCourses", fields: [authorId], references: [id])
+  thumbnail    File?         @relation("CourseThumbnail", fields: [thumbnailId], references: [id])
+  modules      Module[]
+
+  @@index([authorId])
+  @@index([thumbnailId])
+}
+
+// Module Model
+model Module {
+  id         String   @id @default(uuid())
+  title      String
+  order      Int
+  courseId   String
+  createdAt  DateTime @default(now())
+
+  course     Course   @relation(fields: [courseId], references: [id])
+  lessons    Lesson[]
+
+  @@index([courseId])
+  @@unique([courseId, order]) // Ensures unique ordering within a course
+}
+
+// Lesson Model
+model Lesson {
+  id           String   @id @default(uuid())
+  title        String
+  description  String
+  order        Int
+  moduleId     String
+  videoUrl     String?
+  videoFileId  String?
+  createdAt    DateTime @default(now())
+
+  // Relations
+  module       Module   @relation(fields: [moduleId], references: [id])
+  videoFile    File?    @relation("LessonVideo", fields: [videoFileId], references: [id])
+
+  @@index([moduleId])
+  @@index([videoFileId])
+  @@unique([moduleId, order])
+}
+
+// File Model
+model File {
+  id          String   @id @default(uuid())
+  url         String
+  type        FileType
+  public_id   String
+  size        Int
+  createdAt   DateTime @default(now())
+  uploadedBy  String
+
+  // Relations
+  uploader    User     @relation("UploadedFiles", fields: [uploadedBy], references: [id])
+  thumbnails  Course[] @relation("CourseThumbnail")
+  lessonVideo Lesson[] @relation("LessonVideo")
+
+  @@index([uploadedBy])
 }
 
 

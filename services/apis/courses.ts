@@ -1,4 +1,5 @@
 import img from '@/assets/image.png';
+import { courseFormData } from '@/types/types';
 type Course = {
   id: string;
   title: string;
@@ -74,4 +75,26 @@ export const DUMMY_COURSES: Course[] = [
 ];
 export const getAllCourses = () => {
   return DUMMY_COURSES;
+};
+
+export const createCourse = async (course: courseFormData) => {
+  const formData = new FormData();
+  formData.append('title', course.title);
+  formData.append('description', course.description);
+  if (course.thumbnail) {
+    formData.append('thumbnail', course.thumbnail);
+  }
+
+  const response = await fetch('/api/course', {
+    method: 'POST',
+    body: formData,
+  });
+
+  if (!response.ok) {
+    console.log(response);
+    
+    throw new Error('Failed to create coursess');
+  }
+
+  return await response.json();
 };

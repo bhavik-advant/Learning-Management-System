@@ -14,7 +14,7 @@ const NavBar: React.FC<{ onClick: () => void }> = ({ onClick }) => {
         <button className="bg-gray-300 dark:bg-gray-600 p-3 rounded-r-md">
           <BiSearch />
         </button>
-      </div>``
+      </div>
       <ThemeButton />
     </nav>
   );
