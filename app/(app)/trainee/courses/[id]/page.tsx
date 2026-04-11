@@ -35,7 +35,7 @@ export default function CourseDetailsPage({ params }: Props) {
         <p className="text-sm text-gray-500">By: {course.author}</p>
       </div>
 
-      <div className="grid sm:grid-cols-2 xl:grid-cols-3  gap-6">
+      <div className="grid sm:grid-cols-2 xl:grid-cols-3  gap-6 items-start">
         <div className=" border rounded-2xl p-5 space-y-6 ">
           <h3 className="font-semibold text-lg">Course Content</h3>
           {details.modules.map(module => (
@@ -77,7 +77,7 @@ export default function CourseDetailsPage({ params }: Props) {
                   <p className="text-xs text-gray-500">Due: {a.dueDate}</p>
                 </div>
 
-                <button className="border px-3 py-1 bg-gray-800 hover:bg-gray-900 dark:bg-gray-200 dark:hover:bg-gray-100  dark:text-gray-800 text-white rounded-lg text-sm cursor-pointer">
+                <button className="border px-3 py-1 bg-gray-800 hover:bg-gray-900 dark:bg-gray-200 dark:hover:bg-gray-100 dark:text-gray-800 text-white rounded-lg text-sm cursor-pointer">
                   Submit
                 </button>
               </div>

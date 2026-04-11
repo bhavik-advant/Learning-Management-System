@@ -33,7 +33,7 @@ export default function RootLayout({
     >
       <body className="min-h-full w-full dark:bg-gray-800 dark:text-white">
         <TanstackProvider>
-          <ThemeProvider attribute="class" defaultTheme="light">
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <ClerkProvider>{children}</ClerkProvider>
           </ThemeProvider>
         </TanstackProvider>

@@ -5,6 +5,7 @@ export type AssignmentType = {
   description: string;
   dueDate: string;
   status: 'Pending' | 'Submitted';
+  maxScore: number;
 };
 
 const assignments: AssignmentType[] = [
@@ -15,6 +16,7 @@ const assignments: AssignmentType[] = [
     description: 'Build a todo app',
     dueDate: 'Apr 15, 2026',
     status: 'Pending',
+    maxScore: 100,
   },
   {
     id: 'a2',
@@ -23,6 +25,7 @@ const assignments: AssignmentType[] = [
     description: 'Create blog app',
     dueDate: 'Apr 18, 2026',
     status: 'Pending',
+    maxScore: 100,
   },
   {
     id: 'a3',
@@ -31,6 +34,7 @@ const assignments: AssignmentType[] = [
     description: 'Write typed functions',
     dueDate: 'Apr 12, 2026',
     status: 'Submitted',
+    maxScore: 100,
   },
   {
     id: 'a4',
@@ -39,6 +43,7 @@ const assignments: AssignmentType[] = [
     description: 'Build CRUD API',
     dueDate: 'Apr 20, 2026',
     status: 'Pending',
+    maxScore: 100,
   },
   {
     id: 'a5',
@@ -47,12 +52,15 @@ const assignments: AssignmentType[] = [
     description: 'Create UI case study',
     dueDate: 'Apr 25, 2026',
     status: 'Pending',
+    maxScore: 100,
   },
 ];
 
 export const getAllAssignments = (): AssignmentType[] => {
   return assignments;
 };
+
+export const getAssignmentById = (id: string) => assignments.find(a => a.id === id);
 
 export const getAssignmentsByCourse = (courseId: string) => {
   return assignments.filter(a => a.courseId === courseId);

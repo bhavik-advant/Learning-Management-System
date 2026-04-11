@@ -3,3 +3,5 @@ export type courseFormData = {
   description: string;
   thumbnail: File | null;
 };
+
+export type UserRole = 'admin' | 'mentor' | 'trainee';

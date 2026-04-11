@@ -5,17 +5,15 @@ import { IoMdCheckmarkCircleOutline } from 'react-icons/io';
 import { FaArrowTrendUp } from 'react-icons/fa6';
 import Courses from '@/components/ui/Courses';
 import { getAllCourses } from '@/services/apis/courses';
-import Assignments from '@/components/ui/Assignments';
-
+import Assignments from '@/components/assignments/Assignments';
 
 import { getAllAssignments } from '@/services/apis/Assignments';
 async function TraineeDashBoard() {
   const courses = await getAllCourses();
-  const assignments = await getAllAssignments()
+  const assignments = await getAllAssignments();
 
   return (
     <div className="mx-8 space-y-5">
-
       <section className="mt-8 space-y-5">
         <div>
           <h2 className="text-3xl font-bold">Trainee Dashboard</h2>

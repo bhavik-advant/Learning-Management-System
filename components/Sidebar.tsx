@@ -1,55 +1,84 @@
+'use client';
+
 import Image from 'next/image';
 import logo from '@/assets/education.png';
-import { FiUser } from 'react-icons/fi';
-import { RiDashboard2Line } from 'react-icons/ri';
-import { BiBell, BiBook } from 'react-icons/bi';
-import { HiUserGroup } from 'react-icons/hi';
 import { CgClose } from 'react-icons/cg';
 import NavLink from './NavLink';
+import { sidebarMenu } from '@/utils/sidebar-menu-helper';
+import { UserRole } from '@/types/types';
 
-const Sidebar: React.FC<{ show: boolean; onClick: () => void }> = ({ show, onClick }) => {
+type SidebarProps = {
+  show: boolean;
+  onClick: () => void;
+  role: UserRole;
+  user?: {
+    name?: string;
+    email?: string;
+    image?: string;
+    role?: string;
+  };
+};
+
+const Sidebar: React.FC<SidebarProps> = ({ show, onClick, role, user }) => {
+  const menuItems = sidebarMenu[role];
+
   return (
-    <div
-      className={`top-0 min-h-screen z-50 bg-white dark:bg-gray-800  w-76 border-r border-gray-300 fixed lg:sticky transform transition-transform duration-100 ease-in-out ${show ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0 `}
+    <aside
+      className={`top-0 min-h-screen z-50 w-72 
+      bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl 
+      border-r border-gray-200 dark:border-gray-700 
+      fixed lg:sticky flex flex-col
+      transform transition-transform duration-300 ease-in-out
+      ${show ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}
     >
-      <div className="flex justify-between items-center p-4 gap-3 h-18 cursor-pointer border-b border-gray-300">
-        <div className="flex justify-center items-center">
-          <Image src={logo} alt="logo" width={42} height={42} />
-          <h1 className="text-xl font-semibold tracking-tight">
+      <div className="flex justify-between items-center px-5 py-4 border-b border-gray-200 dark:border-gray-700">
+        <div className="flex items-center gap-3">
+          <Image src={logo} alt="logo" width={40} height={40} />
+          <h1 className="text-lg font-semibold tracking-tight">
             Tech<span className="text-blue-600">LMS</span>
           </h1>
         </div>
 
-        <button onClick={onClick} className="lg:hidden">
+        <button
+          onClick={onClick}
+          className="lg:hidden p-2 rounded-md hover:bg-gray-200 dark:hover:bg-gray-700 transition"
+        >
           <CgClose />
         </button>
       </div>
 
-      <ul className="p-4 space-y-2">
-        <NavLink href="dashboard">
-          <RiDashboard2Line className="text-xl" />
-          <p className="font-semibold">DashBoard</p>
-        </NavLink>
-        <NavLink href="users">
-          <HiUserGroup className="text-xl" />
-          <p className="font-semibold">Users</p>
-        </NavLink>
-        <NavLink href="courses">
-          <BiBook className="text-xl" />
-          <p className="font-semibold">Courses</p>
-        </NavLink>
+      <ul className="p-4 space-y-1">
+        {menuItems.map((item, index) => {
+          const fullPath = `/${role}/${item.href}`;
 
-        <NavLink href="notification">
-          <BiBell className="text-xl" />
-          <p className="font-semibold">Notification</p>
-        </NavLink>
-
-        <NavLink href="profile">
-          <FiUser className="text-xl" />
-          <p className="font-semibold">Profile</p>
-        </NavLink>
+          return <NavLink key={index} href={fullPath} icon={item.icon} label={item.label} />;
+        })}
       </ul>
-    </div>
+
+      <div className="mt-auto border-t border-gray-200 dark:border-gray-700 p-4">
+        {user && (
+          <div className="flex items-center gap-3">
+            <Image
+              src={user.image || '/default-avatar.png'}
+              alt="user"
+              width={40}
+              height={40}
+              className="rounded-full object-cover"
+            />
+
+            <div className="flex flex-col">
+              <span className="text-sm font-semibold">{user.name || 'User'}</span>
+
+              <span className="text-xs text-blue-600 dark:text-blue-400 capitalize">
+                {user.role?.toLowerCase()}
+              </span>
+
+              <span className="text-xs text-gray-500 dark:text-gray-400">{user.email}</span>
+            </div>
+          </div>
+        )}
+      </div>
+    </aside>
   );
 };
 
