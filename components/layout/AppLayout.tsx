@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import Sidebar from '../Sidebar';
 import NavBar from '../NavBar';
 
-const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+const AppLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [showSidebar, setShowSidebar] = useState<boolean>(false);
 
   const handleToggle = () => {
@@ -23,4 +23,4 @@ const DashboardLayout: React.FC<{ children: React.ReactNode }> = ({ children }) 
   );
 };
 
-export default DashboardLayout;
+export default AppLayout;
