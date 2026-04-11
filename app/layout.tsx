@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import { ThemeProvider } from 'next-themes';
 import { ClerkProvider } from '@clerk/nextjs';
+import TanstackProvider from '@/components/providers/QueryClientProvider';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -31,9 +32,11 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-full w-full dark:bg-gray-800 dark:text-white">
-        <ThemeProvider attribute="class" defaultTheme="light">
-          <ClerkProvider>{children}</ClerkProvider>
-        </ThemeProvider>
+        <TanstackProvider>
+          <ThemeProvider attribute="class" defaultTheme="light">
+            <ClerkProvider>{children}</ClerkProvider>
+          </ThemeProvider>
+        </TanstackProvider>
       </body>
     </html>
   );

@@ -1,6 +1,7 @@
 import img from '@/assets/image.png';
 import { getAssignmentsByCourse } from './Assignments';
 // TYPES
+import { courseFormData } from '@/types/types';
 export type Course = {
   id: string;
   title: string;
@@ -180,4 +181,26 @@ export const getCourseFullDetails = (courseId: string) => {
     modules: structuredModules,
     assignments,
   };
+};
+
+export const createCourse = async (course: courseFormData) => {
+  const formData = new FormData();
+  formData.append('title', course.title);
+  formData.append('description', course.description);
+  if (course.thumbnail) {
+    formData.append('thumbnail', course.thumbnail);
+  }
+
+  const response = await fetch('/api/course', {
+    method: 'POST',
+    body: formData,
+  });
+
+  if (!response.ok) {
+    console.log(response);
+
+    throw new Error('Failed to create coursess');
+  }
+
+  return await response.json();
 };
