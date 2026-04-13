@@ -3,7 +3,10 @@ import { prisma } from '@/utils/prisma-client';
 import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 
-export const POST = async (req: NextRequest, { params }: { params: { courseId: string } }) => {
+export const POST = async (
+  req: NextRequest,
+  { params }: { params: Promise<{ courseId: string }> }
+) => {
   try {
     const { userId } = await auth();
 
@@ -23,7 +26,8 @@ export const POST = async (req: NextRequest, { params }: { params: { courseId: s
       return NextResponse.json(new ApiResponse(403, 'Unauthorised', {}), { status: 403 });
     }
 
-    const { courseId } = params;
+
+    const { courseId } = await params;
 
     const body = await req.json();
     const { title } = body;
