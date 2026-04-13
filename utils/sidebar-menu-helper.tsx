@@ -65,8 +65,13 @@ export const sidebarMenu: Record<UserRole, MenuItem[]> = {
       icon: <BiBook />,
     },
     {
-      label: 'assignments',
+      label: 'Assignments',
       href: 'assignments',
+      icon: <BiBell />,
+    },
+    {
+      label: 'Submissions',
+      href: 'submissions',
       icon: <BiBell />,
     },
     {

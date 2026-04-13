@@ -1,3 +1,4 @@
+// api/course/[courseId]/module/route.ts
 import ApiResponse from '@/utils/api-response';
 import { prisma } from '@/utils/prisma-client';
 import { auth } from '@clerk/nextjs/server';
@@ -25,7 +26,6 @@ export const POST = async (
     if (user.role === 'TRAINEE') {
       return NextResponse.json(new ApiResponse(403, 'Unauthorised', {}), { status: 403 });
     }
-
 
     const { courseId } = await params;
 

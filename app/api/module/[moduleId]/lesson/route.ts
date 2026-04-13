@@ -1,3 +1,4 @@
+// api/module/[moduleId]/lesson/route.ts
 import { uploadToCloudinary } from '@/services/external/cloudinary';
 import ApiResponse from '@/utils/api-response';
 import { prisma } from '@/utils/prisma-client';
@@ -35,8 +36,7 @@ export const POST = async (req: NextRequest) => {
       });
     }
 
-    console.log("lesson is ",lesson);
-    
+    console.log('lesson is ', lesson);
 
     const result = await uploadToCloudinary(lesson);
 
@@ -65,17 +65,17 @@ export const POST = async (req: NextRequest) => {
     }
 
     const lessonCount = await prisma.lesson.count({
-      where : {
-        moduleId 
-      }
-    })
+      where: {
+        moduleId,
+      },
+    });
 
     const createdLesson = await prisma.lesson.create({
       data: {
         title: lesson.name,
         description: '',
         videoFileId: file.id,
-        order : lessonCount +1,
+        order: lessonCount + 1,
         moduleId,
       },
     });

@@ -1,3 +1,4 @@
+// api/file/route.ts
 import { uploadToCloudinary } from '@/services/external/cloudinary';
 import { NextRequest, NextResponse } from 'next/server';
 

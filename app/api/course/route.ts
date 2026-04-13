@@ -1,3 +1,4 @@
+// api/course/route.ts
 import { FileType } from '@/generated/prisma/enums';
 import { uploadToCloudinary } from '@/services/external/cloudinary';
 import ApiResponse from '@/utils/api-response';

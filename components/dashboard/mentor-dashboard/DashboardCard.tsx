@@ -11,7 +11,7 @@ const DashBoardCard: React.FC<{ title: string; value: number; icon: React.ReactN
         <h2 className="text-lg">{title}</h2>
         <p className="font-bold text-4xl">{value}</p>
       </div>
-      <div className="bg-blue-300/50 rounded-md p-2">{icon}</div>
+      <div className="bg-blue-300/50 rounded-md p-2 text-2xl">{icon}</div>
     </div>
   );
 };
