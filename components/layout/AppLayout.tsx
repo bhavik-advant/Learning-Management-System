@@ -12,6 +12,7 @@ type Props = {
     email: string;
     image?: string;
     role?: string;
+
   };
 };
 

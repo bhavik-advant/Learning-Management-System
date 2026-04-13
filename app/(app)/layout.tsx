@@ -1,4 +1,4 @@
-import DashboardLayout from '@/components/layout/DashboardLayout';
+import DashboardLayout from '@/components/layout/AppLayout';
 import type { Role } from '@/generated/prisma/enums';
 import type { UserRole } from '@/types/types';
 import { prisma } from '@/utils/prisma-client';
