@@ -28,7 +28,7 @@ export default async function Layout({ children }: { children: React.ReactNode }
   const formattedUser = {
     name: user.username,
     email: user.email,
-    image: user.image,
+    image: user.image!,
     role: prismaRoleToSidebarRole[user.role],
   };
 

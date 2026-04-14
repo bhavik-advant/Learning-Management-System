@@ -5,33 +5,52 @@ import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { createModule } from '@/services/apis/module';
 import { useParams } from 'next/navigation';
+import queryClient from '@/utils/query-client';
 
-type ModuleFormCreateProps = {
-  onAddModule: (id: string, title: string) => void;
-};
+// type ModuleFormCreateProps = {
+//   onAddModule: (id: string, title: string) => void;
+// };
 
-type ModuleFormProps = ModuleFormCreateProps;
-const NewModule: React.FC<ModuleFormProps> = ({ onAddModule }) => {
+const NewModule = ({}) => {
   const [inputText, setInputText] = useState<string>('');
 
   const { id: courseId } = useParams<{ id: string }>();
 
-  const { mutateAsync, isPending } = useMutation({ mutationFn: createModule });
+  const { mutateAsync, isPending } = useMutation({
+    mutationFn: createModule,
+    onSuccess: response => {
+      if (!response?.success || response.statusCode !== 201) return;
+
+      queryClient.setQueryData(['courses', courseId], oldData => {
+        if (!oldData) return oldData;
+
+        const newModule = {
+          id: response.data.id,
+          title: response.data.title,
+          order: response.data.order,
+          lessons: [],
+        };
+
+        return {
+          ...oldData,
+          data: {
+            ...oldData.data,
+            modules: [...(oldData.data.modules ?? []), newModule],
+          },
+        };
+      });
+    },
+  });
   const handleModuleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
-    const response = await mutateAsync({ title: inputText, courseId });
-    console.log(response);
-    
-    if (response.success && response.statusCode == 201) {
-      onAddModule(response.data.id, response.data.title);
-    }
+    await mutateAsync({ title: inputText, courseId });
 
     setInputText('');
   };
 
   return (
-    <div className="mt-4 space-y-4 border-2 border-dashed border-gray-300 rounded-2xl p-4">
+    <div className="mt-4 space-y-4 border-2 border-dashed border-gray-400/80 rounded-2xl p-4">
       <form className="flex flex-col space-y-2" onSubmit={handleModuleSubmit}>
         <h2 className="text-lg text-gray-600">Add Module</h2>
         <div className="flex gap-4">

@@ -204,3 +204,16 @@ export const createCourse = async (course: courseFormData) => {
 
   return await response.json();
 };
+
+export const getCourseById = async (id: string) => {
+  const response = await fetch(`/api/course/${id}`, {
+    method: 'GET',
+  });
+
+  if (!response.ok) {
+    console.log(response);
+    throw new Error('Failed to fetch course details');
+  }
+
+  return await response.json();
+};

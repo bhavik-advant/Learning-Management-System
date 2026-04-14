@@ -2,9 +2,9 @@
 
 import Modules from '@/components/course/Modules';
 import NewModule from '@/components/course/NewModule';
-import { addLesson } from '@/services/apis/lesson';
-import { createModule } from '@/services/apis/module';
-import { useMutation } from '@tanstack/react-query';
+import { getCourseById } from '@/services/apis/courses';
+import { useQuery } from '@tanstack/react-query';
+import { useParams } from 'next/navigation';
 import { useState } from 'react';
 
 type Lesson = {
@@ -20,51 +20,66 @@ type Module = {
 };
 
 const AddContent = () => {
-  const [modules, setModules] = useState<Module[]>([]);
+  const { id: courseId } = useParams<{ id: string }>();
 
-  const handleAddModule = (id: string, title: string) => {
-    setModules(prev => [...prev, { id, title, lessons: [] }]);
-  };
+  const { data, isLoading } = useQuery({
+    queryKey: ['courses', courseId],
+    queryFn: () => getCourseById(courseId),
+  });
 
-  const handleAddLesson = (moduleId: string, lessonId: string, title: string, url: string) => {
-    console.log(moduleId, lessonId, title, url);
+  // const [modules, setModules] = useState<Module[]>(data?.data.modules ?? []);
 
-    setModules(prev =>
-      prev.map(module =>
-        module.id === moduleId
-          ? {
-              ...module,
-              lessons: [
-                ...module.lessons,
-                {
-                  id: lessonId,
-                  title,
-                  url,
-                },
-              ],
-            }
-          : module
-      )
-    );
-  };
+  // const handleAddModule = (id: string, title: string) => {
+  //   setModules(prev => [...prev, { id, title, lessons: [] }]);
+  // };
 
-  console.log(modules);
-  
+  // const handleAddLesson = (moduleId: string, lessonId: string, title: string, url: string) => {
+  //   console.log(moduleId, lessonId, title, url);
+
+  //   setModules(prev =>
+  //     prev.map(module =>
+  //       module.id === moduleId
+  //         ? {
+  //             ...module,
+  //             lessons: [
+  //               ...module.lessons,
+  //               {
+  //                 id: lessonId,
+  //                 title,
+  //                 url,
+  //               },
+  //             ],
+  //           }
+  //         : module
+  //     )
+  //   );
+  // };
+
+  if (isLoading) {
+    return <p>Loading....</p>;
+  }
+
   return (
     <>
       <div className="w-full bg-white rounded-2xl shadow-lg p-8">
         <h2 className="font-semibold text-xl">Add Content</h2>
-        {modules.length > 0 &&
-          modules.map(module => (
-            <Modules
-              key={module.id}
-              id={module.id}
-              title={module.title}
-              lessons={module.lessons}
-              onAddLesson={handleAddLesson}
-            />
-          ))}
-        <NewModule onAddModule={handleAddModule} />
+        <div className='space-y-5'>
+          {data &&
+            data.data &&
+            data.data.modules &&
+            data.data.modules.map((module: Module) => (
+              <Modules
+                key={module.id}
+                id={module.id}
+                title={module.title}
+                lessons={module.lessons}
+                // onAddLesson={handleAddLesson}
+              />
+            ))}
+        </div>
+        <NewModule
+        // onAddModule={handleAddModule}
+        />
       </div>
     </>
   );

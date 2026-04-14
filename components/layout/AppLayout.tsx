@@ -8,11 +8,10 @@ type Props = {
   children: React.ReactNode;
   role: UserRole;
   user: {
-    name?: string;
+    name: string;
     email: string;
-    image?: string;
-    role?: string;
-
+    image: string;
+    role: string;
   };
 };
 

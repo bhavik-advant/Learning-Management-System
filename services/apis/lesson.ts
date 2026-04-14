@@ -1,12 +1,15 @@
 export const addLesson = async ({
   moduleId,
+  title,
   lesson,
 }: {
   moduleId: string;
+  title: string;
   lesson: File | null;
 }) => {
   const formData = new FormData();
   formData.append('moduleId', moduleId);
+  formData.append('title', title);
   if (lesson) {
     formData.append('lesson', lesson);
   }

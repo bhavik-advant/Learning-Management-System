@@ -27,6 +27,7 @@ export const POST = async (req: NextRequest) => {
     const formData = await req.formData();
 
     const moduleId = formData.get('moduleId') as string;
+    const title = formData.get('title') as string;
     const lesson = formData.get('lesson') as File;
 
     if (!moduleId || !lesson) {
@@ -34,10 +35,6 @@ export const POST = async (req: NextRequest) => {
         status: 400,
       });
     }
-
-    console.log("lesson is ",lesson);
-    
-
     const result = await uploadToCloudinary(lesson);
 
     if (!result) {
@@ -65,17 +62,17 @@ export const POST = async (req: NextRequest) => {
     }
 
     const lessonCount = await prisma.lesson.count({
-      where : {
-        moduleId 
-      }
-    })
+      where: {
+        moduleId,
+      },
+    });
 
     const createdLesson = await prisma.lesson.create({
       data: {
-        title: lesson.name,
+        title,
         description: '',
         videoFileId: file.id,
-        order : lessonCount +1,
+        order: lessonCount + 1,
         moduleId,
       },
     });
@@ -86,9 +83,39 @@ export const POST = async (req: NextRequest) => {
       });
     }
 
-    return NextResponse.json(new ApiResponse(201, 'Lesson Uploaded Successfully', createdLesson), {
-      status: 201,
+    const lessonToSend = await prisma.lesson.findUnique({
+      where: {
+        id: createdLesson.id,
+      },
+      select: {
+        id: true,
+        title: true,
+        videoFile: {
+          select: {
+            url: true,
+          },
+        },
+      },
     });
+
+    if (!lessonToSend) {
+      return NextResponse.json(new ApiResponse(401, 'Failed to Fetch Lessons', {}), {
+        status: 401,
+      });
+    }
+
+    const formattedLesson = {
+      id: lessonToSend.id,
+      title: lessonToSend.title,
+      url: lessonToSend.videoFile?.url,
+    };
+
+    return NextResponse.json(
+      new ApiResponse(201, 'Lesson Uploaded Successfully', formattedLesson),
+      {
+        status: 201,
+      }
+    );
   } catch (error) {
     console.log('Failed To Add Lesson ', error);
   }
