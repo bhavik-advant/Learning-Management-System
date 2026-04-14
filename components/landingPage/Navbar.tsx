@@ -4,6 +4,7 @@ import logo from '@/assets/education.png';
 import ThemeButton from '../ui/ThemeButton';
 import { useUser } from '@clerk/nextjs';
 import Link from 'next/link';
+import { Show, UserButton } from '@clerk/nextjs';
 
 function Navbar({ role }: { role?: string }) {
   const { isSignedIn, isLoaded } = useUser();
@@ -41,8 +42,16 @@ function Navbar({ role }: { role?: string }) {
               Go to Dashboard
             </Link>
           ) : (
-            <Link href="/auth/signup">Sign in</Link>
+            <Link
+              href="/auth/signup"
+              className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-1 rounded-md cursor-pointer"
+            >
+              Sign in
+            </Link>
           )}
+          <Show when="signed-in">
+            <UserButton />
+          </Show>
         </div>
       </div>
     </nav>

@@ -6,7 +6,7 @@ import { CgClose } from 'react-icons/cg';
 import NavLink from './NavLink';
 import { sidebarMenu } from '@/utils/sidebar-menu-helper';
 import { UserRole } from '@/types/types';
-
+import { Show, UserButton } from '@clerk/nextjs';
 type SidebarProps = {
   show: boolean;
   onClick: () => void;
@@ -31,7 +31,7 @@ const Sidebar: React.FC<SidebarProps> = ({ show, onClick, role, user }) => {
       transform transition-transform duration-300 ease-in-out
       ${show ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}
     >
-      <div className="flex justify-between items-center px-5 py-4 border-b border-gray-200 dark:border-gray-700">
+      <div className="flex justify-between items-center px-4 h-18 py-4 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center gap-3">
           <Image src={logo} alt="logo" width={40} height={40} />
           <h1 className="text-lg font-semibold tracking-tight">
@@ -58,13 +58,9 @@ const Sidebar: React.FC<SidebarProps> = ({ show, onClick, role, user }) => {
       <div className="mt-auto border-t border-gray-200 dark:border-gray-700 p-4">
         {user && (
           <div className="flex items-center gap-3">
-            <Image
-              src={user.image || '/default-avatar.png'}
-              alt="user"
-              width={40}
-              height={40}
-              className="rounded-full object-cover"
-            />
+            <Show when="signed-in">
+              <UserButton />
+            </Show>
 
             <div className="flex flex-col">
               <span className="text-sm font-semibold">{user.name || 'User'}</span>

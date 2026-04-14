@@ -1,3 +1,4 @@
+// api/module/[moduleId]/lesson/route.ts
 import { uploadToCloudinary } from '@/services/external/cloudinary';
 import ApiResponse from '@/utils/api-response';
 import { prisma } from '@/utils/prisma-client';

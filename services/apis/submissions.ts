@@ -91,6 +91,10 @@ export const submissions: SubmissionType[] = [
   },
 ];
 
+export const getAllSubmissions = () => {
+  return submissions;
+};
+
 export const getSubmissionsByAssignment = (assignmentId: string) => {
   return submissions.filter(s => s.assignmentId === assignmentId);
 };
