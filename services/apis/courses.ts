@@ -165,6 +165,17 @@ export const DUMMY_LESSONS: Lesson[] = [
 // FUNCTIONS
 export const getAllCourses = () => DUMMY_COURSES;
 
+export async function fetchCourses(): Promise<Course[]> {
+  const res = await fetch('/api/course');
+  const json = await res.json();
+
+  if (!res.ok || !json.success) {
+    throw new Error(json.message ?? 'Failed to fetch courses');
+  }
+
+  return json.data as Course[];
+}
+
 export const getCoursesById = (id: string) => DUMMY_COURSES.find(c => c.id === id);
 
 export const getCourseFullDetails = (courseId: string) => {

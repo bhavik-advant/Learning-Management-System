@@ -1,7 +1,7 @@
-import TraineeDashBoard from '@/components/dashboard/trainee-dashboard/TraineeDashBoard';
+import AdminDashBoard from '@/components/dashboard/admin-dashboard/AdminDashBoard';
 
 async function DashBoard() {
-  return <TraineeDashBoard />;
+  return <AdminDashBoard />;
 }
 
 export default DashBoard;

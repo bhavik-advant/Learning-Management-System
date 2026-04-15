@@ -4,7 +4,68 @@ import getUserDetails from '@/lib/isAuth';
 import { uploadToCloudinary } from '@/services/external/cloudinary';
 import ApiResponse from '@/utils/api-response';
 import { prisma } from '@/utils/prisma-client';
+import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
+
+export const GET = async () => {
+  try {
+    const { userId } = await auth();
+
+    if (!userId) {
+      return NextResponse.json(new ApiResponse(401, 'Please Login First', {}), { status: 401 });
+    }
+
+    const user = await prisma.user.findUnique({
+      where: { clerkId: userId },
+    });
+
+    if (!user) {
+      return NextResponse.json(new ApiResponse(401, 'Please login first', {}), { status: 401 });
+    }
+
+    const include = {
+      author: { select: { username: true } },
+      thumbnail: { select: { url: true } },
+    } as const;
+
+    let courses;
+
+    if (user.role === 'ADMIN') {
+      courses = await prisma.course.findMany({
+        include,
+        orderBy: { createdAt: 'desc' },
+      });
+    } else if (user.role === 'MENTOR') {
+      courses = await prisma.course.findMany({
+        where: { authorId: user.id },
+        include,
+        orderBy: { createdAt: 'desc' },
+      });
+    } else {
+      courses = await prisma.course.findMany({
+        where: { status: 'APPROVED' },
+        include,
+        orderBy: { createdAt: 'desc' },
+      });
+    }
+
+    const payload = courses.map(c => ({
+      id: c.id,
+      title: c.title,
+      description: c.description,
+      thumbnail: c.thumbnail?.url ?? '',
+      author: c.author.username,
+    }));
+
+    return NextResponse.json(new ApiResponse(200, 'Courses fetched successfully', payload), {
+      status: 200,
+    });
+  } catch (error) {
+    console.error('GET courses error:', error);
+
+    return NextResponse.json(new ApiResponse(500, 'Internal Server Error', {}), { status: 500 });
+  }
+};
 
 export const POST = async (req: NextRequest) => {
   try {

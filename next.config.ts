@@ -10,7 +10,7 @@ const nextConfig: NextConfig = {
         hostname: 'img.clerk.com',
       },
       {
-        protocol: 'https',
+        protocol: 'http',
         hostname: 'res.cloudinary.com', // Allow Cloudinary images/videos
       },
     ],
