@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, use } from 'react';
-import { getCoursesById, getCourseFullDetails, Lesson } from '@/services/apis/courses';
+import  from '@/services/apis/courses';
 
 type Props = {
   params: Promise<{

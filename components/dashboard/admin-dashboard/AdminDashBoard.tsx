@@ -26,7 +26,7 @@ function AdminDashBoard() {
     isLoading: usersLoading,
     isError: usersError,
   } = useQuery({
-    queryKey: ['admin', 'users-with-stats'],
+    queryKey: ['users'],
     queryFn: fetchAdminUsersWithStats,
   });
 

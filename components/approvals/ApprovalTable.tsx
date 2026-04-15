@@ -1,7 +1,6 @@
-'use client';
-
-import React from 'react';
 import Image from 'next/image';
+import Link from 'next/link';
+import ApproveButton from '../ui/ApproveButton';
 
 type CourseType = {
   id: string;
@@ -11,23 +10,14 @@ type CourseType = {
   submittedAt: string;
   modules: number;
   lessons: number;
-  image: string;
+  image: string | null;
 };
 
-const courses: CourseType[] = [
-  {
-    id: '1',
-    title: 'Data Science with Python',
-    description: 'Complete guide to data science and analytics',
-    mentor: 'Dr. Sarah Johnson',
-    submittedAt: '10/03/2024',
-    modules: 10,
-    lessons: 58,
-    image: '/course.jpg',
-  },
-];
+type Props = {
+  courses: CourseType[];
+};
 
-export default function ApprovalTable() {
+export default function ApprovalTable({ courses }: Props) {
   return (
     <div className="w-full overflow-auto rounded-2xl border border-gray-200 dark:border-gray-700 my-5 shadow-sm bg-white/70 dark:bg-gray-900/60 backdrop-blur">
       <table className="w-full text-sm text-left">
@@ -48,13 +38,17 @@ export default function ApprovalTable() {
               className="border-t border-gray-200 dark:border-gray-700 hover:bg-gray-50/70 dark:hover:bg-gray-800/60 transition"
             >
               <td className="px-6 py-4 flex items-center gap-4">
-                <div className="w-14 h-14 relative rounded-lg overflow-hidden">
-                  <Image src={course.image} alt={course.title} fill className="object-cover" />
+                <div className="w-22 h-14 relative rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700 bg-gray-200">
+                  <Image
+                    src={course.image || '/default-course.png'}
+                    alt={course.title}
+                    fill
+                    className="object-cover"
+                  />
                 </div>
 
                 <div>
                   <p className="font-semibold">{course.title}</p>
-                  <p className="text-gray-500 text-sm">{course.description}</p>
                 </div>
               </td>
 
@@ -63,7 +57,7 @@ export default function ApprovalTable() {
               </td>
 
               <td className="px-6 py-4">
-                <p>{course.submittedAt}</p>
+                <p>{new Date(course.submittedAt).toLocaleDateString()}</p>
               </td>
 
               <td className="px-6 py-4">
@@ -71,14 +65,9 @@ export default function ApprovalTable() {
                 <p className="text-gray-500 text-sm">{course.lessons} lessons</p>
               </td>
 
-              <td className="px-6 py-4 text-right space-x-2">
-                <button className="bg-green-600 text-white px-4 py-2 rounded-xl text-sm hover:bg-green-700 transition">
-                  ✓ Approve
-                </button>
-
-                <button className="bg-gray-100 text-red-600 px-4 py-2 rounded-xl text-sm hover:bg-gray-200 transition">
-                  ✕ Reject
-                </button>
+              <td className="px-6 py-4 text-right">
+                <ApproveButton courseId={course.id} />
+                <Link href={`courses/${course.id}`}>View Details</Link>
               </td>
             </tr>
           ))}

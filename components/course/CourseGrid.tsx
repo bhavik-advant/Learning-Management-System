@@ -32,7 +32,7 @@ export default function CourseGrid() {
       <div className="flex justify-between items-center">
         <h2 className="text-3xl font-bold">Courses</h2>
       </div>
-      <Courses btnText="Manage Course" courses={courses} />
+      <Courses btnText="View Course" courses={courses} />
     </section>
   );
 }

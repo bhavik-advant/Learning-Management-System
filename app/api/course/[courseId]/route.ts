@@ -7,7 +7,6 @@ export const GET = async (
   req: NextRequest,
   { params }: { params: Promise<{ courseId: string }> }
 ) => {
-  
   let user;
   try {
     user = await getUserDetails();
@@ -31,6 +30,7 @@ export const GET = async (
       id: true,
       title: true,
       description: true,
+      status: true,
       thumbnail: {
         select: {
           url: true,
@@ -74,6 +74,7 @@ export const GET = async (
     title: course.title,
     description: course.description,
     thumbnail: course.thumbnail?.url || null,
+    status: course.status,
     modules: course.modules.map(module => ({
       id: module.id,
       title: module.title,
@@ -85,7 +86,7 @@ export const GET = async (
     })),
   };
 
-  return NextResponse.json(new ApiResponse(20, 'Course Fetched SuccessFully', formattedCourse), {
+  return NextResponse.json(new ApiResponse(200, 'Course Fetched SuccessFully', formattedCourse), {
     status: 200,
   });
 };
