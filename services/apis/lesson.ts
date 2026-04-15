@@ -1,4 +1,3 @@
-
 export const addLesson = async ({
   moduleId,
   title,
@@ -27,6 +26,26 @@ export const addLesson = async ({
   const response = await fetch(`/api/module/${moduleId}/lesson`, {
     method: 'POST',
     body: formData,
+  });
+
+  if (!response.ok) {
+    console.log(response);
+
+    throw new Error('Failed to create coursess');
+  }
+
+  return await response.json();
+};
+
+export const deletedLesson = async ({
+  moduleId,
+  lessonId,
+}: {
+  moduleId: string;
+  lessonId: string;
+}) => {
+  const response = await fetch(`/api/module/${moduleId}/lesson/${lessonId}`, {
+    method: 'DELETE',
   });
 
   if (!response.ok) {

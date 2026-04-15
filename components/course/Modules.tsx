@@ -44,7 +44,9 @@ const Modules: React.FC<ModuleFormEditProps> = ({ id, title, lessons }) => {
         </div>
         <ModuleInput title={title} moduleId={id} />
         {lessons.length > 0 &&
-          lessons.map(lesson => <Lessons key={`${lesson.id}+${id}`} lesson={lesson} />)}
+          lessons.map(lesson => (
+            <Lessons moduleId={id} key={`${lesson.id}+${id}`} lesson={lesson} />
+          ))}
         <NewLesson key={id} moduleId={id} />
       </div>
     </>

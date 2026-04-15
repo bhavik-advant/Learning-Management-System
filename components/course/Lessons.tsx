@@ -1,5 +1,8 @@
+import { deletedLesson } from '@/services/apis/lesson';
+import queryClient from '@/utils/query-client';
 import { useMutation } from '@tanstack/react-query';
 import Link from 'next/link';
+import { useParams } from 'next/navigation';
 import { BiEdit, BiTrash } from 'react-icons/bi';
 
 type Lesson = {
@@ -10,13 +13,43 @@ type Lesson = {
 
 type LessonEditFormProps = {
   lesson: Lesson;
+  moduleId: string;
 };
 
-const Lessons: React.FC<LessonEditFormProps> = ({ lesson }) => {
-  // const {} = useMutation({
-  //   mutationFn: () => {return {message : ' '}},
-  // });
-  const handleDeleteLesson = () => {};
+const Lessons: React.FC<LessonEditFormProps> = ({ lesson, moduleId }) => {
+  const { id: courseId } = useParams();
+
+  const { isPending: deleting, mutateAsync: deleteAsync } = useMutation({
+    mutationFn: deletedLesson,
+    onSuccess: response => {
+      const deletedLesson = response.data;
+
+      queryClient.setQueryData(['courses', courseId], (old: any) => {
+        if (!old) return old;
+
+        return {
+          ...old,
+          data: {
+            ...old.data,
+            modules: old.data.modules.map((module: any) => {
+              if (module.id !== deletedLesson.moduleId) {
+                return module;
+              }
+
+              return {
+                ...module,
+                lessons: module.lessons.filter((lesson: any) => lesson.id !== deletedLesson.id),
+              };
+            }),
+          },
+        };
+      });
+    },
+  });
+  const handleDeleteLesson = async () => {
+    const response = await deleteAsync({ moduleId, lessonId: lesson.id });
+    console.log(response);
+  };
   return (
     <div>
       <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -38,6 +71,7 @@ const Lessons: React.FC<LessonEditFormProps> = ({ lesson }) => {
           </button>
           <button
             onClick={handleDeleteLesson}
+            disabled={deleting}
             className="bg-red-500/20 dark:bg-red-500/10 p-2 rounded-lg hover:bg-red-500/30 dark:hover:bg-red-500/20 transition"
           >
             <BiTrash className="text-red-400 dark:text-red-300" />
