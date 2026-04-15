@@ -61,9 +61,10 @@ const AddContent = () => {
 
   return (
     <>
-      <div className="w-full bg-white rounded-2xl shadow-lg p-8">
-        <h2 className="font-semibold text-xl">Add Content</h2>
-        <div className='space-y-5'>
+      <div className="w-full bg-white dark:bg-gray-900 rounded-2xl shadow-lg dark:shadow-black/40 p-8 transition-colors duration-300">
+        <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-100">Add Content</h2>
+
+        <div className="space-y-5 mt-4">
           {data &&
             data.data &&
             data.data.modules &&
@@ -73,13 +74,13 @@ const AddContent = () => {
                 id={module.id}
                 title={module.title}
                 lessons={module.lessons}
-                // onAddLesson={handleAddLesson}
               />
             ))}
         </div>
-        <NewModule
-        // onAddModule={handleAddModule}
-        />
+
+        <div className="mt-6">
+          <NewModule />
+        </div>
       </div>
     </>
   );

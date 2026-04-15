@@ -1,13 +1,13 @@
 import getUserDetails from '@/lib/isAuth';
 import ApiResponse from '@/utils/api-response';
 import { prisma } from '@/utils/prisma-client';
-import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 
 export const GET = async (
   req: NextRequest,
   { params }: { params: Promise<{ courseId: string }> }
 ) => {
+  
   let user;
   try {
     user = await getUserDetails();

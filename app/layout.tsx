@@ -32,6 +32,7 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <body className="min-h-full w-full dark:bg-gray-800 dark:text-white">
+        <div id="modal"></div>
         <TanstackProvider>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
             <ClerkProvider>{children}</ClerkProvider>

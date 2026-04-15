@@ -1,123 +1,125 @@
-// api/module/[moduleId]/lesson/route.ts
+import { FileType } from '@/generated/prisma/client';
+import getUserDetails from '@/lib/isAuth';
 import { uploadToCloudinary } from '@/services/external/cloudinary';
 import ApiResponse from '@/utils/api-response';
+import { ResourceTypeToPrisma } from '@/utils/file-type-map';
 import { prisma } from '@/utils/prisma-client';
-import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 
-export const POST = async (req: NextRequest) => {
+export const POST = async (
+  req: NextRequest,
+  { params }: { params: Promise<{ moduleId: string }> }
+) => {
   try {
-    const { userId } = await auth();
+    let user;
+    try {
+      user = await getUserDetails();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Please login first';
 
-    if (!userId) {
-      return NextResponse.json(new ApiResponse(401, 'Unauthorised', {}), { status: 401 });
-    }
-
-    const user = await prisma.user.findUnique({
-      where: { clerkId: userId },
-    });
-
-    if (!user) {
-      return NextResponse.json(new ApiResponse(401, 'Please login first', {}), { status: 401 });
+      return NextResponse.json(new ApiResponse(401, message, {}), { status: 401 });
     }
 
     if (user.role === 'TRAINEE') {
       return NextResponse.json(new ApiResponse(403, 'Unauthorised', {}), { status: 403 });
     }
 
+    const { moduleId } = await params;
     const formData = await req.formData();
 
-    const moduleId = formData.get('moduleId') as string;
-    const title = formData.get('title') as string;
-    const lesson = formData.get('lesson') as File;
+    const title = (formData.get('title') as string)?.trim();
+    const lessonFile = formData.get('lesson');
+    const incomingUrl = (formData.get('url') as string)?.trim();
 
-    if (!moduleId || !lesson) {
-      return NextResponse.json(new ApiResponse(400, 'Please Provide All details', {}), {
-        status: 400,
-      });
-    }
-    const result = await uploadToCloudinary(lesson);
-
-    if (!result) {
-      return NextResponse.json(new ApiResponse(400, 'Failed to upload Given Resource', {}), {
+    if (!moduleId || !title) {
+      return NextResponse.json(new ApiResponse(400, 'Module ID and title are required', {}), {
         status: 400,
       });
     }
 
-    const { public_id, bytes, url } = result;
+    const hasFile = lessonFile instanceof File;
+    const hasUrl = !!incomingUrl;
 
-    const file = await prisma.file.create({
-      data: {
-        public_id: public_id,
-        size: bytes,
-        url,
-        type: 'VIDEO',
-        uploadedBy: user.id,
-      },
-    });
-
-    if (!file) {
-      return NextResponse.json(new ApiResponse(400, 'Failed to upload file', {}), {
+    if (!hasFile && !hasUrl) {
+      return NextResponse.json(new ApiResponse(400, 'Provide either a file or a URL', {}), {
         status: 400,
       });
+    }
+
+    let fileId: string | null = null;
+    let lessonUrl: string | null = null;
+
+    if (hasFile) {
+      const result = await uploadToCloudinary(lessonFile as File);
+
+      if (!result) {
+        return NextResponse.json(new ApiResponse(400, 'Failed to upload resource', {}), {
+          status: 400,
+        });
+      }
+
+      const { public_id, bytes, url, resource_type } = result;
+
+      let fileType: FileType;
+
+      if (resource_type === 'image') {
+        fileType = FileType.IMAGE;
+      } else if (resource_type === 'video') {
+        fileType = FileType.VIDEO;
+      } else {
+        fileType = FileType.DOCUMENT;
+      }
+
+      const file = await prisma.file.create({
+        data: {
+          public_id,
+          size: bytes,
+          url,
+          type: fileType,
+          uploadedBy: user.id,
+        },
+      });
+
+      fileId = file.id;
+      lessonUrl = url;
+    }
+
+    if (hasUrl) {
+      try {
+        new URL(incomingUrl!);
+      } catch {
+        return NextResponse.json(new ApiResponse(400, 'Invalid URL provided', {}), { status: 400 });
+      }
+
+      lessonUrl = incomingUrl!;
     }
 
     const lessonCount = await prisma.lesson.count({
-      where: {
-        moduleId,
-      },
+      where: { moduleId },
     });
 
     const createdLesson = await prisma.lesson.create({
       data: {
         title,
-        description: '',
-        videoFileId: file.id,
+        videoFileId: fileId,
+        videoUrl: fileId ? null : lessonUrl,
         order: lessonCount + 1,
         moduleId,
       },
     });
 
-    if (!createdLesson) {
-      return NextResponse.json(new ApiResponse(400, 'Failes to upload lesson', {}), {
-        status: 400,
-      });
-    }
-
-    const lessonToSend = await prisma.lesson.findUnique({
-      where: {
-        id: createdLesson.id,
-      },
-      select: {
-        id: true,
-        title: true,
-        videoFile: {
-          select: {
-            url: true,
-          },
-        },
-      },
-    });
-
-    if (!lessonToSend) {
-      return NextResponse.json(new ApiResponse(401, 'Failed to Fetch Lessons', {}), {
-        status: 401,
-      });
-    }
-
     const formattedLesson = {
-      id: lessonToSend.id,
-      title: lessonToSend.title,
-      url: lessonToSend.videoFile?.url,
+      id: createdLesson.id,
+      title: createdLesson.title,
+      url: lessonUrl,
     };
 
     return NextResponse.json(
       new ApiResponse(201, 'Lesson Uploaded Successfully', formattedLesson),
-      {
-        status: 201,
-      }
+      { status: 201 }
     );
   } catch (error) {
-    console.log('Failed To Add Lesson ', error);
+    console.error('Failed To Add Lesson', error);
+    return NextResponse.json(new ApiResponse(500, 'Internal Server Error', {}), { status: 500 });
   }
 };

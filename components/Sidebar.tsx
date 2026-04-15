@@ -24,7 +24,7 @@ const Sidebar: React.FC<SidebarProps> = ({ show, onClick, role, user }) => {
 
   return (
     <aside
-      className={`top-0 min-h-screen z-50 w-72 
+      className={`top-0 min-h-screen z-30 w-72 
       bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl 
       border-r border-gray-200 dark:border-gray-700 
       fixed lg:sticky flex flex-col

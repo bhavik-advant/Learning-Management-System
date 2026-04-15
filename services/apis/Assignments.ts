@@ -65,3 +65,32 @@ export const getAssignmentById = (id: string) => assignments.find(a => a.id === 
 export const getAssignmentsByCourse = (courseId: string) => {
   return assignments.filter(a => a.courseId === courseId);
 };
+
+export const createAssignment = async ({
+  moduleId,
+  title,
+  description,
+  maxScore,
+}: {
+  moduleId: string;
+  title: string;
+  description: string;
+  maxScore: number;
+}) => {
+  console.log(moduleId);
+
+  const response = await fetch(`/api/module/${moduleId}/assignment`, {
+    method: 'POST',
+    body: JSON.stringify({ title, description, maxScore }),
+    headers: {
+      'Content-Type': 'application/json',
+    },
+  });
+
+  if (!response.ok) {
+    console.log(response);
+    throw new Error('Failed to create assignment');
+  }
+
+  return await response.json();
+};

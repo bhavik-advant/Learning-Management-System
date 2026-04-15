@@ -217,3 +217,4 @@ export const getCourseById = async (id: string) => {
 
   return await response.json();
 };
+

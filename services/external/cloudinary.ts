@@ -1,4 +1,3 @@
-// lib/cloudinary.ts
 import { UploadApiResponse } from 'cloudinary';
 import { v2 as cloudinary } from 'cloudinary';
 import { Readable } from 'stream';
@@ -16,7 +15,7 @@ export const uploadToCloudinary = async (file: File): Promise<UploadApiResponse>
     const stream = cloudinary.uploader.upload_stream(
       {
         folder: 'lms',
-        resource_type: 'auto', // Handles image, video, and raw files
+        resource_type: 'auto',
       },
       (error, result) => {
         if (error) return reject(error);
@@ -27,4 +26,16 @@ export const uploadToCloudinary = async (file: File): Promise<UploadApiResponse>
 
     Readable.from(buffer).pipe(stream);
   });
+};
+
+export const deleteFromCloudinary = async (publicId: string, resourceType: string) => {
+  try {
+    const result = await cloudinary.uploader.destroy(publicId, {
+      resource_type: resourceType,
+    });
+    return result;
+  } catch (error) {
+    console.error('Cloudinary deletion error:', error);
+    throw error;
+  }
 };

@@ -24,6 +24,12 @@ enum CourseStatus {
   APPROVED
 }
 
+enum EnrollmentStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 enum FileType {
   IMAGE
   VIDEO
@@ -44,6 +50,9 @@ model User {
 
   courses    Course[] @relation("MentorCourses")
   files      File[]   @relation("UploadedFiles")
+  assignments Assignment[] @relation("MentorAssignments")
+  submissions Submission[] @relation("StudentSubmissions")
+  enrollments Enrollment[]
 }
 
 // Course Model
@@ -60,6 +69,7 @@ model Course {
   author       User          @relation("MentorCourses", fields: [authorId], references: [id])
   thumbnail    File?         @relation("CourseThumbnail", fields: [thumbnailId], references: [id])
   modules      Module[]
+  enrollments  Enrollment[]
 
   @@index([authorId])
   @@index([thumbnailId])
@@ -73,8 +83,9 @@ model Module {
   courseId   String
   createdAt  DateTime @default(now())
 
-  course     Course   @relation(fields: [courseId], references: [id])
+  course     Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
   lessons    Lesson[]
+  assignments Assignment[]
 
   @@index([courseId])
   @@unique([courseId, order]) // Ensures unique ordering within a course
@@ -84,7 +95,6 @@ model Module {
 model Lesson {
   id           String   @id @default(uuid())
   title        String
-  description  String
   order        Int
   moduleId     String
   videoUrl     String?
@@ -92,7 +102,7 @@ model Lesson {
   createdAt    DateTime @default(now())
 
   // Relations
-  module       Module   @relation(fields: [moduleId], references: [id])
+  module       Module   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
   videoFile    File?    @relation("LessonVideo", fields: [videoFileId], references: [id])
 
   @@index([moduleId])
@@ -119,4 +129,65 @@ model File {
 }
 
 
+enum SubmissionStatus {
+  PENDING
+  GRADED
+  RESUBMITTED
+}
 
+model Assignment {
+  id          String   @id @default(uuid())
+  title       String
+  description String
+  dueDate     DateTime?
+  maxScore    Int      @default(100)
+  createdAt   DateTime @default(now())
+
+  moduleId    String
+  createdById String
+
+  // Relations
+  module      Module   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
+  createdBy   User     @relation("MentorAssignments", fields: [createdById], references: [id])
+  submissions Submission[]
+
+  @@index([moduleId])
+  @@index([createdById])
+}
+
+model Submission {
+  id          String            @id @default(uuid())
+  fileUrl     String
+  score       Int?
+  feedback    String?
+  status      SubmissionStatus  @default(PENDING)
+  isActive    Boolean           @default(true)
+  submittedAt DateTime          @default(now())
+  gradedAt    DateTime?
+
+  assignmentId String
+  studentId    String
+
+  assignment  Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
+  student     User       @relation("StudentSubmissions", fields: [studentId], references: [id], onDelete: Cascade)
+
+  @@index([assignmentId])
+  @@index([studentId])
+  @@unique([assignmentId, studentId]) 
+}
+
+
+model Enrollment {
+  id         String   @id @default(uuid())
+  studentId  String
+  courseId   String
+  status     EnrollmentStatus @default(PENDING)
+  createdAt  DateTime @default(now())
+
+  student    User     @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  course     Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+
+  @@index([studentId])
+  @@index([courseId])
+  @@unique([studentId, courseId]) // Prevents duplicate enrollments
+}

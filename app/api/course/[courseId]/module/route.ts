@@ -1,7 +1,7 @@
 // api/course/[courseId]/module/route.ts
+import getUserDetails from '@/lib/isAuth';
 import ApiResponse from '@/utils/api-response';
 import { prisma } from '@/utils/prisma-client';
-import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 
 export const POST = async (
@@ -9,18 +9,13 @@ export const POST = async (
   { params }: { params: Promise<{ courseId: string }> }
 ) => {
   try {
-    const { userId } = await auth();
+    let user;
+    try {
+      user = await getUserDetails();
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Please login first';
 
-    if (!userId) {
-      return NextResponse.json(new ApiResponse(401, 'Unauthorised', {}), { status: 401 });
-    }
-
-    const user = await prisma.user.findUnique({
-      where: { clerkId: userId },
-    });
-
-    if (!user) {
-      return NextResponse.json(new ApiResponse(401, 'Please login first', {}), { status: 401 });
+      return NextResponse.json(new ApiResponse(401, message, {}), { status: 401 });
     }
 
     if (user.role === 'TRAINEE') {
@@ -28,6 +23,15 @@ export const POST = async (
     }
 
     const { courseId } = await params;
+
+    const courseDetails = await prisma.course.findUnique({
+      where: { id: courseId },
+      select: { authorId: true },
+    });
+
+    if (user.role != 'ADMIN' && user.id != courseDetails?.authorId) {
+      return NextResponse.json(new ApiResponse(403, 'Unauthorised', {}), { status: 403 });
+    }
 
     const body = await req.json();
     const { title } = body;
