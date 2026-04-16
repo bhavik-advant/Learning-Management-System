@@ -5,7 +5,7 @@ import { useMutation } from '@tanstack/react-query';
 import React, { useImperativeHandle, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
-const AssignmentModal = ({ ref, moduleId }) => {
+const AssignmentModal = ({ ref, moduleId,courseId }) => {
   const dialogRef = useRef<HTMLDialogElement | null>(null);
 
   const { mutateAsync, isPending } = useMutation({
@@ -33,11 +33,13 @@ const AssignmentModal = ({ ref, moduleId }) => {
   const handleSubmitAssignMent = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     await mutateAsync({
+      courseId,
       moduleId,
       title: formData.title,
       description: formData.description,
       maxScore: formData.maxScore,
     });
+    dialogRef.current.close();
   };
 
   return createPortal(

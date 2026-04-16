@@ -67,11 +67,13 @@ export const getAssignmentsByCourse = (courseId: string) => {
 };
 
 export const createAssignment = async ({
+  courseId,
   moduleId,
   title,
   description,
   maxScore,
 }: {
+  courseId : string
   moduleId: string;
   title: string;
   description: string;
@@ -79,7 +81,7 @@ export const createAssignment = async ({
 }) => {
   console.log(moduleId);
 
-  const response = await fetch(`/api/module/${moduleId}/assignment`, {
+  const response = await fetch(`/api/course/${courseId}/module/${moduleId}/assignment`, {
     method: 'POST',
     body: JSON.stringify({ title, description, maxScore }),
     headers: {

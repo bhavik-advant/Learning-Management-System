@@ -21,17 +21,16 @@ const Lessons: React.FC<LessonEditFormProps> = ({ lesson, moduleId }) => {
 
   const { isPending: deleting, mutateAsync: deleteAsync } = useMutation({
     mutationFn: deletedLesson,
-    onSuccess: response => {
-      const deletedLesson = response.data;
+    onSuccess: data => {
+      try {
+        const deletedLesson = data;
 
-      queryClient.setQueryData(['courses', courseId], (old: any) => {
-        if (!old) return old;
+        queryClient.setQueryData(['courses', courseId], (old: any) => {
+          if (!old) return old;
 
-        return {
-          ...old,
-          data: {
-            ...old.data,
-            modules: old.data.modules.map((module: any) => {
+          return {
+            ...old,
+            modules: old.modules.map((module: any) => {
               if (module.id !== deletedLesson.moduleId) {
                 return module;
               }
@@ -41,9 +40,11 @@ const Lessons: React.FC<LessonEditFormProps> = ({ lesson, moduleId }) => {
                 lessons: module.lessons.filter((lesson: any) => lesson.id !== deletedLesson.id),
               };
             }),
-          },
-        };
-      });
+          };
+        });
+      } catch (error) {
+        console.log(error);
+      }
     },
   });
   const handleDeleteLesson = async () => {

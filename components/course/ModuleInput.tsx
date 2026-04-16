@@ -13,24 +13,20 @@ const ModuleInput: React.FC<{ title?: string; moduleId: string }> = ({ title, mo
 
   const { mutateAsync, isPending } = useMutation({
     mutationFn: editModule,
-    onSuccess: (response, variable) => {
-      if (!response.success || response.statusCode !== 200 || !courseId) {
-        return;
-      }
+    onSuccess: (data, variable) => {
+      try {
+        queryClient.setQueryData(['courses', courseId], (old: any) => {
+          if (!old) return old;
+          console.log(old, ' and ', data);
 
-      queryClient.setQueryData(['courses', courseId], (old: any) => {
-        if (!old) return old;
-
-        return {
-          ...old,
-          data: {
+          return {
             ...old.data,
-            modules: old.data.modules.map((module: any) =>
+            modules: old.modules.map((module: any) =>
               module.id === variable.moduleId ? { ...module, title: variable.title } : module
             ),
-          },
-        };
-      });
+          };
+        });
+      } catch (error) {}
     },
   });
 

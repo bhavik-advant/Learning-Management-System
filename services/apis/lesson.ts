@@ -36,7 +36,13 @@ export const addLesson = async ({
     throw new Error('Failed to create coursess');
   }
 
-  return await response.json();
+  const result = await response.json();
+
+  if (!result.success && result.statusCode != 201) {
+    throw new Error(result.message);
+  }
+
+  return result.data;
 };
 
 export const deletedLesson = async ({
@@ -58,5 +64,11 @@ export const deletedLesson = async ({
     throw new Error('Failed to create coursess');
   }
 
-  return await response.json();
+  const result = await response.json();
+
+  if (!result.success) {
+    throw new Error(result.message);
+  }
+
+  return result.data;
 };

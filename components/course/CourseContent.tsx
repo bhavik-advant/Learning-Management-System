@@ -51,9 +51,8 @@ const AddContent = ({ role }: { role: Role }) => {
 
         <div className="space-y-5 mt-4">
           {data &&
-            data.data &&
-            data.data.modules &&
-            data.data.modules.map((module: Module) => (
+            data.modules &&
+            data.modules.map((module: Module) => (
               <Modules
                 key={module.id}
                 id={module.id}
@@ -68,7 +67,9 @@ const AddContent = ({ role }: { role: Role }) => {
         </div>
 
         <div className="flex justify-end mt-4  gap-4">
-          <button className='py-1 px-2 rounded-md border text-gray-500 bg-gray-300/20 border-gray-400'>Back</button>
+          <button className="py-1 px-2 rounded-md border text-gray-500 bg-gray-300/20 border-gray-400">
+            Back
+          </button>
           <button
             onClick={handleSaveCourse}
             className="py-1 px-2 rounded-md border text-green-500 bg-green-300/20 border-green-400"

@@ -21,23 +21,20 @@ const NewLesson: React.FC<LessonAddFormProps> = ({ moduleId }) => {
 
   const { mutateAsync, isPending } = useMutation({
     mutationFn: addLesson,
-    onSuccess: (response, variables) => {
-      if (!response?.success || response.statusCode !== 201) return;
+    onSuccess: (data, variables) => {
+      try {
+        const newLesson = {
+          id: data.id,
+          title: data.title,
+          url: data.url || null,
+        };
 
-      const newLesson = {
-        id: response.data.id,
-        title: response.data.title,
-        url: response.data.url || null,
-      };
+        queryClient.setQueryData(['courses', courseId], (oldData: any) => {
+          if (!oldData) return oldData;
 
-      queryClient.setQueryData(['courses', courseId], (oldData: any) => {
-        if (!oldData) return oldData;
-
-        return {
-          ...oldData,
-          data: {
-            ...oldData.data,
-            modules: oldData.data.modules.map((module: any) =>
+          return {
+            ...oldData,
+            modules: oldData.modules.map((module: any) =>
               module.id === variables.moduleId
                 ? {
                     ...module,
@@ -45,9 +42,11 @@ const NewLesson: React.FC<LessonAddFormProps> = ({ moduleId }) => {
                   }
                 : module
             ),
-          },
-        };
-      });
+          };
+        });
+      } catch (error) {
+        console.log(error);
+      }
     },
   });
 

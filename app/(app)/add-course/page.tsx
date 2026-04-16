@@ -10,6 +10,11 @@ function AddCourse() {
   const router = useRouter();
   const { mutateAsync, isPending } = useMutation({
     mutationFn: createCourse,
+    onSuccess: response => {
+      if (response.success && response.statusCode == 201) {
+        router.push(`/add-course/${response.data.id}/content`);
+      }
+    },
   });
   const [formData, setFormData] = useState<courseFormData>({
     title: '',
@@ -37,10 +42,7 @@ function AddCourse() {
 
   const handleSubmit = async (event: React.SubmitEvent) => {
     event.preventDefault();
-    const response = await mutateAsync(formData);
-    if (response.success && response.statusCode == 201) {
-      router.push(`/add-course/${response.data.id}/content`);
-    }
+    await mutateAsync(formData);
   };
 
   return (

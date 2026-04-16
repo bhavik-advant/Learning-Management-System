@@ -1,4 +1,4 @@
-'use client'
+'use client';
 import { BiBook } from 'react-icons/bi';
 import DashBoardCard from './DashboardCard';
 import { PiStudent } from 'react-icons/pi';
@@ -7,8 +7,16 @@ import Courses from '@/components/ui/Courses';
 import { useQuery } from '@tanstack/react-query';
 import { fetchCourses } from '@/services/apis/courses';
 
+type Course = {
+  id: string;
+  title: string;
+  description: string;
+  thumbnail: string;
+  author: string;
+};
+
 function MentorDashBoard() {
-  const { data, isPending } = useQuery({
+  const { data: courses = [], isPending } = useQuery<Course[]>({
     queryKey: ['courses'],
     queryFn: fetchCourses,
   });
@@ -36,14 +44,18 @@ function MentorDashBoard() {
         </div>
       </section>
 
-      
       <section>
         <div className="flex justify-between items-center">
           <h2 className="text-3xl font-bold">Your Courses</h2>
           <p className="text-blue-500">View all</p>
         </div>
-        {isPending ? <p>Fetching Courses</p> : 
-        <Courses btnText="Manage Course" courses={data} />}
+        {isPending ? (
+          <div className="flex flex-col items-center justify-center py-16 text-center text-gray-500">
+            <p className="text-lg font-medium">Fetching Courses...</p>
+          </div>
+        ) : (
+          <Courses btnText="Manage Course" courses={courses} />
+        )}
       </section>
     </div>
   );

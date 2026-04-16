@@ -18,27 +18,26 @@ const NewModule = ({}) => {
 
   const { mutateAsync, isPending } = useMutation({
     mutationFn: createModule,
-    onSuccess: response => {
-      if (!response?.success || response.statusCode !== 201) return;
+    onSuccess: data => {
+      try {
+        queryClient.setQueryData(['courses', courseId], oldData => {
+          if (!oldData) return oldData;
 
-      queryClient.setQueryData(['courses', courseId], oldData => {
-        if (!oldData) return oldData;
+          const newModule = {
+            id: data.id,
+            title: data.title,
+            order: data.order,
+            lessons: [],
+          };
 
-        const newModule = {
-          id: response.data.id,
-          title: response.data.title,
-          order: response.data.order,
-          lessons: [],
-        };
-
-        return {
-          ...oldData,
-          data: {
-            ...oldData.data,
-            modules: [...(oldData.data.modules ?? []), newModule],
-          },
-        };
-      });
+          return {
+            ...oldData,
+            modules: [...(oldData.modules ?? []), newModule],
+          };
+        });
+      } catch (error) {
+        console.error('Error updating cache:', error);
+      }
     },
   });
   const handleModuleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {

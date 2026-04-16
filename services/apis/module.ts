@@ -13,7 +13,13 @@ export const createModule = async ({ title, courseId }: { title: string; courseI
     throw new Error('Failed to create coursess');
   }
 
-  return await response.json();
+  const result = await response.json();
+
+  if (!result.success && result.statusCode != 201) {
+    throw new Error(result.message);
+  }
+
+  return result.data;
 };
 
 export const editModule = async ({
@@ -39,5 +45,11 @@ export const editModule = async ({
     throw new Error('Failed to create coursess');
   }
 
-  return await response.json();
+  const result = await response.json();
+
+  if (!result.success && result.statusCode != 200) {
+    throw new Error(result.message);
+  }
+
+  return result.data;
 };
