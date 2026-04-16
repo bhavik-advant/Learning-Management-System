@@ -6,12 +6,17 @@ const DashBoardCard: React.FC<{ title: string; value: number; icon: React.ReactN
   icon,
 }) => {
   return (
-    <div className="flex justify-between items-center  rounded-2xl border border-white dark:border-[#828bf8]/50 shadow-2xl shadow-gray-400 dark:shadow-none p-7 backdrop-blur-sm transition-all hover:border-purple-500/30 hover:shadow-md hover:shadow-purple-500/10 space-y-5">
-      <div>
-        <h2 className="text-lg">{title}</h2>
-        <p className="font-bold text-4xl">{value}</p>
+    <div className="group relative overflow-hidden rounded-2xl border border-gray-200/70 dark:border-gray-800 bg-white/70 dark:bg-gray-950/40 backdrop-blur-xl shadow-sm transition hover:shadow-md">
+      <div className="relative flex items-start justify-between gap-4 p-6">
+        <div className="min-w-0">
+          <p className="text-sm font-medium text-gray-600 dark:text-gray-300 truncate">{title}</p>
+          <p className="mt-2 text-3xl font-bold tracking-tight text-gray-900 dark:text-white">{value}</p>
+        </div>
+
+        <div className="shrink-0 rounded-2xl border border-gray-200/70 dark:border-gray-800 bg-white/60 dark:bg-gray-950/30 p-3 text-gray-900 dark:text-white shadow-sm">
+          {icon}
+        </div>
       </div>
-      <div className="bg-blue-300/50 rounded-md p-2 text-2xl">{icon}</div>
     </div>
   );
 };

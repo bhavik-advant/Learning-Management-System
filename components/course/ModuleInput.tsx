@@ -22,7 +22,6 @@ const ModuleInput: React.FC<{ title?: string; moduleId: string }> = ({ title, mo
         if (!old) return old;
 
         return {
-          ...old,
           data: {
             ...old.data,
             modules: old.data.modules.map((module: any) =>

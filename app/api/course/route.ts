@@ -26,6 +26,11 @@ export const GET = async () => {
     const include = {
       author: { select: { username: true } },
       thumbnail: { select: { url: true } },
+      _count: {
+        select: {
+          modules: true,
+        },
+      },
     } as const;
 
     let courses;
@@ -55,6 +60,12 @@ export const GET = async () => {
       description: c.description,
       thumbnail: c.thumbnail?.url ?? '',
       author: c.author.username,
+      status: c.status,
+      authorId: c.authorId,
+      thumbnailId: c.thumbnailId,
+      createdAt: c.createdAt,
+      updatedAt: c.updatedAt,
+      modulesCount: c._count.modules,
     }));
 
     return NextResponse.json(new ApiResponse(200, 'Courses fetched successfully', payload), {

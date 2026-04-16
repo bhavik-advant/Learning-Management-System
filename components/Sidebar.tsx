@@ -7,6 +7,7 @@ import NavLink from './NavLink';
 import { sidebarMenu } from '@/utils/sidebar-menu-helper';
 import { UserRole } from '@/types/types';
 import { Show, UserButton } from '@clerk/nextjs';
+import ThemeButton from './ui/ThemeButton';
 type SidebarProps = {
   show: boolean;
   onClick: () => void;
@@ -55,24 +56,24 @@ const Sidebar: React.FC<SidebarProps> = ({ show, onClick, role, user }) => {
         })}
       </ul>
 
-      <div className="mt-auto border-t border-gray-200 dark:border-gray-700 p-4">
+      <div className="mt-auto border-t border-gray-200 dark:border-gray-700 p-4 flex justify-between items-center">
         {user && (
           <div className="flex items-center gap-3">
             <Show when="signed-in">
               <UserButton />
             </Show>
-
             <div className="flex flex-col">
               <span className="text-sm font-semibold">{user.name || 'User'}</span>
-
               <span className="text-xs text-blue-600 dark:text-blue-400 capitalize">
                 {user.role?.toLowerCase()}
               </span>
-
               <span className="text-xs text-gray-500 dark:text-gray-400">{user.email}</span>
             </div>
           </div>
         )}
+        <div>
+          <ThemeButton />
+        </div>
       </div>
     </aside>
   );
