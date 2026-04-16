@@ -5,6 +5,12 @@ export type Course = {
   description: string;
   thumbnail: string;
   author: string;
+  status: string;
+  authorId: string;
+  thumbnailId: string | null;
+  createdAt: string;
+  updatedAt: string;
+  modulesCount: number;
 };
 
 export type Lesson = {
@@ -76,7 +82,6 @@ export const getCourseById = async (courseId: string) => {
   });
 
   if (!response.ok) {
-    console.log(response);
     throw new Error('Failed to fetch course details');
   }
 
@@ -103,7 +108,6 @@ export const approveCourse = async (courseId: string) => {
     throw error;
   }
 };
-
 
 export const saveCourse = async (courseId: string) => {
   const response = await fetch(`/api/course/${courseId}/submit`, {

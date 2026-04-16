@@ -5,7 +5,7 @@ import { SignOutButton } from '@clerk/nextjs';
 
 const NavBar: React.FC<{ onClick: () => void }> = ({ onClick }) => {
   return (
-    <nav className="flex justify-between items-center border-b w-full lg:px-9 p-4 h-18 border-gray-200 dark:border-gray-700  gap-4">
+    <nav className="hidden flex justify-between items-center border-b w-full lg:px-9 p-4 h-18 border-gray-200 dark:border-gray-700  gap-4">
       <GiHamburgerMenu className="lg:hidden text-2xl" onClick={onClick} />
       <div className="flex flex-1  items-center ">
         <input
