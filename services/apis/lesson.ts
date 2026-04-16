@@ -1,9 +1,11 @@
 export const addLesson = async ({
+  courseId,
   moduleId,
   title,
   lesson,
   url,
 }: {
+  courseId: string;
   moduleId: string;
   title: string;
   lesson?: File | null;
@@ -23,7 +25,7 @@ export const addLesson = async ({
     formData.append('lesson', lesson);
   }
 
-  const response = await fetch(`/api/module/${moduleId}/lesson`, {
+  const response = await fetch(`/api//course/${courseId}/module/${moduleId}/lesson`, {
     method: 'POST',
     body: formData,
   });
@@ -38,13 +40,15 @@ export const addLesson = async ({
 };
 
 export const deletedLesson = async ({
+  courseId,
   moduleId,
   lessonId,
 }: {
+  courseId: string;
   moduleId: string;
   lessonId: string;
 }) => {
-  const response = await fetch(`/api/module/${moduleId}/lesson/${lessonId}`, {
+  const response = await fetch(`/api/course/${courseId}/module/${moduleId}/lesson/${lessonId}`, {
     method: 'DELETE',
   });
 

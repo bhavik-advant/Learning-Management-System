@@ -16,7 +16,7 @@ export const GET = async () => {
       where: { clerkId: userId },
     });
 
-    if (!currentUser || currentUser.role !== 'ADMIN') {
+    if (!currentUser || currentUser.role == 'TRAINEE') {
       return NextResponse.json(new ApiResponse(403, 'Forbidden', null), { status: 403 });
     }
 

@@ -38,8 +38,7 @@ const AddContent = ({ role }: { role: Role }) => {
 
   const handleSaveCourse = async () => {
     const response = await mutateAsync(courseId);
-    console.log(response);
-    
+
     if (response.success == true && response.statusCode == 201) {
       router.push(`/${role.toLowerCase()}/courses`);
     }
@@ -68,10 +67,11 @@ const AddContent = ({ role }: { role: Role }) => {
           <NewModule />
         </div>
 
-        <div className="flex justify-end mt-4 text-green-500 ">
+        <div className="flex justify-end mt-4  gap-4">
+          <button className='py-1 px-2 rounded-md border text-gray-500 bg-gray-300/20 border-gray-400'>Back</button>
           <button
             onClick={handleSaveCourse}
-            className="py-1 px-2 rounded-md border bg-green-300/20 border-green-400"
+            className="py-1 px-2 rounded-md border text-green-500 bg-green-300/20 border-green-400"
             disabled={isPending}
           >
             {isPending ? 'Saving' : 'Save Course'}

@@ -16,8 +16,16 @@ export const createModule = async ({ title, courseId }: { title: string; courseI
   return await response.json();
 };
 
-export const editModule = async ({ title, moduleId }: { title: string; moduleId: string }) => {
-  const response = await fetch(`/api/module/${moduleId}`, {
+export const editModule = async ({
+  courseId,
+  title,
+  moduleId,
+}: {
+  courseId: string;
+  title: string;
+  moduleId: string;
+}) => {
+  const response = await fetch(`/api/course/${courseId}/module/${moduleId}`, {
     method: 'POST',
     body: JSON.stringify({ title }),
     headers: {

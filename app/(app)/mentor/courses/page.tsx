@@ -1,6 +1,6 @@
-'use client'
+'use client';
 import Courses from '@/components/ui/Courses';
-import { fetchCourses} from '@/services/apis/courses';
+import { fetchCourses } from '@/services/apis/courses';
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 
@@ -11,11 +11,7 @@ function Page() {
   });
 
   if (isPending) {
-    return (
-      <>
-        <p>Loading</p>
-      </>
-    );
+    return <p>Loading</p>;
   }
 
   console.log(data);

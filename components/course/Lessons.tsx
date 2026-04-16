@@ -17,7 +17,7 @@ type LessonEditFormProps = {
 };
 
 const Lessons: React.FC<LessonEditFormProps> = ({ lesson, moduleId }) => {
-  const { id: courseId } = useParams();
+  const { id: courseId } = useParams<{ id: string }>();
 
   const { isPending: deleting, mutateAsync: deleteAsync } = useMutation({
     mutationFn: deletedLesson,
@@ -47,7 +47,7 @@ const Lessons: React.FC<LessonEditFormProps> = ({ lesson, moduleId }) => {
     },
   });
   const handleDeleteLesson = async () => {
-    const response = await deleteAsync({ moduleId, lessonId: lesson.id });
+    const response = await deleteAsync({ courseId, moduleId, lessonId: lesson.id });
     console.log(response);
   };
   return (
@@ -72,9 +72,15 @@ const Lessons: React.FC<LessonEditFormProps> = ({ lesson, moduleId }) => {
           <button
             onClick={handleDeleteLesson}
             disabled={deleting}
-            className="bg-red-500/20 dark:bg-red-500/10 p-2 rounded-lg hover:bg-red-500/30 dark:hover:bg-red-500/20 transition"
+            aria-busy={deleting}
+            aria-label={deleting ? 'Deleting lesson' : 'Delete lesson'}
+            className={`relative flex items-center justify-center p-2 rounded-lg transition ${deleting ? 'bg-red-500/10 cursor-not-allowed opacity-70' : 'bg-red-500/20 hover:bg-red-500/30 dark:bg-red-500/10 dark:hover:bg-red-500/20'}`}
           >
-            <BiTrash className="text-red-400 dark:text-red-300" />
+            {deleting ? (
+              <span className="w-5 h-5 border-2 border-red-400 border-t-transparent rounded-full animate-spin"></span>
+            ) : (
+              <BiTrash className="text-red-500 dark:text-red-300" />
+            )}
           </button>
         </div>
       </div>

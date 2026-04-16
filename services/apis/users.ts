@@ -44,3 +44,15 @@ export async function updateUserRole(userId: string, role: string) {
 
   return json.data;
 }
+
+export const getAllTrainee = async () => {
+  const res = await fetch(`/api/user/trainee`);
+
+  const json = await res.json();
+
+  if (!res.ok || !json.success) {
+    throw new Error(json.message ?? 'Failed to update role');
+  }
+
+  return json.data;
+};

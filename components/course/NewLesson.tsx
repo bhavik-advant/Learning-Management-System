@@ -62,10 +62,10 @@ const NewLesson: React.FC<LessonAddFormProps> = ({ moduleId }) => {
 
     try {
       if (showStringForm) {
-        await mutateAsync({ moduleId, title, url: link });
+        await mutateAsync({ courseId, moduleId, title, url: link });
       } else {
         if (!file) return;
-        await mutateAsync({ moduleId, title, lesson: file });
+        await mutateAsync({ courseId, moduleId, title, lesson: file });
       }
 
       setFile(null);
