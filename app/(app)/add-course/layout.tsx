@@ -29,7 +29,7 @@ const CourseLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => 
               <span
                 className={`inline-block px-5 py-2 text-sm font-medium rounded-xl transition-all duration-200 cursor-pointer ${
                   isContent
-                    ? 'bg-blue-600 text-white shadow-md dark:bg-emerald-500'
+                    ? 'bg-blue-600 text-white shadow-md dark:bg-blue-500'
                     : 'text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
                 }`}
               >

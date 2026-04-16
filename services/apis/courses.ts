@@ -70,8 +70,8 @@ export const createCourse = async (course: courseFormData) => {
   return await response.json();
 };
 
-export const getCourseById = async (id: string) => {
-  const response = await fetch(`/api/course/${id}`, {
+export const getCourseById = async (courseId: string) => {
+  const response = await fetch(`/api/course/${courseId}`, {
     method: 'GET',
   });
 
@@ -102,4 +102,18 @@ export const approveCourse = async (courseId: string) => {
     console.error('APPROVE COURSE ERROR:', error);
     throw error;
   }
+};
+
+
+export const saveCourse = async (courseId: string) => {
+  const response = await fetch(`/api/course/${courseId}/submit`, {
+    method: 'PATCH',
+  });
+
+  if (!response.ok) {
+    console.log(response);
+    throw new Error('course Saved Failes');
+  }
+
+  return await response.json();
 };

@@ -1,9 +1,21 @@
+'use client';
 import Courses from '@/components/ui/Courses';
-import { getAllCourses } from '@/services/apis/courses';
+import { fetchCourses } from '@/services/apis/courses';
+import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 
-async function page() {
-  const allCourses = getAllCourses();
+function Page() {
+  const { data, isPending } = useQuery({
+    queryKey: ['courses'],
+    queryFn: fetchCourses,
+  });
+
+  if (isPending) {
+    return <p>Loading</p>;
+  }
+
+  console.log(data);
+
   return (
     <div className="mx-8 space-y-5 mt-4">
       <div className="flex justify-between items-center">
@@ -12,9 +24,9 @@ async function page() {
           <button className="bg-blue-500 text-white rounded-md px-2 py-1 ">+ Add Course</button>
         </Link>
       </div>
-      <Courses btnText="Manage Course" courses={allCourses} />
+      <Courses btnText="Manage Course" courses={data} />
     </div>
   );
 }
 
-export default page;
+export default Page;

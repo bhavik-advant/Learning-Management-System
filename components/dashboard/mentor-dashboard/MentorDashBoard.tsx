@@ -1,10 +1,18 @@
+'use client'
 import { BiBook } from 'react-icons/bi';
 import DashBoardCard from './DashboardCard';
 import { PiStudent } from 'react-icons/pi';
 import { IoDocumentTextOutline } from 'react-icons/io5';
 import Courses from '@/components/ui/Courses';
+import { useQuery } from '@tanstack/react-query';
+import { fetchCourses } from '@/services/apis/courses';
 
 function MentorDashBoard() {
+  const { data, isPending } = useQuery({
+    queryKey: ['courses'],
+    queryFn: fetchCourses,
+  });
+
   return (
     <div className="mx-8 space-y-5">
       <section className="mt-8 space-y-5 ">
@@ -27,12 +35,15 @@ function MentorDashBoard() {
           />
         </div>
       </section>
+
+      
       <section>
         <div className="flex justify-between items-center">
           <h2 className="text-3xl font-bold">Your Courses</h2>
           <p className="text-blue-500">View all</p>
         </div>
-        <Courses btnText="Manage Course" courses={[]} />
+        {isPending ? <p>Fetching Courses</p> : 
+        <Courses btnText="Manage Course" courses={data} />}
       </section>
     </div>
   );
