@@ -13,14 +13,14 @@ async function TraineeDashBoard() {
   const assignments = await getAllAssignments();
 
   return (
-    <div className="mx-8 space-y-5">
-      <section className="mt-8 space-y-5">
-        <div>
+    <div className="mx-4 space-y-8 pb-8 md:mx-8">
+      <section className="space-y-5 pt-6 md:pt-8">
+        <div className="space-y-1">
           <h2 className="text-3xl font-bold">Trainee Dashboard</h2>
-          <p>Here’s an overview of your learning progress</p>
+          <p className="text-gray-600 dark:text-gray-400">Here’s an overview of your learning progress</p>
         </div>
 
-        <div className="grid md:grid-cols-4 gap-4">
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-4">
           <DashBoardCard title="Course Enrolled" value={0} icon={<BiBook />} />
           <DashBoardCard title="Pending Assignments" value={0} icon={<FaRegFileAlt />} />
           <DashBoardCard
@@ -32,18 +32,18 @@ async function TraineeDashBoard() {
         </div>
       </section>
 
-      <section>
+      <section className="space-y-3">
         <div className="flex justify-between items-center">
-          <h2 className="text-3xl font-bold">Your Courses</h2>
-          <p className="text-blue-500 cursor-pointer">View all</p>
+          <h2 className="text-2xl font-bold md:text-3xl">Your Courses</h2>
+          <p className="cursor-pointer text-sm font-medium text-blue-500">View all</p>
         </div>
         <Courses btnText="Continue Learning" courses={courses} />
       </section>
 
-      <section>
+      <section className="space-y-3">
         <div className="flex justify-between items-center">
-          <h2 className="text-3xl font-bold">Assignments</h2>
-          <p className="text-blue-500 cursor-pointer">View all</p>
+          <h2 className="text-2xl font-bold md:text-3xl">Assignments</h2>
+          <p className="cursor-pointer text-sm font-medium text-blue-500">View all</p>
         </div>
 
         <Assignments assignments={assignments} />

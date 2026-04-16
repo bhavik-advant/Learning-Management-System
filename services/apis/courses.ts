@@ -90,6 +90,28 @@ export const getCourseById = async (courseId: string) => {
   return result.data;
 };
 
+export const updateCourse = async (courseId: string, course: courseFormData) => {
+  const formData = new FormData();
+  formData.append('title', course.title);
+  formData.append('description', course.description);
+
+  if (course.thumbnail) {
+    formData.append('thumbnail', course.thumbnail);
+  }
+
+  const response = await fetch(`/api/course/${courseId}`, {
+    method: 'PATCH',
+    body: formData,
+  });
+
+  if (!response.ok) {
+    console.log(response);
+    throw new Error('Failed to update course');
+  }
+
+  return await response.json();
+};
+
 export const approveCourse = async (courseId: string) => {
   try {
     const res = await fetch(`/api/course/${courseId}/approve`, {

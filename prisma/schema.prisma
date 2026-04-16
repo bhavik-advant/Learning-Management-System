@@ -43,16 +43,22 @@ model User {
   clerkId    String   @unique
   username   String   @unique
   email      String   @unique
-  image      String?
+  image      String
   role       Role     @default(TRAINEE)
+  mentorId   String?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+
+  mentor     User?    @relation("UserMentor", fields: [mentorId], references: [id], onDelete: SetNull)
+  trainees    User[]   @relation("UserMentor")
 
   courses    Course[] @relation("MentorCourses")
   files      File[]   @relation("UploadedFiles")
   assignments Assignment[] @relation("MentorAssignments")
   submissions Submission[] @relation("StudentSubmissions")
   enrollments Enrollment[]
+
+  @@index([mentorId])
 }
 
 // Course Model
@@ -181,7 +187,6 @@ model Enrollment {
   id         String   @id @default(uuid())
   studentId  String
   courseId   String
-  status     EnrollmentStatus @default(PENDING)
   createdAt  DateTime @default(now())
 
   student    User     @relation(fields: [studentId], references: [id], onDelete: Cascade)

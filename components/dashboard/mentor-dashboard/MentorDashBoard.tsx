@@ -5,56 +5,79 @@ import { PiStudent } from 'react-icons/pi';
 import { IoDocumentTextOutline } from 'react-icons/io5';
 import Courses from '@/components/ui/Courses';
 import { useQuery } from '@tanstack/react-query';
-import { fetchCourses } from '@/services/apis/courses';
+import { getDashBoardData } from '@/services/apis/dashboard';
 
-type Course = {
-  id: string;
-  title: string;
-  description: string;
-  thumbnail: string;
-  author: string;
-};
+// type dashboardData = {
+//   id: string;
+//   title: string;
+//   description: string;
+//   thumbnail: string;
+//   author: string;
+// };
 
 function MentorDashBoard() {
-  const { data: courses = [], isPending } = useQuery<Course[]>({
+  const {
+    data: dashboardData = {
+      courses: [],
+      stats: {
+        courses: 0,
+        students: 0,
+        pendingReviews: 0,
+      },
+    },
+    isPending,
+  } = useQuery<{
+    courses: [];
+    stats: {
+      courses: number;
+      students: number;
+      pendingReviews: number;
+    };
+  }>({
     queryKey: ['courses'],
-    queryFn: fetchCourses,
+    queryFn: getDashBoardData,
   });
 
   return (
-    <div className="mx-8 space-y-5">
-      <section className="mt-8 space-y-5 ">
-        <div>
-          <h2 className="text-3xl font-bold">Mentor DashBoard</h2>
-          <p>Manage your courses and review student submissions</p>
+    <div className="mx-4 space-y-8 pb-8 md:mx-8">
+      <section className="space-y-5 pt-6 md:pt-8">
+        <div className="space-y-1">
+          <h2 className="text-3xl font-bold">Mentor Dashboard</h2>
+          <p className="text-gray-600 dark:text-gray-400">
+            Manage your courses and review student submissions
+          </p>
         </div>
 
-        <div className="grid md:grid-cols-3  gap-4">
-          <DashBoardCard title="Course Created" value={0} icon={<BiBook className="text-5xl " />} />
+        <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+          <DashBoardCard
+            title="Course Created"
+            value={dashboardData?.stats.courses || 0}
+            icon={<BiBook />}
+          />
           <DashBoardCard
             title="Total Students"
-            value={0}
-            icon={<PiStudent className="text-5xl " />}
+            value={dashboardData?.stats.students || 0}
+            icon={<PiStudent />}
           />
           <DashBoardCard
             title="Pending Review"
-            value={0}
-            icon={<IoDocumentTextOutline className="text-5xl " />}
+            value={dashboardData?.stats.pendingReviews || 0}
+            icon={<IoDocumentTextOutline />}
           />
         </div>
       </section>
 
-      <section>
+      <section className="space-y-3">
         <div className="flex justify-between items-center">
-          <h2 className="text-3xl font-bold">Your Courses</h2>
-          <p className="text-blue-500">View all</p>
+          <h2 className="text-2xl font-bold md:text-3xl">Your Courses</h2>
+          <p className="text-sm font-medium text-blue-500">View all</p>
         </div>
         {isPending ? (
-          <div className="flex flex-col items-center justify-center py-16 text-center text-gray-500">
+          <div className="rounded-2xl border border-dashed border-gray-300 py-14 text-center text-gray-500 dark:border-gray-700 dark:text-gray-400">
             <p className="text-lg font-medium">Fetching Courses...</p>
           </div>
         ) : (
-          <Courses btnText="Manage Course" courses={courses} />
+          <Courses btnText="Manage Course" courses={dashboardData.courses} />
         )}
       </section>
     </div>

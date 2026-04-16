@@ -1,17 +1,11 @@
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
+import { Inter } from 'next/font/google';
 import './globals.css';
 import { ThemeProvider } from 'next-themes';
 import { ClerkProvider } from '@clerk/nextjs';
 import TanstackProvider from '@/components/providers/QueryClientProvider';
 
-const geistSans = Geist({
-  variable: '--font-geist-sans',
-  subsets: ['latin'],
-});
-
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
+const inter = Inter({
   subsets: ['latin'],
 });
 
@@ -28,10 +22,10 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className="h-full antialiased"
       suppressHydrationWarning
     >
-      <body className="min-h-full w-full dark:bg-gray-800 dark:text-white">
+      <body className={`${inter.className} min-h-full w-full dark:bg-gray-800 dark:text-white`}>
         <div id="modal"></div>
         <TanstackProvider>
           <ThemeProvider attribute="class" defaultTheme="system" enableSystem>

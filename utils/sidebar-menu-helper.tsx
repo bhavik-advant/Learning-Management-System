@@ -4,6 +4,7 @@ import { HiUserGroup } from 'react-icons/hi';
 import { BiBook, BiBell } from 'react-icons/bi';
 import { FiUser } from 'react-icons/fi';
 import { UserRole } from '@/types/types';
+import { MdReviews } from 'react-icons/md';
 
 type MenuItem = {
   label: string;
@@ -55,6 +56,11 @@ export const sidebarMenu: Record<UserRole, MenuItem[]> = {
       label: 'Students',
       href: 'students',
       icon: <HiUserGroup />,
+    },
+    {
+      label: 'Reviews',
+      href: 'review',
+      icon: <MdReviews />,
     },
   ],
 
