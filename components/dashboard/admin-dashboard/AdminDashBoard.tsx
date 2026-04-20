@@ -49,16 +49,13 @@ function AdminDashBoard() {
     <div className="mx-4 sm:mx-8 space-y-6 pb-10">
       <section className="mt-6 sm:mt-8">
         <div className="relative overflow-hidden rounded-3xl border border-gray-200/70 dark:border-gray-800 bg-white/70 dark:bg-gray-950/40 backdrop-blur-xl shadow-sm">
-
           <div className="relative p-6 sm:p-8">
             <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
               <div className="space-y-2">
                 <p className="inline-flex w-fit items-center rounded-full border border-gray-200/80 dark:border-gray-800 bg-white/60 dark:bg-gray-950/40 px-3 py-1 text-xs font-medium text-gray-700 dark:text-gray-200">
                   Admin Console
                 </p>
-                <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">
-                  Admin Dashboard
-                </h2>
+                <h2 className="text-3xl sm:text-4xl font-bold tracking-tight">Admin Dashboard</h2>
                 <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300">
                   Monitor growth, manage courses, and control access across the platform.
                 </p>
@@ -117,7 +114,9 @@ function AdminDashBoard() {
           <div className="flex items-center justify-between gap-4 p-5 sm:p-6">
             <div>
               <h2 className="text-xl sm:text-2xl font-bold tracking-tight">Courses</h2>
-              <p className="text-sm text-gray-600 dark:text-gray-300">Manage published content and pending updates.</p>
+              <p className="text-sm text-gray-600 dark:text-gray-300">
+                Manage published content and pending updates.
+              </p>
             </div>
             <Link
               href="/admin/courses"
@@ -137,7 +136,9 @@ function AdminDashBoard() {
           <div className="flex items-center justify-between gap-4 p-5 sm:p-6">
             <div>
               <h2 className="text-xl sm:text-2xl font-bold tracking-tight">Users</h2>
-              <p className="text-sm text-gray-600 dark:text-gray-300">Control roles, access levels, and user activity.</p>
+              <p className="text-sm text-gray-600 dark:text-gray-300">
+                Control roles, access levels, and user activity.
+              </p>
             </div>
             <Link
               href="/admin/users"

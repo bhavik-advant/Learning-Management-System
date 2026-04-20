@@ -42,13 +42,14 @@ export const GET = async () => {
       });
     } else if (user.role === 'MENTOR') {
       courses = await prisma.course.findMany({
-        where: { authorId: user.id },
         include,
         orderBy: { createdAt: 'desc' },
       });
     } else {
       courses = await prisma.course.findMany({
-        where: { status: 'APPROVED' },
+        where: {
+          status: 'APPROVED',
+        },
         include,
         orderBy: { createdAt: 'desc' },
       });
