@@ -6,7 +6,14 @@ export type AssignmentType = {
   dueDate: string;
   status: 'Pending' | 'Submitted';
   maxScore: number;
-  submission: [];
+  submissions: Submission[];
+};
+type SubmissionStatus = 'PENDING' | 'SUBMITTED' | 'GRADED';
+
+type Submission = {
+  id: string;
+  SubmissionStatus: SubmissionStatus;
+  score: number | null;
 };
 
 export const createAssignment = async ({
