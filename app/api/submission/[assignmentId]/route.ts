@@ -20,6 +20,7 @@ export async function GET(
         submittedAt: 'desc',
       },
     });
+    console.log(submissions);
 
     return NextResponse.json(new ApiResponse(200, 'Submissions fetched', submissions), {
       status: 200,

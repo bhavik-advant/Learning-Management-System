@@ -6,19 +6,32 @@ import { IoMdCheckmarkCircleOutline } from 'react-icons/io';
 import { FaArrowTrendUp } from 'react-icons/fa6';
 import Courses from '@/components/ui/Courses';
 import Assignments from '@/components/assignments/Assignments';
-import { getAllAssignments } from '@/services/apis/Assignments';
 import { useQuery } from '@tanstack/react-query';
 import { getTraineeCourses } from '@/services/apis/courses';
+import { AssignmentType, getTraineeAssignments } from '@/services/apis/Assignments';
 
+type Course = {
+  id: string;
+  title: string;
+  description: string;
+  thumbnail: string;
+  author: string;
+  status: string;
+  authorId: string;
+  thumbnailId: string | null;
+  createdAt: string;
+  updatedAt: string;
+  modulesCount: number;
+};
 function TraineeDashBoard() {
-  const { data: courses = [], isLoading: coursesLoading } = useQuery({
+  const { data: courses = [], isLoading: coursesLoading } = useQuery<Course[]>({
     queryKey: ['trainee-courses'],
     queryFn: getTraineeCourses,
   });
 
-  const { data: assignments = [], isLoading: assignmentsLoading } = useQuery({
+  const { data: assignments = [], isLoading: assignmentsLoading } = useQuery<AssignmentType[]>({
     queryKey: ['assignments'],
-    queryFn: getAllAssignments,
+    queryFn: getTraineeAssignments,
   });
 
   if (coursesLoading || assignmentsLoading) {
@@ -27,21 +40,21 @@ function TraineeDashBoard() {
 
   const totalCourses = courses.length;
 
-  const pendingAssignments =
-    assignments?.filter((a: any) => a.submissions?.some((s: any) => s.status === 'PENDING'))
-      .length || 0;
+  const pendingAssignments = assignments.filter(a =>
+    a.submissions?.some(s => s.status === 'PENDING')
+  ).length;
 
-  const completedAssignments =
-    assignments?.filter((a: any) => a.submissions?.some((s: any) => s.status === 'GRADED'))
-      .length || 0;
+  const completedAssignments = assignments.filter(a =>
+    a.submissions?.some(s => s.status === 'GRADED')
+  ).length;
 
   const avgScore =
-    assignments?.reduce((acc: number, a: any) => {
-      const scores = a.submissions?.filter((s: any) => s.score !== null) || [];
+    assignments.reduce((acc, a) => {
+      const scores = a.submissions?.filter(s => s.score !== null) || [];
 
       if (!scores.length) return acc;
 
-      const avg = scores.reduce((sum: number, s: any) => sum + s.score, 0) / scores.length;
+      const avg = scores.reduce((sum, s) => sum + (s.score ?? 0), 0) / scores.length;
 
       return acc + avg;
     }, 0) / (assignments.length || 1);

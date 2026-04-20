@@ -15,8 +15,8 @@ const Assignments: React.FC<{ assignments: AssignmentType[] }> = ({ assignments 
   };
 
   const getStatus = (item: AssignmentType) => {
-    if (!item.submission) return 'NOT_SUBMITTED';
-    return item.submission.status;
+    if (!item.submissions) return 'NOT_SUBMITTED';
+    return item.submissions.SubmissionStatus;
   };
 
   const handleSubmit = (id: string) => {

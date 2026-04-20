@@ -13,7 +13,7 @@ export default function AssignmentPage() {
   });
 
   const total = assignments.length;
-  const pending = assignments.filter(a => !a.submission).length;
+  const pending = assignments.filter(a  => !a.submission).length;
   const completed = assignments.filter(a => a.submission?.status === 'GRADED').length;
 
   return (
