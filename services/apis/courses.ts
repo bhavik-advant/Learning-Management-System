@@ -143,3 +143,14 @@ export const saveCourse = async (courseId: string) => {
 
   return await response.json();
 };
+
+
+export const getTraineeCourses = async () => {
+  const res = await fetch("/api/trainee/courses");
+
+  if (!res.ok) {
+    throw new Error("Failed to fetch trainee courses");
+  }
+
+  return res.json();
+};

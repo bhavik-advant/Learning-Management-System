@@ -1,12 +1,12 @@
 import AssignmentCards from '@/components/assignments/AssignmentCards';
 import Submissions from '@/components/submissions/Submissions';
 // import { getAllAssignments } from '@/services/apis/Assignments';
-import { getAllSubmissions, getSubmissionsByStudent } from '@/services/apis/submissions';
+// import { getAllSubmissions, getSubmissionsByStudent } from '@/services/apis/submissions';
 import { FaRegFileAlt } from 'react-icons/fa';
 
 export default async function SubmissionsPage() {
   // const assignment = getAllAssignments();
-  const submissions = getAllSubmissions();
+  // const submissions = getAllSubmissions();
 
   return (
     <section className="mx-8 space-y-5 mt-5">
@@ -32,7 +32,7 @@ export default async function SubmissionsPage() {
         />
       </div>
       <div>
-        <Submissions submissions={submissions} />
+        <Submissions submissions={[]} />
       </div>
     </section>
   );

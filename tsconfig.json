@@ -29,6 +29,6 @@
     ".next/types/**/*.ts",
     ".next/dev/types/**/*.ts",
     "**/*.mts"
-, "app/(app)/trainee/courses/[id]"  ],
+, "app/(app)/trainee/courses/[courseId]"  ],
   "exclude": ["node_modules"]
 }

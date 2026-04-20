@@ -6,64 +6,7 @@ export type AssignmentType = {
   dueDate: string;
   status: 'Pending' | 'Submitted';
   maxScore: number;
-};
-
-const assignments: AssignmentType[] = [
-  {
-    id: 'a1',
-    courseId: 'c1',
-    title: 'React Mini Project',
-    description: 'Build a todo app',
-    dueDate: 'Apr 15, 2026',
-    status: 'Pending',
-    maxScore: 100,
-  },
-  {
-    id: 'a2',
-    courseId: 'c2',
-    title: 'Next.js Blog',
-    description: 'Create blog app',
-    dueDate: 'Apr 18, 2026',
-    status: 'Pending',
-    maxScore: 100,
-  },
-  {
-    id: 'a3',
-    courseId: 'c3',
-    title: 'TS Practice',
-    description: 'Write typed functions',
-    dueDate: 'Apr 12, 2026',
-    status: 'Submitted',
-    maxScore: 100,
-  },
-  {
-    id: 'a4',
-    courseId: 'c4',
-    title: 'REST API',
-    description: 'Build CRUD API',
-    dueDate: 'Apr 20, 2026',
-    status: 'Pending',
-    maxScore: 100,
-  },
-  {
-    id: 'a5',
-    courseId: 'c5',
-    title: 'Design Case Study',
-    description: 'Create UI case study',
-    dueDate: 'Apr 25, 2026',
-    status: 'Pending',
-    maxScore: 100,
-  },
-];
-
-export const getAllAssignments = (): AssignmentType[] => {
-  return assignments;
-};
-
-export const getAssignmentById = (id: string) => assignments.find(a => a.id === id);
-
-export const getAssignmentsByCourse = (courseId: string) => {
-  return assignments.filter(a => a.courseId === courseId);
+  submission: [];
 };
 
 export const createAssignment = async ({
@@ -73,13 +16,13 @@ export const createAssignment = async ({
   description,
   maxScore,
 }: {
-  courseId : string
+  courseId: string;
   moduleId: string;
   title: string;
   description: string;
   maxScore: number;
 }) => {
-  console.log(moduleId);
+  // console.log(moduleId);
 
   const response = await fetch(`/api/course/${courseId}/module/${moduleId}/assignment`, {
     method: 'POST',
@@ -90,9 +33,35 @@ export const createAssignment = async ({
   });
 
   if (!response.ok) {
-    console.log(response);
+    // console.log(response);
     throw new Error('Failed to create assignment');
   }
 
   return await response.json();
+};
+
+export const getTraineeAssignments = async () => {
+  const res = await fetch('/api/assignments');
+
+  if (!res.ok) throw new Error('Failed');
+
+  const data = await res.json();
+  return data.data;
+};
+
+export const submitAssignment = async (formData: FormData) => {
+  const res = await fetch('/api/assignments/submit', {
+    method: 'POST',
+    body: formData,
+  });
+
+  if (!res.ok) throw new Error('Submission failed');
+
+  return res.json();
+};
+
+export const getAssignmentById = async (id: string) => {
+  const res = await fetch(`/api/assignments/${id}`);
+  const data = await res.json();
+  return data.data;
 };

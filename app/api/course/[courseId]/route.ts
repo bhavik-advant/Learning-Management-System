@@ -11,19 +11,19 @@ export const GET = async (
   { params }: { params: Promise<{ courseId: string }> }
 ) => {
   let user;
+
   try {
     user = await getUserDetails();
   } catch (error) {
     const message = error instanceof Error ? error.message : 'Please login first';
-
     return NextResponse.json(new ApiResponse(401, message, {}), { status: 401 });
   }
 
   const { courseId } = await params;
 
   if (!courseId) {
-    return NextResponse.json(new ApiResponse(401, 'Please Provide CourseId', {}), {
-      status: 401,
+    return NextResponse.json(new ApiResponse(400, 'CourseId required', {}), {
+      status: 400,
     });
   }
 
@@ -35,28 +35,42 @@ export const GET = async (
       description: true,
       status: true,
       thumbnail: {
-        select: {
-          url: true,
-        },
+        select: { url: true },
       },
       modules: {
-        orderBy: {
-          order: 'asc',
-        },
+        orderBy: { order: 'asc' },
         select: {
           id: true,
           title: true,
+
           lessons: {
-            orderBy: {
-              order: 'asc',
-            },
+            orderBy: { order: 'asc' },
             select: {
               id: true,
               title: true,
               videoUrl: true,
               videoFile: {
+                select: { url: true },
+              },
+            },
+          },
+          
+          assignments: {
+            select: {
+              id: true,
+              title: true,
+              description: true,
+              dueDate: true,
+              maxScore: true,
+
+              submissions: {
+                where: {
+                  studentId: user.id,
+                },
                 select: {
-                  url: true,
+                  status: true,
+                  score: true,
+                  submittedAt: true,
                 },
               },
             },
@@ -67,8 +81,8 @@ export const GET = async (
   });
 
   if (!course) {
-    return NextResponse.json(new ApiResponse(401, 'Failed to fetch Coursr', {}), {
-      status: 401,
+    return NextResponse.json(new ApiResponse(404, 'Course not found', {}), {
+      status: 404,
     });
   }
 
@@ -78,20 +92,34 @@ export const GET = async (
     description: course.description,
     thumbnail: course.thumbnail?.url || null,
     status: course.status,
-    modules: course.modules.map(module => ({
+
+    modules: course.modules.map((module) => ({
       id: module.id,
       title: module.title,
-      lessons: module.lessons.map(lesson => ({
+
+      lessons: module.lessons.map((lesson) => ({
         id: lesson.id,
         title: lesson.title,
         url: lesson.videoFile?.url || lesson.videoUrl || null,
       })),
+
+      assignments: module.assignments.map((a) => ({
+        id: a.id,
+        title: a.title,
+        description: a.description,
+        dueDate: a.dueDate,
+        maxScore: a.maxScore,
+
+        
+        submission: a.submissions[0] || null,
+      })),
     })),
   };
 
-  return NextResponse.json(new ApiResponse(200, 'Course Fetched SuccessFully', formattedCourse), {
-    status: 200,
-  });
+  return NextResponse.json(
+    new ApiResponse(200, 'Course fetched successfully', formattedCourse),
+    { status: 200 }
+  );
 };
 
 export const PATCH = async (

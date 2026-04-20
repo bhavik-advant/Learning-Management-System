@@ -3,7 +3,6 @@
 import { use, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { getCourseById } from '@/services/apis/courses';
-import ApproveButton from '@/components/ui/ApproveButton';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -223,39 +222,21 @@ export default function CourseDetailsPage({ params }: Props) {
           </div>
           <div className="space-y-6">
             <div className="flex gap-3">
-              <Link
-                href={`/add-course/${course.id}`}
-                className="flex-1 flex items-center justify-center gap-2 py-3 rounded-xl bg-gray-900 dark:bg-white text-white dark:text-gray-900 font-semibold text-sm hover:bg-gray-800 dark:hover:bg-gray-100 transition"
-              >
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <div className="flex items-center justify-center gap-2 px-4 rounded-xl bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800">
+                <svg
+                  className="w-5 h-5 text-green-600 dark:text-green-400"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
                   <path
                     strokeLinecap="round"
                     strokeLinejoin="round"
                     strokeWidth={2}
-                    d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+                    d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                   />
                 </svg>
-                Edit
-              </Link>
-              {course.status === 'PENDING' ? (
-                <ApproveButton courseId={course.id} />
-              ) : (
-                <div className="flex items-center justify-center gap-2 px-4 rounded-xl bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800">
-                  <svg
-                    className="w-5 h-5 text-green-600 dark:text-green-400"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
-                    />
-                  </svg>
-                </div>
-              )}
+              </div>
             </div>
             <div className="flex gap-4">
               <div className="flex-1 p-4 rounded-2xl bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 shadow-sm">
@@ -342,24 +323,46 @@ export default function CourseDetailsPage({ params }: Props) {
                           </p>
 
                           {module.assignments.map(assignment => {
-                            return (
-                              <Link href={`/assignment/${assignment.id}`} key={assignment.id}>
-                                <div className="p-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
-                                  <div className="flex justify-between items-center">
-                                    <p className="text-xs font-medium text-gray-900 dark:text-white">
-                                      {assignment.title}
-                                    </p>
-                                  </div>
+                            const status = assignment.submission?.status;
 
-                                  <div className="flex justify-between text-[10px] text-gray-500 mt-1">
-                                    <span>
-                                      {assignment.dueDate
-                                        ? new Date(assignment.dueDate).toLocaleDateString()
-                                        : 'No deadline'}
-                                    </span>
-                                  </div>
+                            const statusColor =
+                              status === 'GRADED'
+                                ? 'bg-green-100 text-green-700'
+                                : status === 'PENDING'
+                                  ? 'bg-yellow-100 text-yellow-700'
+                                  : 'bg-gray-100 text-gray-600';
+
+                            return (
+                              <div
+                                key={assignment.id}
+                                className="p-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900"
+                              >
+                                <div className="flex justify-between items-center">
+                                  <p className="text-xs font-medium text-gray-900 dark:text-white">
+                                    {assignment.title}
+                                  </p>
+
+                                  <span
+                                    className={`text-[9px] px-2 py-0.5 rounded-full ${statusColor}`}
+                                  >
+                                    {status || 'NOT SUBMITTED'}
+                                  </span>
                                 </div>
-                              </Link>
+
+                                <div className="flex justify-between text-[10px] text-gray-500 mt-1">
+                                  <span>
+                                    {assignment.dueDate
+                                      ? new Date(assignment.dueDate).toLocaleDateString()
+                                      : 'No deadline'}
+                                  </span>
+
+                                  <span>
+                                    {assignment.submission?.score !== null
+                                      ? `Score: ${assignment.submission?.score}`
+                                      : ''}
+                                  </span>
+                                </div>
+                              </div>
                             );
                           })}
                         </div>
