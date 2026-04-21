@@ -104,5 +104,3 @@ export const getAllSubmissionsAdmin = async () => {
   const result = await res.json();
   return result.data;
 };
-
-
