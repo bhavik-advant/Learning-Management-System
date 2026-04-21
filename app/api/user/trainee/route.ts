@@ -28,7 +28,7 @@ export const GET = async () => {
     );
   } catch (error) {
     console.log(error);
-    
+
     return NextResponse.json(new ApiResponse(401, 'Internal Server Error', {}), { status: 401 });
   }
 };

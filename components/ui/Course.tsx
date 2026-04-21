@@ -24,18 +24,12 @@ const Course: React.FC<{
   status,
   createdAt,
   modulesCount,
-  authorInitials,
   btnText,
   description,
   progress,
   btnVariant = 'dark',
 }) => {
-  const derivedInitials = (authorInitials ?? author)
-    .split(' ')
-    .filter(Boolean)
-    .slice(0, 2)
-    .map(part => part[0]?.toUpperCase())
-    .join('');
+
 
   const statusColors: Record<string, string> = {
     APPROVED: 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 border-green-200 dark:border-green-800',
@@ -103,7 +97,7 @@ const Course: React.FC<{
         
         <div className="flex items-center gap-2">
           <div className="w-7 h-7 rounded-2xl border border-gray-200/70 dark:border-gray-800 bg-white/60 dark:bg-gray-950/30 text-gray-900 dark:text-white flex items-center justify-center text-[10px] font-semibold flex-shrink-0">
-            {derivedInitials}
+            {author}
           </div>
           <span className="text-xs font-medium text-gray-600 dark:text-gray-300 truncate">{author}</span>
         </div>

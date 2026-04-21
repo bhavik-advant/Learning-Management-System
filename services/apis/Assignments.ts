@@ -29,7 +29,6 @@ export const createAssignment = async ({
   description: string;
   maxScore: number;
 }) => {
-  // console.log(moduleId);
 
   const response = await fetch(`/api/course/${courseId}/module/${moduleId}/assignment`, {
     method: 'POST',

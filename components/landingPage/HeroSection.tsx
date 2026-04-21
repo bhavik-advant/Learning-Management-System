@@ -1,5 +1,5 @@
 import Image from 'next/image';
-import Button from '../ui/button';
+import Button from '../button';
 
 export default function HeroSection() {
   return (
@@ -25,6 +25,7 @@ export default function HeroSection() {
             height={1000}
           />
         </div>
+        
       </div>
     </>
   );

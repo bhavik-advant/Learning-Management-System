@@ -1,0 +1,103 @@
+import { NextRequest, NextResponse } from 'next/server';
+import { prisma } from '@/utils/prisma-client';
+import ApiResponse from '@/utils/api-response';
+
+export const GET = async (req: NextRequest) => {
+  try {
+    const searchParams = req.nextUrl.searchParams;
+
+    const limit = Number(searchParams.get('limit')) || 3;
+    const page = Number(searchParams.get('page')) || 1;
+    const traineeId = searchParams.get('traineeId');
+    const skip = (page - 1) * limit;
+
+    if (!traineeId) {
+      return NextResponse.json(
+        new ApiResponse(400, 'traineeId is required', {}),
+        { status: 400 }
+      );
+    }
+
+    const totalCourses = await prisma.course.count({
+      where: {
+        enrollments: {
+          some: {
+            studentId: traineeId,
+          },
+        },
+      },
+    });
+
+    const courses = await prisma.course.findMany({
+      where: {
+        enrollments: {
+          some: {
+            studentId: traineeId,
+          },
+        },
+      },
+      include: {
+        thumbnail: {
+          select: {
+            url: true,
+          },
+        },
+        author: {
+          select: {
+            username: true,
+          },
+        },
+        modules: {
+          select: {
+            _count: {
+              select: {
+                lessons: true,
+              },
+            },
+          },
+        },
+      },
+      orderBy: {
+        createdAt: 'desc',
+      },
+      skip,
+      take: limit,
+    });
+
+    const formattedCourses = courses.map(course => ({
+      id: course.id,
+      title: course.title,
+      description: course.description,
+      status: course.status,
+      thumbnail: course.thumbnail?.url,
+      mentor: course.author?.username,
+      createdAt: course.createdAt,
+      modules: course.modules.length,
+      lessons: course.modules.reduce((acc, module) => acc + module._count.lessons, 0),
+    }));
+
+    const totalPages = Math.ceil(totalCourses / limit);
+
+    const paginationData = {
+      courses: formattedCourses,
+      pagination: {
+        currentPage: page,
+        pageSize: limit,
+        totalItems: totalCourses,
+        totalPages: totalPages,
+        hasNextPage: page < totalPages,
+        hasPreviousPage: page > 1,
+      },
+    };
+
+    return NextResponse.json(
+      new ApiResponse(200, 'Assigned courses fetched successfully', paginationData),
+      {
+        status: 200,
+      }
+    );
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json(new ApiResponse(500, 'Internal Server Error', {}), { status: 500 });
+  }
+};

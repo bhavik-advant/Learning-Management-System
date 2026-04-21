@@ -54,6 +54,56 @@ export async function getPendingCourses(): Promise<CourseType[]> {
   return result.data;
 }
 
+export async function getAssignableCourses({
+  limit,
+  page,
+  traineeId,
+}: {
+  limit: number;
+  page: number;
+  traineeId: string;
+}) {
+  const res = await fetch(
+    `/api/course/not-assigned?limit=${limit}&page=${page}&traineeId=${traineeId}`
+  );
+
+  console.log(res);
+
+  if (!res.ok) {
+    const text = await res.text();
+    console.log('API ERROR:', text);
+    throw new Error('Something went wrong');
+  }
+
+  const result = await res.json();
+
+  return result.data;
+}
+
+export async function getAssignedCourses({
+  limit,
+  page,
+  traineeId,
+}: {
+  limit: number;
+  page: number;
+  traineeId: string;
+}) {
+  const res = await fetch(
+    `/api/course/assigned?limit=${limit}&page=${page}&traineeId=${traineeId}`
+  );
+
+  if (!res.ok) {
+    const text = await res.text();
+    console.log('API ERROR:', text);
+    throw new Error('Something went wrong');
+  }
+
+  const result = await res.json();
+
+  return result.data;
+}
+
 export const createCourse = async (course: courseFormData) => {
   const formData = new FormData();
   formData.append('title', course.title);
@@ -88,7 +138,6 @@ export const getCourseById = async (courseId: string) => {
   const result = await response.json();
 
   console.log(result);
-  
 
   return result.data;
 };
@@ -115,9 +164,9 @@ export const updateCourse = async (courseId: string, course: courseFormData) => 
   return await response.json();
 };
 
-export const approveCourse = async (courseId: string) => {
+export const getApprovedCourses = async (courseId: string) => {
   try {
-    const res = await fetch(`/api/course/${courseId}/approve`, {
+    const res = await fetch(`/api/course/${courseId}/not-assigned`, {
       method: 'PATCH',
     });
 
@@ -129,7 +178,7 @@ export const approveCourse = async (courseId: string) => {
 
     return result.data;
   } catch (error) {
-    console.error('APPROVE COURSE ERROR:', error);
+    console.error(' ', error);
     throw error;
   }
 };
@@ -147,13 +196,76 @@ export const saveCourse = async (courseId: string) => {
   return await response.json();
 };
 
-
 export const getTraineeCourses = async () => {
-  const res = await fetch("/api/trainee/courses");
+  const res = await fetch('/api/trainee/courses');
 
   if (!res.ok) {
-    throw new Error("Failed to fetch trainee courses");
+    throw new Error('Failed to fetch trainee courses');
   }
 
   return res.json();
+};
+
+export const assignCourse = async ({
+  courseIds,
+  traineeId,
+}: {
+  courseIds: string[];
+  traineeId: string;
+}) => {
+  try {
+    const res = await fetch('/api/course/assign-course', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        courseIds,
+        traineeId,
+      }),
+    });
+
+    const result = await res.json();
+
+    if (!res.ok) {
+      throw new Error(result.message ?? 'Failed to assign courses');
+    }
+
+    return result.data;
+  } catch (error) {
+    console.error('ASSIGN COURSE ERROR:', error);
+    throw error;
+  }
+};
+
+export const restrictCourse = async ({
+  courseIds,
+  traineeId,
+}: {
+  courseIds: string[];
+  traineeId: string;
+}) => {
+  try {
+    const res = await fetch('/api/course/restrict-course', {
+      method: 'DELETE',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        courseIds,
+        traineeId,
+      }),
+    });
+
+    const result = await res.json();
+
+    if (!res.ok) {
+      throw new Error(result.message ?? 'Failed to restrict courses');
+    }
+
+    return result.data;
+  } catch (error) {
+    console.error('Restrict COURSE ERROR:', error);
+    throw error;
+  }
 };
