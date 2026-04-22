@@ -33,6 +33,9 @@ const AddContent = ({ role }: { role: Role }) => {
     queryFn: () => getCourseById(courseId),
   });
 
+  console.log(data);
+  
+
   if (isLoading) {
     return <p>Loading....</p>;
   }
@@ -40,22 +43,31 @@ const AddContent = ({ role }: { role: Role }) => {
   const handleSaveCourse = async () => {
     const response = await mutateAsync(courseId);
 
-    if (response.success == true && response.statusCode == 201) {
+    if (response?.success && response?.statusCode === 201) {
       router.push(`/${role.toLowerCase()}/courses`);
     }
   };
 
   return (
     <>
-      <div className="w-full bg-white dark:bg-gray-900 rounded-2xl shadow-lg dark:shadow-black/40 p-8 transition-colors duration-300">
-        <h2 className="font-semibold text-xl text-gray-800 dark:text-gray-100">Add Content</h2>
-
-        <div className="space-y-5 mt-4">
+      <div className="relative h-full w-full overflow-hidden ">
+        <div className="flex justify-end ">
+          <button
+            onClick={handleSaveCourse}
+            className="py-1 px-2 text-md border border-gray-600/80 text-gray-600/80 rounded-md "
+            disabled={isPending}
+          >
+            {isPending ? 'Saving' : 'Save'}
+          </button>
+        </div>
+        <div className="absolute left-1/2 h-full -z-10 rounded-3xl border-l-2 border-dashed " />
+        <div className="space-y-5 mt-4 overflow-auto">
           {data &&
             data.modules &&
-            data.modules.map((module: Module) => (
+            data.modules.map((module: Module, index: number) => (
               <Modules
                 key={module.id}
+                index={index}
                 id={module.id}
                 title={module.title}
                 lessons={module.lessons}
@@ -63,25 +75,19 @@ const AddContent = ({ role }: { role: Role }) => {
             ))}
         </div>
 
-        <div className="mt-6">
+        <div className="mt-6 mb-16">
           <NewModule />
         </div>
 
-        <div className="flex justify-end mt-4  gap-4">
+        {/* <div className="flex justify-end mt-4  gap-4">
           <Link
             href={`/add-course/${courseId}/`}
             className="py-1 px-2 rounded-md border text-gray-500 bg-gray-300/20 border-gray-400"
           >
             Back
           </Link>
-          <button
-            onClick={handleSaveCourse}
-            className="py-1 px-2 rounded-md border text-green-500 bg-green-300/20 border-green-400"
-            disabled={isPending}
-          >
-            {isPending ? 'Saving' : 'Save Course'}
-          </button>
-        </div>
+
+        </div> */}
       </div>
     </>
   );

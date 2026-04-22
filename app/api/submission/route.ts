@@ -7,7 +7,6 @@ export async function GET(req: NextRequest) {
   try {
     const user = await getUserDetails();
 
-    // Fetch all submissions with related data
     const submissions = await prisma.submission.findMany({
       include: {
         assignment: {
