@@ -343,7 +343,7 @@ export default function CourseDetailsPage({ params }: Props) {
 
                           {module.assignments.map(assignment => {
                             return (
-                              <Link href={`/assignment/${assignment.id}`} key={assignment.id}>
+                              <Link href={`../assignment/${assignment.id}`} key={assignment.id}>
                                 <div className="p-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
                                   <div className="flex justify-between items-center">
                                     <p className="text-xs font-medium text-gray-900 dark:text-white">

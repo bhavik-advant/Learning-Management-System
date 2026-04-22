@@ -30,6 +30,14 @@ export async function POST(req: NextRequest) {
 
     const upload = await uploadToCloudinary(file);
 
+<<<<<<< HEAD
+    const submission = await prisma.submission.create({
+      data: {
+        assignmentId,
+        studentId: user.id,
+        fileUrl: upload.url,
+        submittedAt: new Date(),
+=======
     const submission = await prisma.submission.upsert({
       where: {
         assignmentId_studentId: {
@@ -46,6 +54,7 @@ export async function POST(req: NextRequest) {
         assignmentId,
         studentId: user.id,
         fileUrl: upload.url,
+>>>>>>> b5e82bb864556b29707b3e941df9d8548886f784
       },
     });
 

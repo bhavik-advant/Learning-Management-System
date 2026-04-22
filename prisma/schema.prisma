@@ -179,7 +179,6 @@ model Submission {
 
   @@index([assignmentId])
   @@index([studentId])
-  @@unique([assignmentId, studentId]) 
 }
 
 

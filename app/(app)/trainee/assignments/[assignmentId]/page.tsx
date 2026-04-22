@@ -1,9 +1,13 @@
 'use client';
 
-import { use } from 'react';
+import { use, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { getAssignmentById } from '@/services/apis/Assignments';
-import { getSubmissionsByAssignment, submitAssignment } from '@/services/apis/submissions';
+import {
+  getSubmissionsByAssignment,
+  SubmissionType,
+  submitAssignment,
+} from '@/services/apis/submissions';
 
 import AssignmentCards from '@/components/assignments/AssignmentCards';
 import StatusBadge from '@/components/assignments/StatusBadge';
@@ -28,26 +32,21 @@ type Assignment = {
   description: string;
   dueDate: string;
   maxScore: number;
-  status: 'pending' | 'submitted' | 'graded';
-};
-
-type Submission = {
-  id: string;
-  fileUrl: string;
-  score?: number;
-  submittedAt: string;
+  status: 'PENDING' | 'SUBMITTED' | 'GRADED';
 };
 
 export default function AssignmentDetailsPage({ params }: Props) {
   const { assignmentId } = use(params);
   const queryClient = useQueryClient();
 
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
   const { data: assignment, isLoading: isAssignmentLoading } = useQuery<Assignment>({
     queryKey: ['assignment', assignmentId],
     queryFn: () => getAssignmentById(assignmentId),
   });
 
-  const { data: submissions = [], isLoading: isSubmissionsLoading } = useQuery<Submission[]>({
+  const { data: submissions = [] } = useQuery<SubmissionType[]>({
     queryKey: ['submissions', assignmentId],
     queryFn: () => getSubmissionsByAssignment(assignmentId),
   });
@@ -57,22 +56,27 @@ export default function AssignmentDetailsPage({ params }: Props) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['submissions', assignmentId] });
       queryClient.invalidateQueries({ queryKey: ['assignment', assignmentId] });
+
+      setSelectedFile(null);
     },
   });
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const file = e.target.files?.[0] ?? null;
+    setSelectedFile(file);
+  };
+
+  const handleSubmit = () => {
+    if (!selectedFile) return;
 
     const formData = new FormData();
     formData.append('assignmentId', assignmentId);
-    formData.append('file', file);
+    formData.append('file', selectedFile);
 
     mutation.mutate(formData);
   };
 
   if (isAssignmentLoading) return <div>Loading...</div>;
-
   if (!assignment) return <div>Assignment not found</div>;
 
   return (
@@ -109,6 +113,16 @@ export default function AssignmentDetailsPage({ params }: Props) {
           className="text-sm"
           disabled={mutation.isPending}
         />
+
+        {selectedFile && <p className="text-sm text-gray-600">Selected: {selectedFile.name}</p>}
+
+        <button
+          onClick={handleSubmit}
+          disabled={!selectedFile || mutation.isPending}
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg disabled:opacity-50"
+        >
+          {mutation.isPending ? 'Submitting...' : 'Submit Assignment'}
+        </button>
 
         {mutation.isPending && <p className="text-sm text-gray-500">Uploading...</p>}
       </div>

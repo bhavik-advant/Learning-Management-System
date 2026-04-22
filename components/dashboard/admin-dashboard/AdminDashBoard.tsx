@@ -6,38 +6,26 @@ import { FaRegFileAlt } from 'react-icons/fa';
 import { IoMdCheckmarkCircleOutline } from 'react-icons/io';
 import { FaArrowTrendUp } from 'react-icons/fa6';
 import Courses from '@/components/ui/Courses';
-import { fetchCourses } from '@/services/apis/courses';
-import { fetchAdminUsersWithStats } from '@/services/apis/users';
 import Users from '@/components/users/UsersTable';
 import { useQuery } from '@tanstack/react-query';
 import Link from 'next/link';
+import { getAdminDashboard } from '@/services/apis/dashboard';
 
 function AdminDashBoard() {
   const {
-    data: courses = [],
-    isLoading: coursesLoading,
-    isError: coursesError,
+    data: dashboardData,
+    isLoading,
+    isError,
   } = useQuery({
-    queryKey: ['admin', 'courses'],
-    queryFn: fetchCourses,
+    queryKey: ['admin-dashboard'],
+    queryFn: getAdminDashboard,
   });
 
-  const {
-    data: usersPayload,
-    isLoading: usersLoading,
-    isError: usersError,
-  } = useQuery({
-    queryKey: ['admin', 'users-with-stats'],
-    queryFn: fetchAdminUsersWithStats,
-  });
-
-  const loading = coursesLoading || usersLoading;
-  const hasError = coursesError || usersError;
-  if (loading) {
+  if (isLoading) {
     return <p className="text-sm text-gray-500 dark:text-gray-400">Loading dashboard…</p>;
   }
 
-  if (hasError && !loading) {
+  if (isError || !dashboardData) {
     return (
       <p className="text-sm text-red-600 dark:text-red-400">
         Could not load dashboard data. Please refresh the page.
@@ -86,22 +74,22 @@ function AdminDashBoard() {
             <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <DashBoardCard
                 title="Total Users"
-                value={usersPayload?.stats.totalUsers ?? 0}
+                value={dashboardData.stats.totalUsers}
                 icon={<BiBook className="text-[22px]" />}
               />
               <DashBoardCard
                 title="Trainees"
-                value={usersPayload?.stats.totalTrainees ?? 0}
+                value={dashboardData.stats.totalTrainees}
                 icon={<FaRegFileAlt className="text-[20px]" />}
               />
               <DashBoardCard
                 title="Mentors"
-                value={usersPayload?.stats.totalMentors ?? 0}
+                value={dashboardData.stats.totalMentors}
                 icon={<IoMdCheckmarkCircleOutline className="text-[22px]" />}
               />
               <DashBoardCard
                 title="Pending Approvals"
-                value={usersPayload?.pendingCourseApprovals ?? 0}
+                value={dashboardData.pendingCourseApprovals}
                 icon={<FaArrowTrendUp className="text-[20px]" />}
               />
             </div>
@@ -113,9 +101,9 @@ function AdminDashBoard() {
         <div className="rounded-3xl border border-gray-200/70 dark:border-gray-800 bg-white/70 dark:bg-gray-950/40 backdrop-blur-xl shadow-sm">
           <div className="flex items-center justify-between gap-4 p-5 sm:p-6">
             <div>
-              <h2 className="text-xl sm:text-2xl font-bold tracking-tight">Courses</h2>
+              <h2 className="text-xl sm:text-2xl font-bold tracking-tight">Latest Courses</h2>
               <p className="text-sm text-gray-600 dark:text-gray-300">
-                Manage published content and pending updates.
+                Recently created courses on the platform.
               </p>
             </div>
             <Link
@@ -125,8 +113,9 @@ function AdminDashBoard() {
               View all
             </Link>
           </div>
+
           <div className="px-5 sm:px-6 pb-6">
-            <Courses btnText="Manage Course" courses={courses} />
+            <Courses btnText="Manage Course" courses={dashboardData?.latestCourses ?? []} />
           </div>
         </div>
       </section>
@@ -135,9 +124,9 @@ function AdminDashBoard() {
         <div className="rounded-3xl border border-gray-200/70 dark:border-gray-800 bg-white/70 dark:bg-gray-950/40 backdrop-blur-xl shadow-sm">
           <div className="flex items-center justify-between gap-4 p-5 sm:p-6">
             <div>
-              <h2 className="text-xl sm:text-2xl font-bold tracking-tight">Users</h2>
+              <h2 className="text-xl sm:text-2xl font-bold tracking-tight">Latest Users</h2>
               <p className="text-sm text-gray-600 dark:text-gray-300">
-                Control roles, access levels, and user activity.
+                Recently joined users on the platform.
               </p>
             </div>
             <Link
@@ -147,8 +136,9 @@ function AdminDashBoard() {
               View all
             </Link>
           </div>
+
           <div className="px-5 sm:px-6 pb-6">
-            <Users users={usersPayload?.users ?? []} />
+            <Users users={dashboardData?.latestUsers ?? []} />
           </div>
         </div>
       </section>

@@ -333,36 +333,35 @@ export default function CourseDetailsPage({ params }: Props) {
                                   : 'bg-gray-100 text-gray-600';
 
                             return (
-                              <div
-                                key={assignment.id}
-                                className="p-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900"
-                              >
-                                <div className="flex justify-between items-center">
-                                  <p className="text-xs font-medium text-gray-900 dark:text-white">
-                                    {assignment.title}
-                                  </p>
+                              <Link href={`../assignments/${assignment.id}`} key={assignment.id}>
+                                <div className="p-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
+                                  <div className="flex justify-between items-center">
+                                    <p className="text-xs font-medium text-gray-900 dark:text-white">
+                                      {assignment.title}
+                                    </p>
 
-                                  <span
-                                    className={`text-[9px] px-2 py-0.5 rounded-full ${statusColor}`}
-                                  >
-                                    {status || 'NOT SUBMITTED'}
-                                  </span>
+                                    <span
+                                      className={`text-[9px] px-2 py-0.5 rounded-full ${statusColor}`}
+                                    >
+                                      {status || 'NOT SUBMITTED'}
+                                    </span>
+                                  </div>
+
+                                  <div className="flex justify-between text-[10px] text-gray-500 mt-1">
+                                    <span>
+                                      {assignment.dueDate
+                                        ? new Date(assignment.dueDate).toLocaleDateString()
+                                        : 'No deadline'}
+                                    </span>
+
+                                    <span>
+                                      {assignment.submission?.score !== null
+                                        ? `Score: ${assignment.submission?.score}`
+                                        : ''}
+                                    </span>
+                                  </div>
                                 </div>
-
-                                <div className="flex justify-between text-[10px] text-gray-500 mt-1">
-                                  <span>
-                                    {assignment.dueDate
-                                      ? new Date(assignment.dueDate).toLocaleDateString()
-                                      : 'No deadline'}
-                                  </span>
-
-                                  <span>
-                                    {assignment.submission?.score !== null
-                                      ? `Score: ${assignment.submission?.score}`
-                                      : ''}
-                                  </span>
-                                </div>
-                              </div>
+                              </Link>
                             );
                           })}
                         </div>

@@ -6,14 +6,34 @@ import { useQuery } from '@tanstack/react-query';
 import { getTraineeAssignments } from '@/services/apis/Assignments';
 import { FaRegFileAlt } from 'react-icons/fa';
 
+type AssignmentType = {
+  id: string;
+  title: string;
+  description: string;
+  dueDate: string | null;
+  maxScore: number;
+  moduleTitle: string;
+  courseTitle: string;
+  submission: {
+    status: 'PENDING' | 'GRADED' | 'RESUBMITTED';
+    score?: number | null;
+  } | null;
+};
+
 export default function AssignmentPage() {
-  const { data: assignments = [] } = useQuery({
+  const { data: assignments = [], isLoading } = useQuery<AssignmentType[]>({
     queryKey: ['assignments'],
     queryFn: getTraineeAssignments,
   });
 
+  if (isLoading) return <div className="p-6">Loading...</div>;
+
   const total = assignments.length;
-  const pending = assignments.filter(a  => !a.submission).length;
+
+  const pending = assignments.filter(
+    a => !a.submission || a.submission.status === 'PENDING'
+  ).length;
+
   const completed = assignments.filter(a => a.submission?.status === 'GRADED').length;
 
   return (

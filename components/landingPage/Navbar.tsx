@@ -1,6 +1,7 @@
 'use client';
 import Image from 'next/image';
-import logo from '@/assets/education.png';
+import logo from '@/public/light-eduvant.png';
+import Darklogo from '@/public/dark-eduvant.png';
 import ThemeButton from '../ui/ThemeButton';
 import { useUser } from '@clerk/nextjs';
 import Link from 'next/link';
@@ -13,11 +14,23 @@ function Navbar({ role }: { role?: string }) {
   return (
     <nav className="w-full border-b border-gray-300  backdrop-blur-md sticky top-0 z-50">
       <div className="mx-4 xxl:mx-70 sm:mx-8 lg:mx-14 xl:mx-52 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-3 cursor-pointer">
-          <Image src={logo} alt="logo" width={42} height={42} />
-          <h1 className="text-xl font-semibold tracking-tight">
-            Tech<span className="text-blue-600">LMS</span>
-          </h1>
+        <div className="flex justify-center items-center gap-2 dark:hidden">
+          <Image
+            src={logo}
+            alt="EduVant logo"
+            width={200}
+            height={40}
+            className="object-contain "
+          />
+        </div>
+        <div className="flex justify-center items-center gap-2 hidden dark:block">
+          <Image
+            src={Darklogo}
+            alt="EduVant logo"
+            width={180}
+            height={40}
+            className="object-contain "
+          />
         </div>
 
         <ul className="hidden sm:flex items-center gap-8 text-sm font-medium text-gray-600 dark:text-gray-300">
