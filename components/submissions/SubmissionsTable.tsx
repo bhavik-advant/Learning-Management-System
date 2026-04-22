@@ -76,7 +76,7 @@ const SubmissionsTable: React.FC<{ submissions: Submission[] }> = ({ submissions
 
                 <td className="p-4 text-gray-600 dark:text-gray-400">{s.student.mentorName}</td>
 
-                <td className="p-4 text-gray-700 dark:text-gray-300">{s.course.title}</td>
+                {/* <td className="p-4 text-gray-700 dark:text-gray-300">{s.course.title}</td> */}
 
                 <td className="p-4 text-gray-700 dark:text-gray-300">{s.assignment.title}</td>
 
