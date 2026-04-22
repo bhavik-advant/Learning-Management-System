@@ -5,18 +5,21 @@ import React from 'react';
 
 type Submission = {
   id: string;
-  status: string;
+  status: 'PENDING' | 'GRADED' | 'LATE' | string; // keep flexible if needed
   fileUrl: string;
   score: number | null;
-  submittedAt: string;
+  submittedAt: string; // because it will be serialized from API
+
   student: {
     name: string;
     mentorName: string;
   };
-  assignment: {
+
+  course: {
     title: string;
   };
-  course: {
+
+  assignment: {
     title: string;
   };
 };
@@ -76,7 +79,7 @@ const SubmissionsTable: React.FC<{ submissions: Submission[] }> = ({ submissions
 
                 <td className="p-4 text-gray-600 dark:text-gray-400">{s.student.mentorName}</td>
 
-                {/* <td className="p-4 text-gray-700 dark:text-gray-300">{s.course.title}</td> */}
+                <td className="p-4 text-gray-700 dark:text-gray-300">{s.course.title}</td>
 
                 <td className="p-4 text-gray-700 dark:text-gray-300">{s.assignment.title}</td>
 

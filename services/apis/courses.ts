@@ -269,3 +269,17 @@ export const restrictCourse = async ({
     throw error;
   }
 };
+
+export const approveCourse = async (courseId: string) => {
+  const res = await fetch(`/api/admin/courses/approve/${courseId}`, {
+    method: 'PATCH',
+  });
+
+  const data = await res.json();
+
+  if (!res.ok) {
+    throw new Error(data?.message || 'Failed to approve course');
+  }
+
+  return data;
+};
