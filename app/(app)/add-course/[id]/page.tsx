@@ -1,10 +1,12 @@
 'use client';
 
+import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { getCourseById, updateCourse } from '@/services/apis/courses';
 import { courseFormData } from '@/types/types';
 import { useMutation, useQuery } from '@tanstack/react-query';
+import Image from 'next/image';
 import { useParams, useRouter } from 'next/navigation';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 type CourseDetails = {
   id: string;
@@ -28,6 +30,7 @@ function AddCourse() {
     description: undefined,
     thumbnail: null,
   });
+  const [preview, setPreview] = useState<string | null>(null);
 
   const {
     data: course,
@@ -65,7 +68,19 @@ function AddCourse() {
       ...prev,
       thumbnail: file,
     }));
+
+    const url = URL.createObjectURL(file);
+    setPreview(prev => {
+      if (prev) URL.revokeObjectURL(prev);
+      return url;
+    });
   };
+
+  useEffect(() => {
+    return () => {
+      if (preview) URL.revokeObjectURL(preview);
+    };
+  }, [preview]);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -100,122 +115,152 @@ function AddCourse() {
   }
 
   return (
-    <div className="w-full bg-white dark:bg-gray-900 rounded-2xl shadow-lg dark:shadow-black/40 p-8">
-      <div className="mb-8">
-        <h2 className="text-3xl font-bold text-gray-800 dark:text-gray-100">Edit Course</h2>
+    <Card className="w-full bg-white dark:bg-gray-900 rounded-2xl shadow-lg dark:shadow-black/40 p-8 border  dark:border-gray-800 text-sm">
+      <CardHeader className="">
+        <h2 className="text-2xl font-bold text-gray-800 dark:text-gray-100">Edit Course</h2>
         <p className="text-gray-500 dark:text-gray-400 mt-2">
           Update your course details and continue adding content.
         </p>
-      </div>
+      </CardHeader>
 
-      <form className="space-y-6" onSubmit={handleSubmit}>
-        <div>
-          <label
-            htmlFor="title"
-            className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-          >
-            Course Title
-          </label>
+      <CardContent>
+        <form className="space-y-6" onSubmit={handleSubmit}>
+          <div>
+            <label
+              htmlFor="title"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+            >
+              Course Title
+            </label>
 
-          <input
-            id="title"
-            name="title"
-            type="text"
-            value={formData.title ?? course.title}
-            onChange={event => onChangeHandler('title', event.target.value)}
-            placeholder="e.g., Mastering Next.js"
-            className="w-full rounded-xl border border-gray-300 dark:border-gray-700 px-4 py-3 text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition bg-white dark:bg-gray-800"
-            required
-          />
-        </div>
+            <input
+              id="title"
+              name="title"
+              type="text"
+              value={formData.title ?? course.title}
+              onChange={event => onChangeHandler('title', event.target.value)}
+              placeholder="e.g., Mastering Next.js"
+              className="w-full rounded-xl border border-gray-300 dark:border-gray-700 px-4 py-2 text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition bg-white dark:bg-gray-800"
+              required
+            />
+          </div>
 
-        <div>
-          <label
-            htmlFor="description"
-            className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-          >
-            Course Description
-          </label>
+          <div>
+            <label
+              htmlFor="description"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
+            >
+              Course Description
+            </label>
 
-          <textarea
-            id="description"
-            name="description"
-            value={formData.description ?? course.description}
-            onChange={event => onChangeHandler('description', event.target.value)}
-            rows={4}
-            placeholder="Write a short description about your course..."
-            className="w-full rounded-xl border border-gray-300 dark:border-gray-700 px-4 py-3 text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition resize-none bg-white dark:bg-gray-800"
-            required
-          />
-        </div>
+            <textarea
+              id="description"
+              name="description"
+              value={formData.description ?? course.description}
+              onChange={event => onChangeHandler('description', event.target.value)}
+              rows={6}
+              placeholder="Write a short description about your course..."
+              className="w-full rounded-xl border border-gray-300 dark:border-gray-700 px-4 py-2 text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 focus:border-transparent transition resize-none bg-white dark:bg-gray-800"
+              required
+            />
+          </div>
 
-        <div>
-          <label
-            htmlFor="thumbnail"
-            className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
-          >
-            Course Thumbnail
-          </label>
-
-          <div className="flex items-center justify-center w-full">
+          <div>
             <label
               htmlFor="thumbnail"
-              className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-xl cursor-pointer bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+              className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2"
             >
-              {formData.thumbnail ? (
-                <p className="text-gray-700 dark:text-gray-200">{formData.thumbnail.name}</p>
-              ) : course.thumbnail ? (
-                <p className="text-gray-700 dark:text-gray-200">Current thumbnail selected</p>
-              ) : (
-                <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                  <svg
-                    className="w-10 h-10 mb-3 text-gray-400 dark:text-gray-500"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M7 16a4 4 0 01.88-7.9A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
-                    />
-                  </svg>
-
-                  <p className="mb-1 text-sm text-gray-600 dark:text-gray-300">
-                    <span className="font-semibold">Click to upload</span> or drag and drop
-                  </p>
-
-                  <p className="text-xs text-gray-400 dark:text-gray-500">
-                    PNG, JPG, or WEBP (Max. 5MB)
-                  </p>
-                </div>
-              )}
-
-              <input
-                onChange={imageHandler}
-                id="thumbnail"
-                name="thumbnail"
-                type="file"
-                accept="image/*"
-                className="hidden"
-                disabled={isPending}
-              />
+              Course Thumbnail (click on image to change)
             </label>
-          </div>
-        </div>
 
-        <div className="flex justify-end pt-4">
-          <button
-            disabled={isPending}
-            type="submit"
-            className="bg-blue-600 text-white px-6 py-3 rounded-xl font-semibold shadow-md hover:bg-blue-700 dark:hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 transition"
-          >
-            {isPending ? 'Updating Course....' : 'Save & Continue'}
-          </button>
-        </div>
-      </form>
-    </div>
+            <div className="flex items-center justify-center w-full">
+              <label
+                htmlFor="thumbnail"
+                className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed border-gray-300 dark:border-gray-700 rounded-xl cursor-pointer bg-gray-50 dark:bg-gray-800 hover:bg-gray-100 dark:hover:bg-gray-700 transition"
+              >
+                {formData.thumbnail ? (
+                  <div className="relative w-full h-full flex items-center justify-center">
+                    <Image src={preview ?? ''} alt={formData.thumbnail.name} fill />
+
+                    <button
+                      type="button"
+                      onClick={e => {
+                        e.preventDefault();
+                        setFormData(prev => ({ ...prev, thumbnail: null }));
+                        if (preview) {
+                          URL.revokeObjectURL(preview);
+                          setPreview(null);
+                        }
+                        const input = document.getElementById(
+                          'thumbnail'
+                        ) as HTMLInputElement | null;
+                        if (input) input.value = '';
+                      }}
+                      className="absolute top-2 right-2 bg-white/80 dark:bg-gray-800/80 text-sm px-2 py-1 rounded-md shadow"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                ) : course.thumbnail ? (
+                  <div className="relative w-full h-full flex items-center justify-center">
+                    <Image
+                      src={course.thumbnail}
+                      alt="Current thumbnail"
+                      className=" w-full h-full rounded-xl"
+                      fill
+                    />
+                  </div>
+                ) : (
+                  <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                    <svg
+                      className="w-10 h-10 mb-3 text-gray-400 dark:text-gray-500"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M7 16a4 4 0 01.88-7.9A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
+                      />
+                    </svg>
+
+                    <p className="mb-1 text-sm text-gray-600 dark:text-gray-300">
+                      <span className="font-semibold">Click to upload</span> or drag and drop
+                    </p>
+
+                    <p className="text-xs text-gray-400 dark:text-gray-500">
+                      PNG, JPG, or WEBP (Max. 5MB)
+                    </p>
+                  </div>
+                )}
+
+                <input
+                  onChange={imageHandler}
+                  id="thumbnail"
+                  name="thumbnail"
+                  type="file"
+                  accept="image/*"
+                  className="hidden"
+                  disabled={isPending}
+                />
+              </label>
+            </div>
+          </div>
+
+          <div className="flex justify-end pt-4">
+            <button
+              disabled={isPending}
+              type="submit"
+              className="bg-blue-600 text-white px-6 py-3 rounded-xl font-semibold shadow-md hover:bg-blue-700 dark:hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 dark:focus:ring-offset-gray-900 transition"
+            >
+              {isPending ? 'Updating Course....' : 'Save & Continue'}
+            </button>
+          </div>
+        </form>
+      </CardContent>
+    </Card>
   );
 }
 

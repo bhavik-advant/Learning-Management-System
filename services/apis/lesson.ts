@@ -72,3 +72,46 @@ export const deletedLesson = async ({
 
   return result.data;
 };
+
+export const editLesoon = async ({
+  courseId,
+  moduleId,
+  lessonId,
+  title,
+  file,
+  url,
+}: {
+  courseId: string;
+  moduleId: string;
+  lessonId: string;
+  title: string;
+  file?: File;
+  url?: string;
+}) => {
+  const formData = new FormData();
+  formData.append('title', title);
+  if (file) {
+    formData.append('file', file);
+  }
+  if (url) {
+    formData.append('url', url);
+  }
+  const response = await fetch(`/api/course/${courseId}/module/${moduleId}/lesson/${lessonId}`, {
+    method: 'PATCH',
+    body: formData,
+  });
+
+  if (!response.ok) {
+    console.log(response);
+
+    throw new Error('Failed to update Lesson');
+  }
+
+  const result = await response.json();
+
+  if (!result.success) {
+    throw new Error(result.message);
+  }
+
+  return result.data;
+};
