@@ -1,5 +1,8 @@
 'use client';
+<<<<<<< HEAD
 
+=======
+>>>>>>> b5e82bb864556b29707b3e941df9d8548886f784
 import { BiBook } from 'react-icons/bi';
 import DashBoardCard from '../mentor-dashboard/DashboardCard';
 import { FaRegFileAlt } from 'react-icons/fa';
@@ -10,7 +13,10 @@ import Assignments from '@/components/assignments/Assignments';
 import { useQuery } from '@tanstack/react-query';
 import { getTraineeCourses } from '@/services/apis/courses';
 import { AssignmentType, getTraineeAssignments } from '@/services/apis/Assignments';
+<<<<<<< HEAD
 import Link from 'next/link';
+=======
+>>>>>>> b5e82bb864556b29707b3e941df9d8548886f784
 
 type Course = {
   id: string;
@@ -25,7 +31,6 @@ type Course = {
   updatedAt: string;
   modulesCount: number;
 };
-
 function TraineeDashBoard() {
   const { data: courses = [], isLoading: coursesLoading } = useQuery<Course[]>({
     queryKey: ['trainee-courses'],

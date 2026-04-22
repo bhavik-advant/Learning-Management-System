@@ -8,6 +8,7 @@ export type AssignmentType = {
   maxScore: number;
   submissions: Submission[];
 };
+type SubmissionStatus = 'PENDING' | 'SUBMITTED' | 'GRADED';
 
 type Submission = {
   id: string;
