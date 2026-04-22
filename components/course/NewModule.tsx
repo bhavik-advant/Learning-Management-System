@@ -6,10 +6,7 @@ import { useMutation } from '@tanstack/react-query';
 import { createModule } from '@/services/apis/module';
 import { useParams } from 'next/navigation';
 import queryClient from '@/utils/query-client';
-
-// type ModuleFormCreateProps = {
-//   onAddModule: (id: string, title: string) => void;
-// };
+import { RiLoader4Fill } from 'react-icons/ri';
 
 const NewModule = ({}) => {
   const [inputText, setInputText] = useState<string>('');
@@ -43,19 +40,25 @@ const NewModule = ({}) => {
   const handleModuleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
 
+    if (inputText.trim() == '') {
+      return;
+    }
+
     await mutateAsync({ title: inputText, courseId });
 
     setInputText('');
   };
 
   return (
-    <div className="mt-4 space-y-4 border-2 border-dashed border-gray-400/80 rounded-2xl p-4">
-      <form className="flex flex-col space-y-2" onSubmit={handleModuleSubmit}>
-        <h2 className="text-lg text-gray-600">Add Module</h2>
-        <div className="flex gap-4">
+    <div className="mt-4 flex  justify-center items-center">
+      <form
+        className="flex-1 max-w-[700px] border border-gray-400/30 p-2 rounded-lg bg-white "
+        onSubmit={handleModuleSubmit}
+      >
+        <div className="flex-1 flex  gap-4">
           <input
-            placeholder="Module Name "
-            className="flex-1 border rounded-md border-blue-500 focus:outline-none py-1 px-2"
+            placeholder="Enter New Module Name"
+            className="flex-1  text-sm rounded-md  focus:outline-none py-1 px-2"
             value={inputText}
             onChange={event => setInputText(event.target.value)}
             type="text"
@@ -63,9 +66,9 @@ const NewModule = ({}) => {
 
           <button
             disabled={isPending}
-            className={`bg-red-400/20 text-red-400 p-2 rounded-md ${isPending && 'animate-bounce'}`}
+            className={`bg-red-400/20 text-red-400 p-2 ${isPending ? 'animate-spin rounded-full' : 'rounded-md '}`}
           >
-            <BiPlus />
+            {!isPending ? <BiPlus /> : <RiLoader4Fill />}
           </button>
         </div>
       </form>

@@ -1,56 +1,36 @@
 'use client';
-
-import { addLesson } from '@/services/apis/lesson';
 import { useMutation } from '@tanstack/react-query';
 import React, { useRef, useState } from 'react';
-import { BiPlus, BiLinkAlt, BiVideo } from 'react-icons/bi';
+import { BiLinkAlt, BiVideo } from 'react-icons/bi';
 import { useParams } from 'next/navigation';
-import queryClient from '@/utils/query-client';
 import { CiSaveUp2 } from 'react-icons/ci';
 
 type LessonAddFormProps = {
   moduleId: string;
-  onClose : () => void
+  onClose: () => void;
+  title: string;
+  url: string;
+  formTitle: string;
+  func: ({ title, url, file }: { title: string; url?: string; file?: File }) => Promise<void>;
+  stringForm: boolean;
+  isPending : boolean
 };
 
-const NewLesson: React.FC<LessonAddFormProps> = ({ moduleId ,onClose}) => {
+const LessonForm: React.FC<LessonAddFormProps> = ({
+  moduleId,
+  title: incomingTitle,
+  url,
+  formTitle,
+  func,
+  onClose,
+  stringForm = false,
+  isPending
+}) => {
   const [file, setFile] = useState<File | null>(null);
-  const [title, setTitle] = useState('');
-  const [link, setLink] = useState('');
-  const [showStringForm, setShowStringForm] = useState<boolean>(false);
+  const [title, setTitle] = useState(incomingTitle || '');
+  const [link, setLink] = useState(url || '');
+  const [showStringForm, setShowStringForm] = useState<boolean>(stringForm ?? false);
   const inputRef = useRef<HTMLInputElement>(null);
-  const { id: courseId } = useParams<{ id: string }>();
-
-  const { mutateAsync, isPending } = useMutation({
-    mutationFn: addLesson,
-    onSuccess: (data, variables) => {
-      try {
-        const newLesson = {
-          id: data.id,
-          title: data.title,
-          url: data.url || null,
-        };
-
-        queryClient.setQueryData(['courses', courseId], (oldData: any) => {
-          if (!oldData) return oldData;
-
-          return {
-            ...oldData,
-            modules: oldData.modules.map((module: any) =>
-              module.id === variables.moduleId
-                ? {
-                    ...module,
-                    lessons: [...(module.lessons || []), newLesson],
-                  }
-                : module
-            ),
-          };
-        });
-      } catch (error) {
-        console.log(error);
-      }
-    },
-  });
 
   const handleChangeImage = (event: React.ChangeEvent<HTMLInputElement>) => {
     const incomingFile = event.target.files?.[0];
@@ -63,10 +43,10 @@ const NewLesson: React.FC<LessonAddFormProps> = ({ moduleId ,onClose}) => {
 
     try {
       if (showStringForm) {
-        await mutateAsync({ courseId, moduleId, title, url: link });
+        await func({ title, url: link });
       } else {
         if (!file) return;
-        await mutateAsync({ courseId, moduleId, title, lesson: file });
+        await func({ title, file: file });
       }
 
       setFile(null);
@@ -84,7 +64,7 @@ const NewLesson: React.FC<LessonAddFormProps> = ({ moduleId ,onClose}) => {
       className="bg-white w-full max-w-[600px] dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-3 shadow-sm dark:shadow-black/20 space-y-2 transition-colors"
     >
       <label className="block text-xs font-semibold text-gray-700 dark:text-gray-200">
-        Add New Lesson
+        {formTitle}
       </label>
 
       <div className="flex rounded-lg bg-gray-100 dark:bg-gray-700 p-1">
@@ -187,4 +167,4 @@ const NewLesson: React.FC<LessonAddFormProps> = ({ moduleId ,onClose}) => {
   );
 };
 
-export default NewLesson;
+export default LessonForm;

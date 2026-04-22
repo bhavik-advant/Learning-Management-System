@@ -94,8 +94,12 @@ export const POST = async (
       lessonUrl = incomingUrl!;
     }
 
-    const lessonCount = await prisma.lesson.count({
+    const lastLesson = await prisma.lesson.findFirst({
       where: { moduleId },
+      orderBy: { createdAt: 'desc' },
+      select: {
+        order: true,
+      },
     });
 
     const createdLesson = await prisma.lesson.create({
@@ -103,7 +107,7 @@ export const POST = async (
         title,
         videoFileId: fileId,
         videoUrl: fileId ? null : lessonUrl,
-        order: lessonCount + 1,
+        order: (lastLesson?.order ?? 0) + 1,
         moduleId,
       },
     });
