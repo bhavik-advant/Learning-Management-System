@@ -1,6 +1,6 @@
 'use client';
 
-import type { AssignmentType } from '@/services/apis/Assignments';
+import type { AssignmentType } from '@/services/apis/assignments';
 import AssignmentActionButton from './AssignmentActionButton';
 import StatusBadge from './StatusBadge';
 import Link from 'next/link';

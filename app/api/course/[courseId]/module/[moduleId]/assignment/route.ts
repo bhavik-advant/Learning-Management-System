@@ -5,19 +5,31 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export const POST = async (
   req: NextRequest,
-  { params }: { params: Promise<{ moduleId: string }> }
+  { params }: { params: Promise<{ courseId: string; moduleId: string }> }
 ) => {
   try {
-    let user;
-    try {
-      user = await getUserDetails();
-    } catch (error) {
-      const message = error instanceof Error ? error.message : 'Please login first';
+    const user = await getUserDetails();
 
-      return NextResponse.json(new ApiResponse(401, message, {}), { status: 401 });
+    const { moduleId, courseId } = await params;
+
+    const courseDetails = await prisma.course.findUnique({
+      where: {
+        id: courseId,
+      },
+    });
+
+    if (!courseDetails) {
+      return NextResponse.json(new ApiResponse(404, 'Course not found', {}), {
+        status: 404,
+      });
     }
 
-    const { moduleId } = await params;
+    if (user.role !== 'ADMIN' && courseDetails.authorId !== user.id) {
+      return NextResponse.json(
+        new ApiResponse(403, 'You do not have access to Add Assignmnets', {}),
+        { status: 403 }
+      );
+    }
 
     const moduleDetails = await prisma.module.findUnique({
       where: { id: moduleId },

@@ -7,6 +7,7 @@ import { createModule } from '@/services/apis/module';
 import { useParams } from 'next/navigation';
 import queryClient from '@/utils/query-client';
 import { RiLoader4Fill } from 'react-icons/ri';
+import { Course } from '@/types/types';
 
 const NewModule = ({}) => {
   const [inputText, setInputText] = useState<string>('');
@@ -17,7 +18,7 @@ const NewModule = ({}) => {
     mutationFn: createModule,
     onSuccess: data => {
       try {
-        queryClient.setQueryData(['courses', courseId], oldData => {
+        queryClient.setQueryData(['courses', courseId], (oldData: Course) => {
           if (!oldData) return oldData;
 
           const newModule = {
@@ -32,8 +33,8 @@ const NewModule = ({}) => {
             modules: [...(oldData.modules ?? []), newModule],
           };
         });
-      } catch (error) {
-        console.error('Error updating cache:', error);
+      } catch {
+        console.log('failed to Add Module');
       }
     },
   });

@@ -4,6 +4,7 @@ import { editLesoon } from '@/services/apis/lesson';
 import { useMutation } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
 import queryClient from '@/utils/query-client';
+import { Course } from '@/types/types';
 
 function EditLesson({
   lessonId,
@@ -23,18 +24,18 @@ function EditLesson({
   const { mutateAsync, isPending } = useMutation({
     mutationFn: editLesoon,
     onSuccess: response => {
-      queryClient.setQueryData(['courses', courseId], (old: any) => {
+      queryClient.setQueryData(['courses', courseId], (old: Course) => {
         if (!old) {
           return old;
         }
 
         return {
           ...old,
-          modules: old.modules.map((module: any) =>
+          modules: old.modules.map(module =>
             module.id === moduleId
               ? {
                   ...module,
-                  lessons: module.lessons.map((lesson: any) =>
+                  lessons: module.lessons.map(lesson =>
                     lesson.id === lessonId ? response : lesson
                   ),
                 }

@@ -3,20 +3,13 @@ import ApiResponse from '@/utils/api-response';
 import { prisma } from '@/utils/prisma-client';
 import { NextRequest, NextResponse } from 'next/server';
 
-export const PATCH = async (req : NextRequest,{ params }: { params: Promise<{ courseId: string }> }) => {
+export const PATCH = async (
+  req: NextRequest,
+  { params }: { params: Promise<{ courseId: string }> }
+) => {
   try {
-    let user;
-    try {
-      user = await getUserDetails();
-    } catch (error) {
-      const message = error instanceof Error ? error.message : 'Please login first';
-
-      return NextResponse.json(new ApiResponse(401, message, {}), { status: 401 });
-    }
-
+    const user = await getUserDetails();
     const { courseId } = await params;
-    
-    console.log(courseId, '///////////////////////////////');
 
     const availabeCourse = await prisma.course.findUnique({ where: { id: courseId } });
 

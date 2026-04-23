@@ -1,9 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/utils/prisma-client';
 import ApiResponse from '@/utils/api-response';
+import getUserDetails from '@/lib/isAuth';
 
 export const GET = async (req: NextRequest) => {
   try {
+    const user = await getUserDetails();
+
     const searchParams = req.nextUrl.searchParams;
 
     const limit = Number(searchParams.get('limit')) || 3;
@@ -12,10 +15,18 @@ export const GET = async (req: NextRequest) => {
     const skip = (page - 1) * limit;
 
     if (!traineeId) {
-      return NextResponse.json(
-        new ApiResponse(400, 'traineeId is required', {}),
-        { status: 400 }
-      );
+      return NextResponse.json(new ApiResponse(400, 'traineeId is required', {}), { status: 400 });
+    }
+
+    const userDetails = await prisma.user.findUnique({
+      where: { id: traineeId },
+      select: {
+        mentorId: true,
+      },
+    });
+
+    if (userDetails?.mentorId != user.id) {
+      return NextResponse.json(new ApiResponse(401, 'Unauthorised', {}), { status: 401 });
     }
 
     const totalCourses = await prisma.course.count({

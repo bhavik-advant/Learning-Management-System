@@ -11,7 +11,10 @@ export async function GET(
     const user = await getUserDetails();
     const { submissionId } = await params;
 
-    // Fetch submission with all related data
+    if (user.role == 'TRAINEE') {
+      return NextResponse.json(new ApiResponse(403, 'Unauthorised', {}), { status: 403 });
+    }
+
     const submission = await prisma.submission.findUnique({
       where: { id: submissionId },
       include: {
@@ -48,22 +51,17 @@ export async function GET(
     });
 
     if (!submission) {
-      return NextResponse.json(
-        new ApiResponse(404, 'Submission not found', {}),
-        { status: 404 }
-      );
+      return NextResponse.json(new ApiResponse(404, 'Submission not found', {}), { status: 404 });
     }
 
-    return NextResponse.json(
-      new ApiResponse(200, 'Submission fetched successfully', submission),
-      { status: 200 }
-    );
+    return NextResponse.json(new ApiResponse(200, 'Submission fetched successfully', submission), {
+      status: 200,
+    });
   } catch (err) {
     console.error('Error fetching submission:', err);
-    return NextResponse.json(
-      new ApiResponse(500, 'Error fetching submission', {}),
-      { status: 500 }
-    );
+    return NextResponse.json(new ApiResponse(500, 'Error fetching submission', {}), {
+      status: 500,
+    });
   }
 }
 
@@ -83,10 +81,7 @@ export async function PATCH(
     });
 
     if (!submission) {
-      return NextResponse.json(
-        new ApiResponse(404, 'Submission not found', {}),
-        { status: 404 }
-      );
+      return NextResponse.json(new ApiResponse(404, 'Submission not found', {}), { status: 404 });
     }
 
     // Update submission with feedback and/or score
@@ -137,9 +132,8 @@ export async function PATCH(
     );
   } catch (err) {
     console.error('Error updating submission:', err);
-    return NextResponse.json(
-      new ApiResponse(500, 'Error updating submission', {}),
-      { status: 500 }
-    );
+    return NextResponse.json(new ApiResponse(500, 'Error updating submission', {}), {
+      status: 500,
+    });
   }
 }

@@ -5,18 +5,11 @@ import { FileTypeToResourceType } from '@/utils/file-type-map';
 import { prisma } from '@/utils/prisma-client';
 import { NextRequest, NextResponse } from 'next/server';
 
-export const POST = async (
+export const PATCH = async (
   req: NextRequest,
   { params }: { params: Promise<{ moduleId: string }> }
 ) => {
-  let user;
-  try {
-    user = await getUserDetails();
-  } catch (error) {
-    const message = error instanceof Error ? error.message : 'Please login first';
-
-    return NextResponse.json(new ApiResponse(401, message, {}), { status: 401 });
-  }
+  const user = await getUserDetails();
 
   if (user.role == 'TRAINEE') {
     return NextResponse.json(new ApiResponse(403, 'Unauthorised', {}), { status: 403 });
@@ -29,6 +22,30 @@ export const POST = async (
 
   if (!title) {
     return NextResponse.json(new ApiResponse(401, 'Provide Valid Title', {}), { status: 401 });
+  }
+
+  const moduleToUpdate = await prisma.module.findUnique({
+    where: {
+      id: moduleId,
+    },
+    select: {
+      course: {
+        select: {
+          authorId: true,
+        },
+      },
+    },
+  });
+
+  if (!moduleToUpdate) {
+    return NextResponse.json(new ApiResponse(403, 'Module not Found', {}), { status: 403 });
+  }
+
+  if (user.role !== 'ADMIN' && moduleToUpdate.course.authorId !== user.id) {
+    return NextResponse.json(
+      new ApiResponse(403, 'You do not have access to modify course content', {}),
+      { status: 403 }
+    );
   }
 
   const updatedModule = await prisma.module.update({
@@ -45,13 +62,7 @@ export const DELETE = async (
   req: NextRequest,
   { params }: { params: Promise<{ moduleId: string }> }
 ) => {
-  let user;
-  try {
-    user = await getUserDetails();
-  } catch (error) {
-    const message = error instanceof Error ? error.message : 'Please login first';
-    return NextResponse.json(new ApiResponse(401, message, {}), { status: 401 });
-  }
+  const user = await getUserDetails();
 
   if (user.role == 'TRAINEE') {
     return NextResponse.json(new ApiResponse(403, 'Unauthorised', {}), { status: 403 });

@@ -1,19 +1,17 @@
 'use client';
-import { useMutation } from '@tanstack/react-query';
 import React, { useRef, useState } from 'react';
 import { BiLinkAlt, BiVideo } from 'react-icons/bi';
-import { useParams } from 'next/navigation';
 import { CiSaveUp2 } from 'react-icons/ci';
 
 type LessonAddFormProps = {
   moduleId: string;
   onClose: () => void;
-  title: string;
-  url: string;
+  title?: string;
+  url?: string;
   formTitle: string;
   func: ({ title, url, file }: { title: string; url?: string; file?: File }) => Promise<void>;
-  stringForm: boolean;
-  isPending : boolean
+  stringForm?: boolean;
+  isPending: boolean;
 };
 
 const LessonForm: React.FC<LessonAddFormProps> = ({
@@ -24,7 +22,7 @@ const LessonForm: React.FC<LessonAddFormProps> = ({
   func,
   onClose,
   stringForm = false,
-  isPending
+  isPending,
 }) => {
   const [file, setFile] = useState<File | null>(null);
   const [title, setTitle] = useState(incomingTitle || '');

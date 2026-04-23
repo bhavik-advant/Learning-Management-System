@@ -3,7 +3,7 @@
 import AssignmentCards from '@/components/assignments/AssignmentCards';
 import Assignments from '@/components/assignments/Assignments';
 import { useQuery } from '@tanstack/react-query';
-import { getTraineeAssignments } from '@/services/apis/Assignments';
+import { getTraineeAssignments } from '@/services/apis/assignments';
 import { FaRegFileAlt } from 'react-icons/fa';
 
 export default function AssignmentPage() {

@@ -9,14 +9,7 @@ export const POST = async (
   { params }: { params: Promise<{ courseId: string }> }
 ) => {
   try {
-    let user;
-    try {
-      user = await getUserDetails();
-    } catch (error) {
-      const message = error instanceof Error ? error.message : 'Please login first';
-
-      return NextResponse.json(new ApiResponse(401, message, {}), { status: 401 });
-    }
+    const user = await getUserDetails();
 
     if (user.role === 'TRAINEE') {
       return NextResponse.json(new ApiResponse(403, 'Unauthorised', {}), { status: 403 });

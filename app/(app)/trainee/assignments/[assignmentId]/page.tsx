@@ -2,7 +2,7 @@
 
 import { use } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
-import { getAssignmentById } from '@/services/apis/Assignments';
+import { getAssignmentById } from '@/services/apis/assignments';
 import { getSubmissionsByAssignment, submitAssignment } from '@/services/apis/submissions';
 
 import AssignmentCards from '@/components/assignments/AssignmentCards';

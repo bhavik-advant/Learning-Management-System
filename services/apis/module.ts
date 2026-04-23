@@ -32,7 +32,7 @@ export const editModule = async ({
   moduleId: string;
 }) => {
   const response = await fetch(`/api/course/${courseId}/module/${moduleId}`, {
-    method: 'POST',
+    method: 'PATCH',
     body: JSON.stringify({ title }),
     headers: {
       'Content-Type': 'application/json',

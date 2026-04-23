@@ -1,13 +1,32 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { prisma } from '@/utils/prisma-client';
 import getUserDetails from '@/lib/isAuth';
 import ApiResponse from '@/utils/api-response';
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
     const user = await getUserDetails();
 
+    if (user.role != 'MENTOR') {
+      return NextResponse.json(new ApiResponse(400, 'Not authorised', {}), { status: 400 });
+    }
+
     const submissions = await prisma.submission.findMany({
+      where: {
+        assignment: {
+          module: {
+            course: {
+              enrollments: {
+                some: {
+                  student: {
+                    mentorId: user.id,
+                  },
+                },
+              },
+            },
+          },
+        },
+      },
       include: {
         assignment: {
           select: {

@@ -1,11 +1,19 @@
 'use client';
 
-import { createAssignment } from '@/services/apis/Assignments';
+import { createAssignment } from '@/services/apis/assignments';
 import { useMutation } from '@tanstack/react-query';
-import React, { useImperativeHandle, useRef, useState } from 'react';
+import React, { Ref, useImperativeHandle, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 
-const AssignmentModal = ({ ref, moduleId,courseId }) => {
+const AssignmentModal = ({
+  ref,
+  moduleId,
+  courseId,
+}: {
+  ref: Ref<HTMLInputElement>;
+  moduleId: string;
+  courseId: string;
+}) => {
   const dialogRef = useRef<HTMLDialogElement | null>(null);
 
   const { mutateAsync, isPending } = useMutation({

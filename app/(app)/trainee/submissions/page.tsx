@@ -1,7 +1,6 @@
 import AssignmentCards from '@/components/assignments/AssignmentCards';
 import Submissions from '@/components/submissions/Submissions';
-// import { getAllAssignments } from '@/services/apis/Assignments';
-// import { getAllSubmissions, getSubmissionsByStudent } from '@/services/apis/submissions';
+
 import { FaRegFileAlt } from 'react-icons/fa';
 
 export default async function SubmissionsPage() {

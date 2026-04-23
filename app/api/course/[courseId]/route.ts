@@ -10,14 +10,7 @@ export const GET = async (
   req: NextRequest,
   { params }: { params: Promise<{ courseId: string }> }
 ) => {
-  let user;
-
-  try {
-    user = await getUserDetails();
-  } catch (error) {
-    const message = error instanceof Error ? error.message : 'Please login first';
-    return NextResponse.json(new ApiResponse(401, message, {}), { status: 401 });
-  }
+  const user = await getUserDetails();
 
   const { courseId } = await params;
 
@@ -27,6 +20,24 @@ export const GET = async (
     });
   }
 
+  const courseDetails = await prisma.course.findUnique({
+    where: { id: courseId },
+    select: {
+      enrollments: {
+        select: {
+          studentId: true,
+        },
+      },
+    },
+  });
+
+  if (!courseDetails) {
+    return NextResponse.json(new ApiResponse(401, 'Course not founc', {}), { status: 401 });
+  }
+
+  if (!courseDetails.enrollments.includes({ studentId: user.id }) && user.role == 'TRAINEE') {
+    return NextResponse.json(new ApiResponse(401, 'Unauthorised', {}), { status: 401 });
+  }
   const course = await prisma.course.findUnique({
     where: { id: courseId },
     select: {
@@ -54,7 +65,7 @@ export const GET = async (
               },
             },
           },
-          
+
           assignments: {
             select: {
               id: true,
@@ -93,33 +104,31 @@ export const GET = async (
     thumbnail: course.thumbnail?.url || null,
     status: course.status,
 
-    modules: course.modules.map((module) => ({
+    modules: course.modules.map(module => ({
       id: module.id,
       title: module.title,
 
-      lessons: module.lessons.map((lesson) => ({
+      lessons: module.lessons.map(lesson => ({
         id: lesson.id,
         title: lesson.title,
         url: lesson.videoFile?.url || lesson.videoUrl || null,
       })),
 
-      assignments: module.assignments.map((a) => ({
+      assignments: module.assignments.map(a => ({
         id: a.id,
         title: a.title,
         description: a.description,
         dueDate: a.dueDate,
         maxScore: a.maxScore,
 
-        
         submission: a.submissions[0] || null,
       })),
     })),
   };
 
-  return NextResponse.json(
-    new ApiResponse(200, 'Course fetched successfully', formattedCourse),
-    { status: 200 }
-  );
+  return NextResponse.json(new ApiResponse(200, 'Course fetched successfully', formattedCourse), {
+    status: 200,
+  });
 };
 
 export const PATCH = async (

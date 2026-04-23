@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
 import NewLesson from './NewLesson';
@@ -22,17 +23,17 @@ type ModuleFormEditProps = {
 
 const Modules: React.FC<ModuleFormEditProps> = ({ id, index, title, lessons }) => {
   const [showLessonForm, setShowLessonForm] = useState(false);
-  const assignmentRef = useRef(null);
+  // const assignmentRef = useRef(null);
 
-  const { id: courseId } = useParams();
+  // const { id: courseId } = useParams();
 
-  const handleShowAssignment = () => {
-    assignmentRef.current?.open();
-  };
+  // const handleShowAssignment = () => {
+  //   assignmentRef.current?.open();
+  // };
 
   return (
     <>
-      <AssignmentModal moduleId={id} courseId={courseId} ref={assignmentRef} />
+      {/* <AssignmentModal moduleId={id} courseId={courseId} ref={assignmentRef} /> */}
       <div className="mt-4 space-y-4  ">
         {/* <div className="flex items-center justify-between gap-4">
           <h2 className="text-lg text-gray-600">Module Details</h2>

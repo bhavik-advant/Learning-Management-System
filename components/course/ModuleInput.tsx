@@ -1,15 +1,17 @@
 'use client';
 
 import { editModule } from '@/services/apis/module';
+import { Course } from '@/types/types';
 import queryClient from '@/utils/query-client';
 import { useMutation } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
-import { BiEdit, BiSave } from 'react-icons/bi';
+import { BiSave } from 'react-icons/bi';
 import { MdClose } from 'react-icons/md';
+import { RiLoader4Fill } from 'react-icons/ri';
 import { VscEdit } from 'react-icons/vsc';
 
-const ModuleInput: React.FC<{ title?: string; moduleId: string; index: string }> = ({
+const ModuleInput: React.FC<{ title?: string; moduleId: string; index: number }> = ({
   title,
   moduleId,
   index,
@@ -20,18 +22,19 @@ const ModuleInput: React.FC<{ title?: string; moduleId: string; index: string }>
     mutationFn: editModule,
     onSuccess: (data, variable) => {
       try {
-        queryClient.setQueryData(['courses', courseId], (old: any) => {
+        queryClient.setQueryData(['courses', courseId], (old: Course) => {
           if (!old) return old;
-          console.log(old, ' and ', data);
 
           return {
-            ...old.data,
-            modules: old.modules.map((module: any) =>
+            ...old,
+            modules: old.modules.map(module =>
               module.id === variable.moduleId ? { ...module, title: variable.title } : module
             ),
           };
         });
-      } catch (error) {}
+      } catch (error) {
+        console.log(error);
+      }
     },
   });
 
@@ -74,7 +77,11 @@ const ModuleInput: React.FC<{ title?: string; moduleId: string; index: string }>
               disabled={isPending}
               className="bg-blue-500/20 p-2 rounded-lg hover:bg-blue-500/30 transition disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              <BiSave className={`text-blue-500 ${isPending ? 'animate-spin' : ''}`} />
+              {isPending ? (
+                <RiLoader4Fill className=" border-blue-400 animate-spin" />
+              ) : (
+                <BiSave className="text-blue-500 " />
+              )}
             </button>
           </div>
         ) : (

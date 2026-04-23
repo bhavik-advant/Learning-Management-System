@@ -1,9 +1,16 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/utils/prisma-client';
 import ApiResponse from '@/utils/api-response';
+import getUserDetails from '@/lib/isAuth';
 
 export const GET = async () => {
   try {
+    const user = await getUserDetails();
+
+    if (user.role !== 'ADMIN') {
+      return NextResponse.json(new ApiResponse(401, 'Unauthorised', {}), { status: 401 });
+    }
+
     const courses = await prisma.course.findMany({
       where: {
         status: 'PENDING',

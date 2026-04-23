@@ -1,18 +1,13 @@
 import getUserDetails from '@/lib/isAuth';
 import ApiResponse from '@/utils/api-response';
 import { prisma } from '@/utils/prisma-client';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 
-export async function GET(req: NextRequest) {
+export async function GET() {
   try {
-    const user = await getUserDetails();
-    const clerkId = user.clerkId;
+    const currentUser = await getUserDetails();
 
-    const currentUser = await prisma.user.findUnique({
-      where: { clerkId },
-    });
-
-    if (!currentUser || currentUser.role === 'TRAINEE' || currentUser.role === 'MENTOR') {
+    if (!currentUser || currentUser.role !== 'ADMIN') {
       return NextResponse.json(new ApiResponse(403, 'Forbidden', null), { status: 403 });
     }
 
