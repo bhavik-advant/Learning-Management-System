@@ -1,9 +1,11 @@
+import { SubmissionStatus } from '@/generated/prisma/enums';
+
 export type SubmissionType = {
   id: string;
   fileUrl: string;
   score?: number | null;
   feedback?: string | null;
-  status: string;
+  status: SubmissionStatus;
   isActive: boolean;
   submittedAt: string;
   gradedAt?: string | null;
@@ -81,4 +83,26 @@ export const updateFeedback = async ({
   }
 
   return response.json();
+};
+
+export const getSubmissionsByTrainee = async () => {
+  const res = await fetch(`/api/submission/trainee`);
+  const data = await res.json();
+  return data.data;
+};
+
+// services/apis/submissions.ts
+
+export const getAllSubmissionsAdmin = async () => {
+  const res = await fetch('/api/admin/submissions', {
+    method: 'GET',
+    credentials: 'include',
+  });
+
+  if (!res.ok) {
+    throw new Error('Failed to fetch submissions');
+  }
+
+  const result = await res.json();
+  return result.data;
 };

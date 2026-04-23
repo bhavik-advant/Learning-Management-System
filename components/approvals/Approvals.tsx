@@ -83,7 +83,7 @@ export default function ApprovalsPage() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <ApprovalTable courses={courses} />
+        <ApprovalTable courses={courses ?? []} />
       </div>
     </div>
   );

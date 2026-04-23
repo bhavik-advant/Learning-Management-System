@@ -15,9 +15,16 @@ export default function CoursesPage() {
 
   return (
     <section className="mx-8 space-y-5 mt-5">
-      <div>
-        <h1 className="text-3xl font-bold">Courses</h1>
-        <p>Explore and enroll in courses</p>
+      <div className="space-y-1">
+        <p className="text-[11px] font-semibold tracking-[0.15em] uppercase text-indigo-500 dark:text-indigo-400">
+          Learning Progress
+        </p>
+        <h1 className="text-3xl font-extrabold tracking-tight text-gray-900 dark:text-white">
+          My Courses
+        </h1>
+        <p className="text-sm text-gray-500 dark:text-gray-400">
+          Track, submit, and review your course work
+        </p>
       </div>
       <div>
         <Courses btnText="Continue Learning" courses={courses} />

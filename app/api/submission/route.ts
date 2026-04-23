@@ -55,6 +55,12 @@ export async function GET() {
             username: true,
             email: true,
             image: true,
+            mentor: {
+              select: {
+                id: true,
+                username: true,
+              },
+            },
           },
         },
       },
@@ -63,8 +69,28 @@ export async function GET() {
       },
     });
 
+    const formatted = submissions.map(s => ({
+      id: s.id,
+      status: s.status,
+      fileUrl: s.fileUrl,
+      score: s.score,
+      maxScore: s.assignment.maxScore,
+      submittedAt: s.submittedAt,
+      student: {
+        name: s.student.username,
+        mentorName: s.student.mentor?.username || 'N/A',
+      },
+      course: {
+        title: s.assignment.module.course.title,
+      },
+      assignment: {
+        title: s.assignment.title,
+      },
+    }));
+
     return NextResponse.json(
-      new ApiResponse(200, 'All submissions fetched successfully', submissions),
+      new ApiResponse(200, 'All submissions fetched successfully', formatted),
+
       { status: 200 }
     );
   } catch (err) {

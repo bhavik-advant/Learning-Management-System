@@ -6,6 +6,11 @@ import { getCourseById } from '@/services/apis/courses';
 import ApproveButton from '@/components/ui/ApproveButton';
 import Link from 'next/link';
 import Image from 'next/image';
+import { getEmbedUrl } from '@/utils/embeded-url';
+
+const isYouTubeUrl = (url: string) => url.includes('youtube.com') || url.includes('youtu.be');
+
+const isVideoFile = (url: string) => /\.(mp4|webm|ogg)$/i.test(url);
 
 type Props = {
   params: Promise<{ courseId: string }>;
@@ -51,6 +56,7 @@ type Course = {
 export default function CourseDetailsPage({ params }: Props) {
   const { courseId } = use(params);
   const [expandedModule, setExpandedModule] = useState<string | null>(null);
+  const [isVideoLoading, setIsVideoLoading] = useState(true);
 
   const {
     data: course,
@@ -189,9 +195,43 @@ export default function CourseDetailsPage({ params }: Props) {
 
               <div className="aspect-video bg-black">
                 {currentLesson?.url ? (
-                  <video key={currentLesson.id} controls className="w-full h-full">
-                    <source src={currentLesson.url} />
-                  </video>
+                  isYouTubeUrl(currentLesson.url) ? (
+                    <div className="relative w-full h-full">
+                      {isVideoLoading && (
+                        <div className="absolute inset-0 flex items-center justify-center bg-black z-10">
+                          <div className="flex items-center gap-3 text-white/80">
+                            <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                            Loading video...
+                          </div>
+                        </div>
+                      )}
+
+                      <iframe
+                        key={currentLesson.id}
+                        src={getEmbedUrl(currentLesson.url)}
+                        className="w-full h-full"
+                        allow="autoplay; encrypted-media"
+                        allowFullScreen
+                        onLoad={() => setIsVideoLoading(false)}
+                      />
+                    </div>
+                  ) : isVideoFile(currentLesson.url) ? (
+                    <video key={currentLesson.id} controls className="w-full h-full">
+                      <source src={currentLesson.url} />
+                    </video>
+                  ) : (
+                    <div className="w-full h-full flex flex-col items-center justify-center gap-4 text-white">
+                      <p className="text-sm text-white/70">This lesson is hosted externally</p>
+                      <a
+                        href={currentLesson.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="px-6 py-2 rounded-lg bg-indigo-600 hover:bg-indigo-700 transition"
+                      >
+                        Open Course
+                      </a>
+                    </div>
+                  )
                 ) : (
                   <div className="w-full h-full flex flex-col items-center justify-center">
                     <div className="w-20 h-20 rounded-full bg-white/10 flex items-center justify-center mb-4">
@@ -314,7 +354,10 @@ export default function CourseDetailsPage({ params }: Props) {
                       {module.lessons.map((lesson, lessonIndex) => (
                         <div
                           key={lesson.id}
-                          onClick={() => setActiveLesson(lesson)}
+                          onClick={() => {
+                            setIsVideoLoading(true);
+                            setActiveLesson(lesson);
+                          }}
                           className={`p-3 flex items-center gap-3 cursor-pointer transition ${
                             currentLesson?.id === lesson.id
                               ? 'bg-indigo-50 dark:bg-indigo-900/20 border-l-4 border-indigo-500'
@@ -343,7 +386,7 @@ export default function CourseDetailsPage({ params }: Props) {
 
                           {module.assignments.map(assignment => {
                             return (
-                              <Link href={`/assignment/${assignment.id}`} key={assignment.id}>
+                              <Link href={`../assignment/${assignment.id}`} key={assignment.id}>
                                 <div className="p-2 rounded-lg border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900">
                                   <div className="flex justify-between items-center">
                                     <p className="text-xs font-medium text-gray-900 dark:text-white">

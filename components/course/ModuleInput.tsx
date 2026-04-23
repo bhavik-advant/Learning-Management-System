@@ -1,12 +1,12 @@
 'use client';
 
-import { editModule } from '@/services/apis/module';
+import { deleteModule, editModule } from '@/services/apis/module';
 import { Course } from '@/types/types';
 import queryClient from '@/utils/query-client';
 import { useMutation } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
-import { BiSave } from 'react-icons/bi';
+import { BiSave, BiTrash } from 'react-icons/bi';
 import { MdClose } from 'react-icons/md';
 import { RiLoader4Fill } from 'react-icons/ri';
 import { VscEdit } from 'react-icons/vsc';
@@ -41,6 +41,22 @@ const ModuleInput: React.FC<{ title?: string; moduleId: string; index: number }>
   const [text, setText] = useState<string>(title ?? '');
   const [showEditForm, setShowEditForm] = useState(false);
 
+  const { mutateAsync: deleteModuleFunc, isPending: isDeleting } = useMutation({
+    mutationFn: deleteModule,
+    onSuccess: () => {
+      queryClient.setQueryData(['courses', courseId], (old: Course) => {
+        if (!old) {
+          return old;
+        }
+
+        return {
+          ...old,
+          modules: old.modules.filter(module => module.id != moduleId),
+        };
+      });
+    },
+  });
+
   const handleEditTitle = async () => {
     if (text.trim() == '') {
       return;
@@ -50,12 +66,16 @@ const ModuleInput: React.FC<{ title?: string; moduleId: string; index: number }>
     setShowEditForm(false);
   };
 
+  const handleDelete = async () => {
+    await deleteModuleFunc({ courseId, moduleId });
+  };
+
   return (
     <div className="flex justify-center bg-white  items-center gap-4">
       <h4 className="text-md font-medium">{index + 1}</h4>
       <div className="border flex-1 max-w-[700px] flex justify-between w-full border-gray-400/40 p-2 rounded-lg">
         <input
-          className="flex text-sm h-9 px-2 focus:outline-none transition disabled:cursor-not-allowed disabled:opacity-70"
+          className="flex-1 text-sm h-9 px-2 focus:outline-none transition disabled:cursor-not-allowed disabled:opacity-70"
           value={text}
           onChange={event => setText(event.target.value)}
           type="text"
@@ -85,12 +105,28 @@ const ModuleInput: React.FC<{ title?: string; moduleId: string; index: number }>
             </button>
           </div>
         ) : (
-          <button
-            onClick={() => setShowEditForm(true)}
-            className="bg-blue-500/20 p-2 rounded-lg hover:bg-blue-500/30 transition"
-          >
-            <VscEdit className="text-blue-500" />
-          </button>
+          <div className="flex gap-4">
+            <button
+              onClick={() => setShowEditForm(true)}
+              disabled={isDeleting}
+              className="bg-blue-500/20 p-2 rounded-lg hover:bg-blue-500/30 transition"
+            >
+              <VscEdit className="text-blue-500" />
+            </button>
+            <button
+              disabled={isDeleting}
+              onClick={handleDelete}
+              className="bg-red-500/20 p-2 rounded-lg hover:bg-blue-500/30 transition"
+            >
+              {isDeleting ? (
+                <RiLoader4Fill className=" border-red-400 animate-spin" />
+              ) : (
+                <BiTrash
+                  className={`text-red-500 dark:text-red-300 ${isDeleting && 'animate-spin'}`}
+                />
+              )}
+            </button>
+          </div>
         )}
       </div>
     </div>

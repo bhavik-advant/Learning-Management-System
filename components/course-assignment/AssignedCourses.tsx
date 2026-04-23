@@ -81,7 +81,7 @@ const AssignedCourses = ({ traineeId }: { traineeId: string }) => {
     }
   };
 
-  const { mutateAsync: restrictCourseForTrainee } = useMutation({
+  const { mutateAsync: restrictCourseForTrainee, isPending } = useMutation({
     mutationFn: restrictCourse,
     onSuccess: (data, variable) => {
       queryClient.setQueryData(
@@ -96,7 +96,7 @@ const AssignedCourses = ({ traineeId }: { traineeId: string }) => {
         }
       );
 
-      queryClient.invalidateQueries({queryKey : ['assignable-courses', traineeId]});
+      queryClient.invalidateQueries({ queryKey: ['assignable-courses', traineeId] });
       setSelectedCourses([]);
     },
   });
@@ -114,7 +114,9 @@ const AssignedCourses = ({ traineeId }: { traineeId: string }) => {
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-      <div className="lg:col-span-2 space-y-4">
+      <div
+        className={` ${selectedCourses.length > 0 ? 'lg:col-span-2' : 'lg:col-span-3'}  space-y-4`}
+      >
         {!isTraineeSelected && (
           <Card className="shadow-md border border-dashed border-border">
             <CardContent className="pt-16 pb-16 flex items-center justify-center min-h-64">
@@ -222,8 +224,10 @@ const AssignedCourses = ({ traineeId }: { traineeId: string }) => {
         )}
       </div>
 
-      {isTraineeSelected && !isLoading && !isError && (
+      {selectedCourses.length > 0 && (
         <Summery
+          isLoading={isPending}
+          pendingText="Taking Access.."
           actionLabel="Restrict"
           selectedTraineeId={traineeId}
           selectedCourses={selectedCourses}

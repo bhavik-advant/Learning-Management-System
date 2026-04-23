@@ -56,7 +56,7 @@ const AssignableCourses = ({ selectedTraineeId }: { selectedTraineeId: string })
     },
   });
 
-  const { mutateAsync: assignCourseToTrainee } = useMutation({
+  const { mutateAsync: assignCourseToTrainee, isPending } = useMutation({
     mutationFn: assignCourse,
     onSuccess: (data, variable) => {
       queryClient.setQueryData(
@@ -113,7 +113,9 @@ const AssignableCourses = ({ selectedTraineeId }: { selectedTraineeId: string })
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-      <div className="lg:col-span-2 space-y-4">
+      <div
+        className={` ${selectedCourses.length > 0 ? 'lg:col-span-2' : 'lg:col-span-3'}  space-y-4`}
+      >
         {!isTraineeSelected && (
           <Card className="shadow-md border border-dashed border-border">
             <CardContent className="pt-16 pb-16 flex items-center justify-center min-h-96">
@@ -180,7 +182,7 @@ const AssignableCourses = ({ selectedTraineeId }: { selectedTraineeId: string })
         )}
 
         {isTraineeSelected && !isLoading && !isError && hasCoursesWithData && (
-          <Card className="shadow-md border border-border">
+          <Card className="shadow-md border border-border ">
             <CardHeader className="border-b border-border py-2 px-4">
               <CardTitle className="text-sm">Assignable Courses</CardTitle>
               <CardDescription className="text-xs">
@@ -221,12 +223,14 @@ const AssignableCourses = ({ selectedTraineeId }: { selectedTraineeId: string })
         )}
       </div>
 
-      {isTraineeSelected && !isLoading && !isError && (
+      {selectedCourses.length > 0 && (
         <Summery
           selectedTraineeId={selectedTraineeId}
           selectedCourses={selectedCourses}
           onAction={handleAssignCourse}
           actionLabel="Assign"
+          pendingText="Assigning..."
+          isLoading={isPending}
         />
       )}
     </div>

@@ -30,22 +30,12 @@ export async function POST(req: NextRequest) {
 
     const upload = await uploadToCloudinary(file);
 
-    const submission = await prisma.submission.upsert({
-      where: {
-        assignmentId_studentId: {
-          assignmentId,
-          studentId: user.id,
-        },
-      },
-      update: {
-        fileUrl: upload.url,
-        status: 'RESUBMITTED',
-        submittedAt: new Date(),
-      },
-      create: {
+    const submission = await prisma.submission.create({
+      data: {
         assignmentId,
         studentId: user.id,
         fileUrl: upload.url,
+        submittedAt: new Date(),
       },
     });
 

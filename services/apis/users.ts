@@ -123,3 +123,5 @@ export const getAllTrainee = async () => {
 
   return json.data;
 };
+
+

@@ -1,13 +1,4 @@
-export type SubmissionType = {
-  id: string;
-  fileId: string;
-  score?: number;
-  feedback: string;
-  isActive: boolean;
-  submittedAt: string;
-  assignmentId: string;
-  studentId: string;
-};
+import { SubmissionType } from '@/services/apis/submissions';
 
 type Props = {
   submissions: SubmissionType[];
@@ -30,37 +21,48 @@ export default function SubmissionHistory({ submissions, maxScore }: Props) {
             >
               <div className="flex justify-between items-start">
                 <div>
-                  <h3 className="font-semibold text-lg">Submission #{index + 1}</h3>
+                  <h3 className="font-semibold text-lg">
+                    Submission #{submissions.length - index}
+                  </h3>
+
                   <p className="text-sm text-gray-500">
-                    Submitted on {new Date(submission.submittedAt).toLocaleDateString()}
+                    Submitted on {new Date(submission.submittedAt).toLocaleString()}
                   </p>
                 </div>
 
                 <div className="text-right">
                   <p className="text-2xl font-bold text-purple-600">
-                    {submission?.score}
+                    {submission.score ?? '--'}
                     <span className="text-sm text-gray-500"> / {maxScore}</span>
                   </p>
 
                   <span
                     className={`inline-block mt-1 px-3 py-1 text-xs rounded-full ${
-                      submission.score
+                      submission.status === 'GRADED'
                         ? 'bg-green-100 text-green-700'
                         : 'bg-yellow-100 text-yellow-700'
                     }`}
                   >
-                    {submission.score ? 'Graded' : 'Pending'}
+                    {submission.status}
                   </span>
                 </div>
               </div>
 
               <div className="mt-4 rounded-xl bg-gray-100 dark:bg-gray-800 p-4">
                 <p className="font-medium text-sm mb-1">Feedback:</p>
-                <p className="text-sm text-gray-600 dark:text-gray-300">{submission.feedback}</p>
+
+                <p className="text-sm text-gray-600 dark:text-gray-300">
+                  {submission.feedback || 'No feedback yet'}
+                </p>
               </div>
 
               <div className="mt-3">
-                <a href="#" className="text-sm text-purple-600 hover:underline">
+                <a
+                  href={submission.fileUrl}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-sm text-purple-600 hover:underline"
+                >
                   View Submitted File
                 </a>
               </div>

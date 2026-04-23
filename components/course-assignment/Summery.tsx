@@ -22,11 +22,14 @@ type SummeryProps = {
   onAction: () => Promise<void>;
   actionLabel?: string;
   title?: string;
+  isLoading: boolean;
+  pendingText: string;
 };
 
 const Summery = ({
   selectedCourses,
-  selectedTraineeId,
+  pendingText,
+  isLoading,
   onAction,
   actionLabel = 'Assign',
   title = 'Selected',
@@ -37,7 +40,7 @@ const Summery = ({
 
   return (
     <div className="lg:col-span-1">
-      <Card className="sticky top-8 h-fit shadow-md border border-border">
+      <Card className=" h-fit shadow-md border border-border">
         <CardHeader className="py-2 px-4 border-b border-border">
           <CardTitle className="text-sm">{title}</CardTitle>
           <CardDescription className="text-xs">{selectedCourses.length} course(s)</CardDescription>
@@ -45,7 +48,7 @@ const Summery = ({
         <CardContent className="pt-2 px-4 pb-4">
           {selectedCourses.length > 0 ? (
             <div className="space-y-2">
-              <div className="space-y-1 max-h-56 overflow-y-auto">
+              <div className="space-y-1  overflow-y-auto">
                 {selectedCourses.map(course => (
                   <div
                     key={course.id}
@@ -72,7 +75,7 @@ const Summery = ({
                 onClick={handleAction}
                 className="w-full bg-blue-600 hover:bg-blue-700 shadow-md hover:shadow-lg text-white text-xs font-medium py-1.5 px-3 rounded transition-all mt-2"
               >
-                {actionLabel}
+                {isLoading ? pendingText : actionLabel}
               </button>
             </div>
           ) : (

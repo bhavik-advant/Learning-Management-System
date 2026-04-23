@@ -1,7 +1,8 @@
 'use client';
 
 import Image from 'next/image';
-import logo from '@/assets/education.png';
+import logo from '@/public/light-eduvant.png';
+import Darklogo from '@/public/dark-eduvant.png';
 import { CgClose } from 'react-icons/cg';
 import NavLink from './NavLink';
 import { sidebarMenu } from '@/utils/sidebar-menu-helper';
@@ -32,12 +33,24 @@ const Sidebar: React.FC<SidebarProps> = ({ show, onClick, role, user }) => {
       transform transition-transform duration-300 ease-in-out
       ${show ? 'translate-x-0' : '-translate-x-full'} lg:translate-x-0`}
     >
-      <div className="flex justify-between items-center px-4 h-18 py-4 border-b border-gray-200 dark:border-gray-700">
-        <div className="flex items-center gap-3">
-          <Image src={logo} alt="logo" width={40} height={40} />
-          <h1 className="text-lg font-semibold tracking-tight">
-            Tech<span className="text-blue-600">LMS</span>
-          </h1>
+      <div className="flex justify-between items-center px-4 py-3 border-b border-gray-200 dark:border-gray-700">
+        <div className="flex justify-center items-center gap-2 dark:hidden">
+          <Image
+            src={logo}
+            alt="EduVant logo"
+            width={200}
+            height={40}
+            className="object-contain "
+          />
+        </div>
+        <div className="flex justify-center items-center gap-2 hidden dark:block">
+          <Image
+            src={Darklogo}
+            alt="EduVant logo"
+            width={180}
+            height={40}
+            className="object-contain "
+          />
         </div>
 
         <button

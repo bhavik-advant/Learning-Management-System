@@ -10,7 +10,19 @@ const formatDate = (date: string) => {
   }).format(new Date(date));
 };
 
-const TraineeDetails = ({ traineeDetails }) => {
+type TraineeType = {
+  username: string;
+  email: string;
+  role: string;
+  image?: string | null;
+  createdAt: string;
+};
+
+type Props = {
+  traineeDetails: TraineeType | null;
+};
+
+const TraineeDetails = ({ traineeDetails }: Props) => {
   return (
     <div className="lg:col-span-1">
       {traineeDetails ? (

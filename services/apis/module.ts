@@ -53,3 +53,29 @@ export const editModule = async ({
 
   return result.data;
 };
+
+export const deleteModule = async ({
+  courseId,
+  moduleId,
+}: {
+  courseId: string;
+  moduleId: string;
+}) => {
+  const response = await fetch(`/api/course/${courseId}/module/${moduleId}`, {
+    method: 'DELETE',
+  });
+
+  if (!response.ok) {
+    console.log(response);
+
+    throw new Error('Failed to create coursess');
+  }
+
+  const result = await response.json();
+
+  if (!result.success && result.statusCode != 200) {
+    throw new Error(result.message);
+  }
+
+  return result.data;
+};

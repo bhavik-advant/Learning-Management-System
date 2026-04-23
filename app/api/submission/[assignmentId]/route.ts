@@ -20,12 +20,14 @@ export async function GET(
         submittedAt: 'desc',
       },
     });
-    console.log(submissions);
+    // console.log(submissions);
 
     return NextResponse.json(new ApiResponse(200, 'Submissions fetched', submissions), {
       status: 200,
     });
   } catch (err) {
+    console.log(err);
+
     return NextResponse.json(new ApiResponse(500, 'Error fetching submissions', {}), {
       status: 500,
     });

@@ -34,7 +34,7 @@ const CourseLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => 
         </ul>
         <div className="relative  h-1 bg-gray-200 rounded-full ">
           <div
-            className="h-full bg-blue-500 transition-all duration-300"
+            className="h-full rounded-full bg-blue-500 transition-all duration-300"
             style={{ width: `${isContent ? 100 : 50}%` }}
           />
 
