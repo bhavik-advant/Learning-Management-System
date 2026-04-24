@@ -1,4 +1,4 @@
-import { deletedLesson } from '@/services/apis/lesson';
+import { deleteLesson } from '@/services/apis/lesson';
 import { getEmbedUrl } from '@/utils/embeded-url';
 import queryClient from '@/utils/query-client';
 import { useMutation } from '@tanstack/react-query';
@@ -6,9 +6,9 @@ import { useParams } from 'next/navigation';
 import { useState } from 'react';
 import { BiTrash } from 'react-icons/bi';
 import { VscEdit } from 'react-icons/vsc';
-import NewLesson from './NewLesson';
-import LessonForm from './LessonForm';
 import EditLesson from './EditLesson';
+import { Course } from '@/types/types';
+import { Card } from '../ui/card';
 
 type Lesson = {
   id: string;
@@ -27,21 +27,21 @@ const Lessons: React.FC<LessonEditFormProps> = ({ lesson, moduleId }) => {
   const embedUrl = getEmbedUrl(lesson.url);
 
   const { isPending: deleting, mutateAsync: deleteAsync } = useMutation({
-    mutationFn: deletedLesson,
+    mutationFn: deleteLesson,
     onSuccess: data => {
       try {
         const deletedLesson = data;
-        queryClient.setQueryData(['courses', courseId], (old: any) => {
+        queryClient.setQueryData(['courses', courseId], (old: Course) => {
           if (!old) return old;
           return {
             ...old,
-            modules: old.modules.map((module: any) => {
+            modules: old.modules.map(module => {
               if (module.id !== deletedLesson.moduleId) {
                 return module;
               }
               return {
                 ...module,
-                lessons: module.lessons.filter((lesson: any) => lesson.id !== deletedLesson.id),
+                lessons: module.lessons.filter(lesson => lesson.id !== deletedLesson.id),
               };
             }),
           };
@@ -51,20 +51,16 @@ const Lessons: React.FC<LessonEditFormProps> = ({ lesson, moduleId }) => {
       }
     },
   });
+
   const handleDeleteLesson = async () => {
-    const response = await deleteAsync({ courseId, moduleId, lessonId: lesson.id });
-    console.log(response);
+    await deleteAsync({ courseId, moduleId, lessonId: lesson.id });
   };
+
   return (
-    <div className="flex justify-center bg-white  items-center">
-      <div className="max-w-[500px] flex-1 border border-gray-400/30 p-4 rounded-lg">
-        <div className="flex justify-between items-center mb-2">
-          <div className="flex items-center gap-2">
-            <label className="block text-md font-medium text-gray-700 dark:text-gray-300">
-              Lesson :
-            </label>
-            <p className="text-sm">{lesson.title}</p>
-          </div>
+    <div className="flex justify-center bg-white dark:bg-[#1e2939]  items-center">
+      <Card className="max-w-[500px] flex-1 border border-gray-400/30 p-4 ">
+        <div className="flex justify-between items-center px-2  ">
+          <div className=" font-medium">{lesson.title}</div>
 
           <div className="flex gap-4">
             <button
@@ -104,14 +100,14 @@ const Lessons: React.FC<LessonEditFormProps> = ({ lesson, moduleId }) => {
             <iframe
               src={embedUrl}
               title={lesson.title}
-              className="w-full h-64 rounded-lg"
+              className="w-full h-64 rounded-2xl"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
               referrerPolicy="strict-origin-when-cross-origin"
               allowFullScreen
             ></iframe>
           </div>
         )}
-      </div>
+      </Card>
     </div>
   );
 };

@@ -8,7 +8,8 @@ import Courses from '@/components/ui/Courses';
 import Assignments from '@/components/assignments/Assignments';
 import { useQuery } from '@tanstack/react-query';
 import { getTraineeCourses } from '@/services/apis/courses';
-import { AssignmentType, getTraineeAssignments } from '@/services/apis/Assignments';
+
+import { AssignmentType, getTraineeAssignments } from '@/services/apis/assignments';
 import Link from 'next/link';
 import Loading from '@/components/ui/loading';
 

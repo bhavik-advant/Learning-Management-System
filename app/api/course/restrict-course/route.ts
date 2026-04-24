@@ -7,7 +7,7 @@ export const DELETE = async (req: NextRequest) => {
   try {
     const user = await getUserDetails();
 
-    if (user.role == 'TRAINEE') {
+    if (user.role !== 'MENTOR') {
       return NextResponse.json(new ApiResponse(401, 'Unauthorised', {}), { status: 401 });
     }
 
@@ -15,7 +15,18 @@ export const DELETE = async (req: NextRequest) => {
 
     const { courseIds, traineeId }: { courseIds: string[]; traineeId: string } = body;
 
-    const newEnrollment = await Promise.all(
+    const userDetails = await prisma.user.findUnique({
+      where: { id: traineeId },
+      select: {
+        mentorId: true,
+      },
+    });
+
+    if (userDetails?.mentorId != user.id) {
+      return NextResponse.json(new ApiResponse(401, 'Unauthorised', {}), { status: 401 });
+    }
+
+    await Promise.all(
       courseIds.map(courseId => {
         return prisma.enrollment.deleteMany({
           where: {
@@ -31,7 +42,7 @@ export const DELETE = async (req: NextRequest) => {
     });
   } catch (error) {
     console.log(error);
-    const errorMessage = error instanceof Error ? error.message : 'Internal Server Error'
+    const errorMessage = error instanceof Error ? error.message : 'Internal Server Error';
     return NextResponse.json(new ApiResponse(401, errorMessage || 'Error', {}), {
       status: 401,
     });

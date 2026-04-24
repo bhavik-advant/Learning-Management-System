@@ -1,9 +1,11 @@
+import { SubmissionStatus } from '@/generated/prisma/enums';
+
 export type SubmissionType = {
   id: string;
   fileUrl: string;
   score?: number | null;
   feedback?: string | null;
-  status: string;
+  status: SubmissionStatus;
   isActive: boolean;
   submittedAt: string;
   gradedAt?: string | null;

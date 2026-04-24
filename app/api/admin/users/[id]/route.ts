@@ -2,19 +2,11 @@ import { NextRequest, NextResponse } from 'next/server';
 import ApiResponse from '@/utils/api-response';
 import { prisma } from '@/utils/prisma-client';
 import { auth } from '@clerk/nextjs/server';
+import getUserDetails from '@/lib/isAuth';
 
-// GET /api/admin/users/:id — fetch single user details for admin
 export const GET = async (_req: Request, { params }: { params: Promise<{ id: string }> }) => {
   try {
-    const { userId: clerkId } = await auth();
-
-    if (!clerkId) {
-      return NextResponse.json(new ApiResponse(401, 'Please login first', null), { status: 401 });
-    }
-
-    const currentUser = await prisma.user.findUnique({
-      where: { clerkId },
-    });
+    const currentUser = await getUserDetails();
 
     if (!currentUser || currentUser.role === 'TRAINEE') {
       return NextResponse.json(new ApiResponse(403, 'Forbidden', null), { status: 403 });
@@ -135,7 +127,7 @@ export const PATCH = async (req: NextRequest, { params }: { params: Promise<{ id
         email: email ?? existingUser.email,
         image: image ?? existingUser.image,
         role: nextRole,
-        mentorId: nextRole === 'TRAINEE' ? nextMentorId ?? existingUser.mentorId : undefined,
+        mentorId: nextRole === 'TRAINEE' ? (nextMentorId ?? existingUser.mentorId) : undefined,
       },
     });
 

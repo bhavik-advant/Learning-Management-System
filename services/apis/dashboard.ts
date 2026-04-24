@@ -11,7 +11,6 @@ export const getDashBoardData = async () => {
     }
 
     console.log(result);
-    
 
     return result.data;
   } catch (error) {

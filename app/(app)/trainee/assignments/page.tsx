@@ -3,7 +3,7 @@
 import AssignmentCards from '@/components/assignments/AssignmentCards';
 import Assignments from '@/components/assignments/Assignments';
 import { useQuery } from '@tanstack/react-query';
-import { getTraineeAssignments } from '@/services/apis/Assignments';
+import { getTraineeAssignments } from '@/services/apis/assignments';
 import { BsFileEarmarkText, BsClockHistory, BsCheckCircleFill } from 'react-icons/bs';
 import { useState } from 'react';
 
@@ -90,7 +90,7 @@ export default function AssignmentPage() {
             </span>
             <div className="w-36 h-1.5 rounded-full bg-gray-200 dark:bg-gray-800 overflow-hidden">
               <div
-                className="h-full rounded-full bg-gradient-to-r from-indigo-500 to-emerald-500 transition-all duration-700"
+                className="h-full rounded-full bg-linear-to-r from-indigo-500 to-emerald-500 transition-all duration-700"
                 style={{ width: `${(completed / total) * 100}%` }}
               />
             </div>

@@ -7,7 +7,7 @@ export const POST = async (req: NextRequest) => {
   try {
     const user = await getUserDetails();
 
-    if (user.role == 'TRAINEE') {
+    if (user.role !== 'MENTOR') {
       return NextResponse.json(new ApiResponse(401, 'Unauthorised', {}), { status: 401 });
     }
 
@@ -15,7 +15,18 @@ export const POST = async (req: NextRequest) => {
 
     const { courseIds, traineeId }: { courseIds: string[]; traineeId: string } = body;
 
-    const newEnrollment = await Promise.all(
+    const userDetails = await prisma.user.findUnique({
+      where: { id: traineeId },
+      select: {
+        mentorId: true,
+      },
+    });
+
+    if (userDetails?.mentorId != user.id) {
+      return NextResponse.json(new ApiResponse(401, 'Unauthorised', {}), { status: 401 });
+    }
+
+    await Promise.all(
       courseIds.map(courseId => {
         return prisma.enrollment.create({
           data: {

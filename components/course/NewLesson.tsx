@@ -2,23 +2,17 @@
 
 import { addLesson } from '@/services/apis/lesson';
 import { useMutation } from '@tanstack/react-query';
-import React, { useRef, useState } from 'react';
-import { BiPlus, BiLinkAlt, BiVideo } from 'react-icons/bi';
 import { useParams } from 'next/navigation';
 import queryClient from '@/utils/query-client';
-import { CiSaveUp2 } from 'react-icons/ci';
+import LessonForm from './LessonForm';
+import { Course } from '@/types/types';
 
 type LessonAddFormProps = {
   moduleId: string;
-  onClose : () => void
+  onClose: () => void;
 };
 
-const NewLesson: React.FC<LessonAddFormProps> = ({ moduleId ,onClose}) => {
-  const [file, setFile] = useState<File | null>(null);
-  const [title, setTitle] = useState('');
-  const [link, setLink] = useState('');
-  const [showStringForm, setShowStringForm] = useState<boolean>(false);
-  const inputRef = useRef<HTMLInputElement>(null);
+const NewLesson: React.FC<LessonAddFormProps> = ({ moduleId, onClose }) => {
   const { id: courseId } = useParams<{ id: string }>();
 
   const { mutateAsync, isPending } = useMutation({
@@ -31,12 +25,12 @@ const NewLesson: React.FC<LessonAddFormProps> = ({ moduleId ,onClose}) => {
           url: data.url || null,
         };
 
-        queryClient.setQueryData(['courses', courseId], (oldData: any) => {
+        queryClient.setQueryData(['courses', courseId], (oldData: Course) => {
           if (!oldData) return oldData;
 
           return {
             ...oldData,
-            modules: oldData.modules.map((module: any) =>
+            modules: oldData.modules.map(module =>
               module.id === variables.moduleId
                 ? {
                     ...module,
@@ -46,144 +40,44 @@ const NewLesson: React.FC<LessonAddFormProps> = ({ moduleId ,onClose}) => {
             ),
           };
         });
+        onClose();
       } catch (error) {
         console.log(error);
       }
     },
   });
 
-  const handleChangeImage = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const incomingFile = event.target.files?.[0];
-    if (!incomingFile) return;
-    setFile(incomingFile);
-  };
-
-  const handleAddLesson = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-
+  const handleAddLesson = async ({
+    title,
+    url,
+    file,
+  }: {
+    title: string;
+    url?: string;
+    file?: File;
+  }) => {
     try {
-      if (showStringForm) {
-        await mutateAsync({ courseId, moduleId, title, url: link });
+      if (url) {
+        await mutateAsync({ courseId, moduleId, title, url });
       } else {
         if (!file) return;
         await mutateAsync({ courseId, moduleId, title, lesson: file });
       }
-
-      setFile(null);
-      setTitle('');
-      setLink('');
-      if (inputRef.current) inputRef.current.value = '';
     } catch (error) {
       console.error('Upload error:', error);
     }
   };
 
   return (
-    <form
-      onSubmit={handleAddLesson}
-      className="bg-white w-full max-w-[600px] dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-3 shadow-sm dark:shadow-black/20 space-y-2 transition-colors"
-    >
-      <label className="block text-xs font-semibold text-gray-700 dark:text-gray-200">
-        Add New Lesson
-      </label>
-
-      <div className="flex rounded-lg bg-gray-100 dark:bg-gray-700 p-1">
-        <button
-          type="button"
-          onClick={() => setShowStringForm(false)}
-          className={`flex items-center justify-center gap-1.5 flex-1 py-1.5 text-xs font-medium rounded-md transition ${
-            !showStringForm
-              ? 'bg-white dark:bg-gray-600 shadow-sm text-red-500'
-              : 'text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-white'
-          }`}
-        >
-          <BiVideo size={16} />
-          Upload Video
-        </button>
-
-        <button
-          type="button"
-          onClick={() => setShowStringForm(true)}
-          className={`flex items-center justify-center gap-1.5 flex-1 py-1.5 text-xs font-medium rounded-md transition ${
-            showStringForm
-              ? 'bg-white dark:bg-gray-600 shadow-sm text-red-500'
-              : 'text-gray-500 dark:text-gray-300 hover:text-gray-700 dark:hover:text-white'
-          }`}
-        >
-          <BiLinkAlt size={16} />
-          Add Link
-        </button>
-      </div>
-
-      <input
-        type="text"
-        placeholder="Enter lesson title"
-        value={title}
-        onChange={e => setTitle(e.target.value)}
-        required
-        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-xs text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-400 transition bg-white dark:bg-gray-700"
+    <>
+      <LessonForm
+        onClose={onClose}
+        formTitle="Add new Lesson"
+        func={handleAddLesson}
+        isPending={isPending}
+        moduleId={moduleId}
       />
-
-      {showStringForm ? (
-        <input
-          type="url"
-          placeholder="https://example.com/video"
-          value={link}
-          onChange={e => setLink(e.target.value)}
-          required
-          className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg text-xs text-gray-800 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-red-400 transition bg-white dark:bg-gray-700"
-        />
-      ) : (
-        <label
-          htmlFor={`lesson-${moduleId}`}
-          className="flex flex-col items-center justify-center w-full h-20 border border-dashed border-gray-300 dark:border-gray-600 rounded-lg cursor-pointer bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 transition text-center"
-        >
-          {file ? (
-            <p className="text-xs font-medium text-gray-700 dark:text-gray-100 truncate px-2">
-              {file.name}
-            </p>
-          ) : (
-            <>
-              <p className="text-xs font-medium text-gray-600 dark:text-gray-200">
-                Click to upload video
-              </p>
-              <p className="text-[10px] text-gray-400 dark:text-gray-400 mt-0.5">
-                Supports files up to 100 MB
-              </p>
-            </>
-          )}
-
-          <input
-            id={`lesson-${moduleId}`}
-            name="lesson"
-            onChange={handleChangeImage}
-            ref={inputRef}
-            type="file"
-            className="hidden"
-          />
-        </label>
-      )}
-
-      <div className="flex justify-end gap-4">
-        <button className="font-light text-sm cursor-pointer" onClick={onClose}>
-          Cancel
-        </button>
-
-        <button
-          type="submit"
-          disabled={isPending || !title.trim() || (showStringForm ? !link.trim() : !file)}
-          className="p-2 flex items-center justify-center bg-red-500 text-white  rounded-lg text-xs font-medium hover:bg-red-600 disabled:opacity-50 disabled:cursor-not-allowed transition"
-        >
-          {isPending ? (
-            <span className="animate-pulse">uploading..</span>
-          ) : (
-            <>
-              <CiSaveUp2 size={18} />
-            </>
-          )}
-        </button>
-      </div>
-    </form>
+    </>
   );
 };
 

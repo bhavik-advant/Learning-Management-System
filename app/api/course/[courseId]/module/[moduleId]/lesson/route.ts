@@ -2,7 +2,6 @@ import { FileType } from '@/generated/prisma/client';
 import getUserDetails from '@/lib/isAuth';
 import { uploadToCloudinary } from '@/services/external/cloudinary';
 import ApiResponse from '@/utils/api-response';
-import { ResourceTypeToPrisma } from '@/utils/file-type-map';
 import { prisma } from '@/utils/prisma-client';
 import { NextRequest, NextResponse } from 'next/server';
 
@@ -11,14 +10,7 @@ export const POST = async (
   { params }: { params: Promise<{ moduleId: string }> }
 ) => {
   try {
-    let user;
-    try {
-      user = await getUserDetails();
-    } catch (error) {
-      const message = error instanceof Error ? error.message : 'Please login first';
-
-      return NextResponse.json(new ApiResponse(401, message, {}), { status: 401 });
-    }
+    const user = await getUserDetails();
 
     if (user.role === 'TRAINEE') {
       return NextResponse.json(new ApiResponse(403, 'Unauthorised', {}), { status: 403 });
@@ -35,6 +27,30 @@ export const POST = async (
       return NextResponse.json(new ApiResponse(400, 'Module ID and title are required', {}), {
         status: 400,
       });
+    }
+
+    const moduleDetails = await prisma.module.findUnique({
+      where: { id: moduleId },
+      select: {
+        course: {
+          select: {
+            authorId: true,
+          },
+        },
+      },
+    });
+
+    if (!moduleDetails) {
+      return NextResponse.json(new ApiResponse(404, 'Module not found', {}), {
+        status: 404,
+      });
+    }
+
+    if (user.role !== 'ADMIN' && moduleDetails.course.authorId !== user.id) {
+      return NextResponse.json(
+        new ApiResponse(403, 'You do not have access to modify course content', {}),
+        { status: 403 }
+      );
     }
 
     const hasFile = lessonFile instanceof File;

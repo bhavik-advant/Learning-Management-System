@@ -8,19 +8,35 @@ import { NextRequest, NextResponse } from 'next/server';
 
 export const DELETE = async (
   req: NextRequest,
-  { params }: { params: Promise<{ lessonId: string }> }
+  { params }: { params: Promise<{ courseId: string; lessonId: string }> }
 ) => {
   try {
-    let user;
-    try {
-      user = await getUserDetails();
-    } catch (error) {
-      const message = error instanceof Error ? error.message : 'Please login first';
+    const user = await getUserDetails();
 
-      return NextResponse.json(new ApiResponse(401, message, {}), { status: 401 });
+    if (user.role === 'TRAINEE') {
+      return NextResponse.json(new ApiResponse(403, 'Unauthorised', {}), { status: 403 });
     }
 
-    const { lessonId } = await params;
+    const { lessonId, courseId } = await params;
+
+    const courseDetails = await prisma.course.findUnique({
+      where: {
+        id: courseId,
+      },
+    });
+
+    if (!courseDetails) {
+      return NextResponse.json(new ApiResponse(404, 'Course not found', {}), {
+        status: 404,
+      });
+    }
+
+    if (user.role !== 'ADMIN' && courseDetails.authorId !== user.id) {
+      return NextResponse.json(
+        new ApiResponse(403, 'You do not have access to modify course content', {}),
+        { status: 403 }
+      );
+    }
 
     const lesson = await prisma.lesson.findUnique({
       where: { id: lessonId },
@@ -43,7 +59,7 @@ export const DELETE = async (
         FileTypeToResourceType[lesson.videoFile.type]
       );
 
-      const deletedFile = await prisma.file.delete({
+      await prisma.file.delete({
         where: {
           id: lesson.videoFile.id,
         },
@@ -66,22 +82,35 @@ export const DELETE = async (
 
 export const PATCH = async (
   req: NextRequest,
-  { params }: { params: Promise<{ lessonId: string }> }
+  { params }: { params: Promise<{ courseId: string; lessonId: string }> }
 ) => {
   try {
-    let user;
-    try {
-      user = await getUserDetails();
-    } catch (error) {
-      const message = error instanceof Error ? error.message : 'Please login first';
-      return NextResponse.json(new ApiResponse(401, message, {}), { status: 401 });
-    }
+    const user = await getUserDetails();
 
     if (user.role === 'TRAINEE') {
       return NextResponse.json(new ApiResponse(403, 'Unauthorised', {}), { status: 403 });
     }
 
-    const { lessonId } = await params;
+    const { lessonId, courseId } = await params;
+
+    const courseDetails = await prisma.course.findUnique({
+      where: {
+        id: courseId,
+      },
+    });
+
+    if (!courseDetails) {
+      return NextResponse.json(new ApiResponse(404, 'Course not found', {}), {
+        status: 404,
+      });
+    }
+
+    if (user.role !== 'ADMIN' && courseDetails.authorId !== user.id) {
+      return NextResponse.json(
+        new ApiResponse(403, 'You do not have access to modify course content', {}),
+        { status: 403 }
+      );
+    }
 
     const formData = await req.formData();
 

@@ -1,12 +1,21 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 'use client';
 
 import NewLesson from './NewLesson';
 import Lessons from './Lessons';
 import ModuleInput from './ModuleInput';
-import AssignmentModal from './AssignmentModal';
+import AssignmentForm from './AssignmentForm';
 import { useRef, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { BiPlus } from 'react-icons/bi';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '../ui/dropdown-menu';
+import { Bookmark, BookOpen } from 'lucide-react';
 type Lesson = {
   id: string;
   title: string;
@@ -22,32 +31,22 @@ type ModuleFormEditProps = {
 
 const Modules: React.FC<ModuleFormEditProps> = ({ id, index, title, lessons }) => {
   const [showLessonForm, setShowLessonForm] = useState(false);
-  const assignmentRef = useRef(null);
+  const [formName, setFormName] = useState('');
+  const { id: courseId } = useParams<{ id: string }>();
+  // const assignmentRef = useRef(null);
 
-  const { id: courseId } = useParams();
+  // const handleShowAssignment = () => {
+  //   assignmentRef.current?.open();
+  // };
 
-  const handleShowAssignment = () => {
-    assignmentRef.current?.open();
+  const handleCloseForm = () => {
+    setShowLessonForm(false);
+    setFormName('');
   };
 
   return (
     <>
-      <AssignmentModal moduleId={id} courseId={courseId} ref={assignmentRef} />
       <div className="mt-4 space-y-4  ">
-        {/* <div className="flex items-center justify-between gap-4">
-          <h2 className="text-lg text-gray-600">Module Details</h2>
-          <div className="flex gap-4">
-            <button
-              onClick={handleShowAssignment}
-              className="bg-blue-400/20 px-2 py-1 rounded-md text-blue-500"
-            >
-              Add Assignment
-            </button>
-            <button className="bg-red-400/20 px-2 py-1 rounded-md text-red-500">
-              Delete Module
-            </button>
-          </div> 
-        </div>*/}
         <ModuleInput index={index} title={title} moduleId={id} />
         {lessons.length > 0 &&
           lessons.map(lesson => (
@@ -55,16 +54,43 @@ const Modules: React.FC<ModuleFormEditProps> = ({ id, index, title, lessons }) =
           ))}
         <div className="flex justify-center items-center">
           {!showLessonForm ? (
-            <span className="bg-white">
-              <button
-                onClick={() => setShowLessonForm(true)}
-                className="bg-red-400/20 text-red-400 p-2 rounded-md  cursor-pointer"
-              >
-                <BiPlus />
-              </button>
-            </span>
+            <DropdownMenu>
+              <DropdownMenuTrigger>
+                <div className="bg-white">
+                  <span className="block bg-red-400/20 text-red-400 p-2 rounded-md  cursor-pointer">
+                    <BiPlus />
+                  </span>
+                </div>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent>
+                <DropdownMenuGroup>
+                  <DropdownMenuItem
+                    onClick={() => {
+                      setFormName('assignment');
+                      setShowLessonForm(true);
+                    }}
+                  >
+                    <BookOpen /> <p> Assignment</p>
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => {
+                      setFormName('lesson');
+                      setShowLessonForm(true);
+                    }}
+                  >
+                    <Bookmark /> <p> lesson</p>
+                  </DropdownMenuItem>
+                </DropdownMenuGroup>
+              </DropdownMenuContent>
+            </DropdownMenu>
           ) : (
-            <NewLesson onClose={() => setShowLessonForm(false)} key={id} moduleId={id} />
+            <>
+              {formName == 'assignment' ? (
+                <AssignmentForm onClose={handleCloseForm} courseId={courseId} moduleId={id} />
+              ) : (
+                <NewLesson onClose={handleCloseForm} key={id} moduleId={id} />
+              )}
+            </>
           )}
         </div>
       </div>

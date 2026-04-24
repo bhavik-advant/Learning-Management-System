@@ -26,6 +26,8 @@ export async function GET(
       status: 200,
     });
   } catch (err) {
+    console.log(err);
+
     return NextResponse.json(new ApiResponse(500, 'Error fetching submissions', {}), {
       status: 500,
     });

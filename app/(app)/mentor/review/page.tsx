@@ -1,7 +1,7 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { getAllSubmissions, SubmissionType } from '@/services/apis/submissions';
+import { getAllSubmissions } from '@/services/apis/submissions';
 import {
   Table,
   TableBody,
@@ -12,16 +12,31 @@ import {
 } from '@/components/ui/table';
 import Link from 'next/link';
 import Loading from '@/components/ui/loading';
+import { SubmissionStatus } from '@/generated/prisma/enums';
+
+type submission = {
+  assignment: { title: string };
+  course: { title: string };
+  fileUrl: string;
+  id: string;
+  score: number | null;
+  maxScore: number;
+  status: SubmissionStatus;
+  student: { name: string; mentorName: string };
+  submittedAt: string;
+};
 
 const ReviewAssignment = () => {
   const {
     data: submissions = [],
     isPending: loading,
     error,
-  } = useQuery<SubmissionType[]>({
+  } = useQuery<submission[]>({
     queryKey: ['submissions'],
     queryFn: getAllSubmissions,
   });
+
+  console.log(submissions);
 
   if (loading) {
     return <Loading text="Submissions" />;
@@ -52,14 +67,13 @@ const ReviewAssignment = () => {
             submissions.map(submission => (
               <TableRow key={submission.id}>
                 <TableCell>
-                  <p className="font-medium">{submission.student.username}</p>
-                  <p className="text-xs text-gray-500">{submission.student.email}</p>
+                  <p className="font-medium">{submission.student.name}</p>
                 </TableCell>
                 <TableCell>
-                  <p className="font-medium">{submission.assignment.module.course.title}</p>
+                  <p className="font-medium">{submission.course.title}</p>
                 </TableCell>
                 <TableCell>
-                  <p className="font-medium">{submission.assignment.title}</p>
+                  <p className="font-medium">{submission.course.title}</p>
                 </TableCell>
                 <TableCell>
                   <span
@@ -76,7 +90,7 @@ const ReviewAssignment = () => {
                 </TableCell>
                 <TableCell>
                   <p className="font-medium">
-                    {submission.score ?? '-'} / {submission.assignment.maxScore}
+                    {submission.score ?? '-'} / {submission.maxScore}
                   </p>
                 </TableCell>
                 <TableCell className="text-gray-600 dark:text-gray-400">

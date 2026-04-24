@@ -4,12 +4,10 @@ import { useState } from 'react';
 import { useMutation } from '@tanstack/react-query';
 import { updateFeedback } from '@/services/apis/submissions';
 import queryClient from '@/utils/query-client';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Textarea } from '@/components/ui/textarea';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Alert, AlertDescription } from '@/components/ui/alert';
+
+import { SubmissionStatus } from '@/generated/prisma/enums';
 
 interface FeedbackSectionProps {
   feedback: string | null | undefined;
@@ -42,6 +40,7 @@ const FeedbackSection = ({
 
         return {
           ...old,
+          status: SubmissionStatus.GRADED,
           feedback: feedbackText,
           score: score,
         };

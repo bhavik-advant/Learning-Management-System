@@ -45,7 +45,7 @@ export const addLesson = async ({
   return result.data;
 };
 
-export const deletedLesson = async ({
+export const deleteLesson = async ({
   courseId,
   moduleId,
   lessonId,

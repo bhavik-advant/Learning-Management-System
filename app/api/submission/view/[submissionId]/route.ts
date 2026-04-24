@@ -11,7 +11,31 @@ export async function GET(
     const user = await getUserDetails();
     const { submissionId } = await params;
 
-    // Fetch submission with all related data
+    if (user.role == 'TRAINEE') {
+      return NextResponse.json(new ApiResponse(403, 'Unauthorised', {}), { status: 403 });
+    }
+
+    const submisionForValidate = await prisma.submission.findUnique({
+      where: { id: submissionId },
+      select: {
+        student: {
+          select: {
+            mentorId: true,
+          },
+        },
+      },
+    });
+
+    if (!submisionForValidate) {
+      return NextResponse.json(new ApiResponse(403, 'Submission not found', {}), { status: 403 });
+    }
+
+    if (user.id != submisionForValidate.student.mentorId) {
+      return NextResponse.json(new ApiResponse(403, 'Not authorised to view Submission', {}), {
+        status: 403,
+      });
+    }
+
     const submission = await prisma.submission.findUnique({
       where: { id: submissionId },
       include: {
@@ -48,22 +72,17 @@ export async function GET(
     });
 
     if (!submission) {
-      return NextResponse.json(
-        new ApiResponse(404, 'Submission not found', {}),
-        { status: 404 }
-      );
+      return NextResponse.json(new ApiResponse(404, 'Submission not found', {}), { status: 404 });
     }
 
-    return NextResponse.json(
-      new ApiResponse(200, 'Submission fetched successfully', submission),
-      { status: 200 }
-    );
+    return NextResponse.json(new ApiResponse(200, 'Submission fetched successfully', submission), {
+      status: 200,
+    });
   } catch (err) {
     console.error('Error fetching submission:', err);
-    return NextResponse.json(
-      new ApiResponse(500, 'Error fetching submission', {}),
-      { status: 500 }
-    );
+    return NextResponse.json(new ApiResponse(500, 'Error fetching submission', {}), {
+      status: 500,
+    });
   }
 }
 
@@ -77,19 +96,25 @@ export async function PATCH(
     const body = await req.json();
     const { feedback, score } = body;
 
-    // Fetch submission to verify it exists
     const submission = await prisma.submission.findUnique({
       where: { id: submissionId },
+      include: {
+        student: {
+          select: {
+            mentorId: true,
+          },
+        },
+      },
     });
 
     if (!submission) {
-      return NextResponse.json(
-        new ApiResponse(404, 'Submission not found', {}),
-        { status: 404 }
-      );
+      return NextResponse.json(new ApiResponse(404, 'Submission not found', {}), { status: 404 });
     }
 
-    // Update submission with feedback and/or score
+    if (submission.student.mentorId !== user.id) {
+      return NextResponse.json(new ApiResponse(404, 'Unauthorised', {}), { status: 404 });
+    }
+
     const updatedSubmission = await prisma.submission.update({
       where: { id: submissionId },
       data: {
@@ -137,9 +162,8 @@ export async function PATCH(
     );
   } catch (err) {
     console.error('Error updating submission:', err);
-    return NextResponse.json(
-      new ApiResponse(500, 'Error updating submission', {}),
-      { status: 500 }
-    );
+    return NextResponse.json(new ApiResponse(500, 'Error updating submission', {}), {
+      status: 500,
+    });
   }
 }

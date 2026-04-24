@@ -7,6 +7,7 @@ import { getCourseById, saveCourse } from '@/services/apis/courses';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useParams, useRouter } from 'next/navigation';
 import Loading from '../ui/loading';
+import Link from 'next/link';
 
 type Lesson = {
   id: string;
@@ -26,6 +27,9 @@ const AddContent = ({ role }: { role: Role }) => {
 
   const { mutateAsync, isPending } = useMutation({
     mutationFn: saveCourse,
+    onSuccess: () => {
+      router.push(`/${role.toLowerCase()}/courses`);
+    },
   });
 
   const { data, isLoading } = useQuery({
@@ -40,17 +44,19 @@ const AddContent = ({ role }: { role: Role }) => {
   }
 
   const handleSaveCourse = async () => {
-    const response = await mutateAsync(courseId);
-
-    if (response?.success && response?.statusCode === 201) {
-      router.push(`/${role.toLowerCase()}/courses`);
-    }
+    await mutateAsync(courseId);
   };
 
   return (
     <>
       <div className="relative h-full w-full overflow-hidden ">
-        <div className="flex justify-end ">
+        <div className="flex justify-end gap-4 ">
+          <Link
+            href={`/add-course/${courseId}/`}
+            className="py-1 px-2 text-md border border-gray-600/80 text-gray-600/80 rounded-md"
+          >
+            Back
+          </Link>
           <button
             onClick={handleSaveCourse}
             className="py-1 px-2 text-md border border-gray-600/80 text-gray-600/80 rounded-md "
@@ -77,16 +83,6 @@ const AddContent = ({ role }: { role: Role }) => {
         <div className="mt-6 mb-16">
           <NewModule />
         </div>
-
-        {/* <div className="flex justify-end mt-4  gap-4">
-          <Link
-            href={`/add-course/${courseId}/`}
-            className="py-1 px-2 rounded-md border text-gray-500 bg-gray-300/20 border-gray-400"
-          >
-            Back
-          </Link>
-
-        </div> */}
       </div>
     </>
   );

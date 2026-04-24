@@ -9,6 +9,7 @@ import queryClient from '@/utils/query-client';
 import { Card, CardContent } from '@/components/ui/card';
 import { Avatar, AvatarImage } from '@/components/ui/avatar';
 import Loading from '@/components/ui/loading';
+import { BiRightArrowAlt } from 'react-icons/bi';
 
 const SubmissionReviewPage = () => {
   const params = useParams();
@@ -59,7 +60,12 @@ const SubmissionReviewPage = () => {
 
   return (
     <div className="mx-auto p-8 max-w-6xl">
-      <h1 className="text-3xl font-bold mb-8">Submission Review</h1>
+      <h1 className="text-3xl flex font-bold mb-8">
+        <span className="flex items-center">
+          <Link href="./"> Review</Link> <BiRightArrowAlt />
+        </span>{' '}
+        {submission.assignment.title}
+      </h1>
 
       <div className="space-y-4">
         <Card>

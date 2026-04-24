@@ -4,24 +4,11 @@ import getUserDetails from '@/lib/isAuth';
 import { uploadToCloudinary } from '@/services/external/cloudinary';
 import ApiResponse from '@/utils/api-response';
 import { prisma } from '@/utils/prisma-client';
-import { auth } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
 
 export const GET = async () => {
   try {
-    const { userId } = await auth();
-
-    if (!userId) {
-      return NextResponse.json(new ApiResponse(401, 'Please Login First', {}), { status: 401 });
-    }
-
-    const user = await prisma.user.findUnique({
-      where: { clerkId: userId },
-    });
-
-    if (!user) {
-      return NextResponse.json(new ApiResponse(401, 'Please login first', {}), { status: 401 });
-    }
+    const user = await getUserDetails();
 
     const include = {
       author: {

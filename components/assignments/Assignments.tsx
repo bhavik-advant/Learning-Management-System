@@ -94,7 +94,7 @@ function AssignmentCard({ item, index }: { item: AssignmentType; index: number }
     >
       <div className={`absolute left-0 top-3 bottom-3 w-[3px] rounded-full ${cfg.bar}`} />
 
-      <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-800/60 flex items-center justify-center text-gray-400 dark:text-gray-500 text-base">
+      <div className="shrink-0 w-10 h-10 rounded-xl bg-gray-100 dark:bg-gray-800/60 flex items-center justify-center text-gray-400 dark:text-gray-500 text-base">
         <BsFileEarmarkText />
       </div>
 
@@ -151,7 +151,7 @@ function AssignmentCard({ item, index }: { item: AssignmentType; index: number }
         </div>
       </div>
 
-      <div className="hidden sm:flex flex-col gap-1 w-36 flex-shrink-0">
+      <div className="hidden sm:flex flex-col gap-1 w-36 shrink-0">
         <div className="flex items-center gap-1 text-[10px] font-semibold uppercase text-gray-400 dark:text-gray-500">
           <HiOutlineStar className="text-xs" />
           {isGraded ? 'Score' : 'Max score'}

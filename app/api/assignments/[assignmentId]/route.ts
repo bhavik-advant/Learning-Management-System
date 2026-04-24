@@ -9,6 +9,7 @@ export async function GET(
 ) {
   try {
     const user = await getUserDetails();
+
     const { assignmentId } = await params;
 
     const assignment = await prisma.assignment.findUnique({
@@ -46,7 +47,7 @@ export async function GET(
     return NextResponse.json(new ApiResponse(200, 'Assignment fetched', formatted), {
       status: 200,
     });
-  } catch (err) {
+  } catch {
     return NextResponse.json(new ApiResponse(500, 'Error fetching assignment', {}), {
       status: 500,
     });

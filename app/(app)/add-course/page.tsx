@@ -8,6 +8,7 @@ import React, { useState } from 'react';
 
 function AddCourse() {
   const router = useRouter();
+
   const { mutateAsync, isPending } = useMutation({
     mutationFn: createCourse,
     onSuccess: response => {
