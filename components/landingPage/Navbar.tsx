@@ -7,7 +7,7 @@ import { useUser } from '@clerk/nextjs';
 import Link from 'next/link';
 import { Show, UserButton } from '@clerk/nextjs';
 
-function Navbar({ role }: { role?: string }) {
+function Navbar() {
   const { isSignedIn, isLoaded } = useUser();
 
   if (!isLoaded) return null;
@@ -47,11 +47,8 @@ function Navbar({ role }: { role?: string }) {
 
         <div className="flex items-center gap-4">
           <ThemeButton />
-          {isSignedIn && role ? (
-            <Link
-              href={`/${role}/dashboard`}
-              className="px-4 py-1.5 bg-blue-600 text-white rounded-md"
-            >
+          {isSignedIn ? (
+            <Link href={`/app`} className="px-4 py-1.5 bg-blue-600 text-white rounded-md">
               Go to Dashboard
             </Link>
           ) : (

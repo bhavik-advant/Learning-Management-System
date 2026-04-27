@@ -35,7 +35,7 @@ export type SubmissionType = {
 };
 
 export const getAllSubmissions = async () => {
-  const res = await fetch(`/api/submission`);
+  const res = await fetch(`/api/admin/submissions`);
   const data = await res.json();
   return data.data;
 };
@@ -90,8 +90,6 @@ export const getSubmissionsByTrainee = async () => {
   const data = await res.json();
   return data.data;
 };
-
-// services/apis/submissions.ts
 
 export const getAllSubmissionsAdmin = async () => {
   const res = await fetch('/api/admin/submissions', {

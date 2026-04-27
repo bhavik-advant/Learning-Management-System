@@ -35,9 +35,9 @@ export const GET = async (
     return NextResponse.json(new ApiResponse(401, 'Course not founc', {}), { status: 401 });
   }
 
-  if (!courseDetails.enrollments.includes({ studentId: user.id }) && user.role == 'TRAINEE') {
-    return NextResponse.json(new ApiResponse(401, 'Unauthorised', {}), { status: 401 });
-  }
+  // if (!courseDetails.enrollments.includes({ studentId: user.id }) && user.role == 'TRAINEE') {
+  //   return NextResponse.json(new ApiResponse(401, 'Unauthorised', {}), { status: 401 });
+  // }
   const course = await prisma.course.findUnique({
     where: { id: courseId },
     select: {
@@ -45,9 +45,9 @@ export const GET = async (
       title: true,
       description: true,
       status: true,
-      thumbnail: {
-        select: { url: true },
-      },
+      // thumbnail: {
+      //   select: { url: true },
+      // },
       modules: {
         orderBy: { order: 'asc' },
         select: {
@@ -59,10 +59,10 @@ export const GET = async (
             select: {
               id: true,
               title: true,
-              videoUrl: true,
-              videoFile: {
-                select: { url: true },
-              },
+              // videoUrl: true,
+              // videoFile: {
+              //   select: { url: true },
+              // },
             },
           },
 
@@ -101,7 +101,7 @@ export const GET = async (
     id: course.id,
     title: course.title,
     description: course.description,
-    thumbnail: course.thumbnail?.url || null,
+    // thumbnail: course.thumbnail?.url || null,
     status: course.status,
 
     modules: course.modules.map(module => ({
@@ -111,7 +111,7 @@ export const GET = async (
       lessons: module.lessons.map(lesson => ({
         id: lesson.id,
         title: lesson.title,
-        url: lesson.videoFile?.url || lesson.videoUrl || null,
+        // url: lesson.videoFile?.url || lesson.videoUrl || null,
       })),
 
       assignments: module.assignments.map(a => ({

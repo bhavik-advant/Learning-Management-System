@@ -168,7 +168,7 @@ function AssignmentCard({ item, index }: { item: AssignmentType; index: number }
 
       <div>
         <Link
-          href={`./assignments/${item.id}`}
+          href={`/app/assignments/${item.id}`}
           className={`inline-flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-semibold ${
             isGraded
               ? 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300'

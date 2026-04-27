@@ -132,7 +132,7 @@ const Course: React.FC<{
 
         <div className="flex items-center justify-between pt-1">
           <Link
-            href={`courses/${id}`}
+            href={`/app/courses/${id}`}
             className={`text-sm font-medium px-4 py-2 rounded-2xl transition-colors duration-200 ${
               btnVariant === 'dark'
                 ? 'bg-gray-900 text-white hover:opacity-90'

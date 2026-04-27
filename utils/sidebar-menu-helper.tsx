@@ -16,32 +16,32 @@ export const sidebarMenu: Record<UserRole, MenuItem[]> = {
   admin: [
     {
       label: 'Dashboard',
-      href: 'dashboard',
+      href: 'app',
       icon: <RiDashboard2Line />,
     },
     {
       label: 'Users',
-      href: 'users',
+      href: 'app/users',
       icon: <HiUserGroup />,
     },
     {
       label: 'Courses',
-      href: 'courses',
+      href: 'app/courses',
       icon: <BiBook />,
     },
     {
       label: 'Approvals',
-      href: 'approvals',
+      href: 'app/approvals',
       icon: <BiBook />,
     },
     {
       label: 'Submissions',
-      href: 'submissions',
+      href: 'app/submissions',
       icon: <BiBook />,
     },
     {
       label: 'Notifications',
-      href: 'notification',
+      href: 'app/notification',
       icon: <BiBell />,
     },
   ],
@@ -49,22 +49,22 @@ export const sidebarMenu: Record<UserRole, MenuItem[]> = {
   mentor: [
     {
       label: 'Dashboard',
-      href: 'dashboard',
+      href: 'app',
       icon: <RiDashboard2Line />,
     },
     {
       label: 'My Courses',
-      href: 'courses',
+      href: 'app/courses',
       icon: <BiBook />,
     },
     {
       label: 'Students',
-      href: 'students',
+      href: 'app/students',
       icon: <HiUserGroup />,
     },
     {
       label: 'Reviews',
-      href: 'review',
+      href: 'app/review',
       icon: <MdReviews />,
     },
   ],
@@ -72,27 +72,27 @@ export const sidebarMenu: Record<UserRole, MenuItem[]> = {
   trainee: [
     {
       label: 'Dashboard',
-      href: 'dashboard',
+      href: 'app',
       icon: <RiDashboard2Line />,
     },
     {
       label: 'My Learning',
-      href: 'courses',
+      href: 'app/courses',
       icon: <BiBook />,
     },
     {
       label: 'Assignments',
-      href: 'assignments',
+      href: 'app/assignments',
       icon: <BiBell />,
     },
     {
       label: 'Submissions',
-      href: 'submissions',
+      href: 'app/submissions',
       icon: <BiBell />,
     },
     {
       label: 'Profile',
-      href: 'profile',
+      href: 'app/profile',
       icon: <FiUser />,
     },
   ],
