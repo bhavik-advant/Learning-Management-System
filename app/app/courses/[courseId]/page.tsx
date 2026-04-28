@@ -18,7 +18,7 @@ export default async function CoursesDetailsPage({ params }: PageProps) {
       role={user.role}
       components={{
         ADMIN: () => <AdminCourseDetailsPage params={Promise.resolve(params)} />,
-        MENTOR: MentorCoursesPage,
+        MENTOR: () => <AdminCourseDetailsPage params={Promise.resolve(params)} />,
         TRAINEE: () => <TraineeCourseDetailsPage params={Promise.resolve(params)} />,
       }}
     />
