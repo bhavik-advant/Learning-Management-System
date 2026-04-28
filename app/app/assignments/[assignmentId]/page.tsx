@@ -46,6 +46,8 @@ export default function AssignmentDetailsPage({ params }: Props) {
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [dragOver, setDragOver] = useState(false);
+  const [submissionType, setSubmissionType] = useState<'FILE' | 'LINK'>('FILE');
+  const [githubLink, setGithubLink] = useState('');
 
   const { data: assignment, isLoading } = useQuery<Assignment>({
     queryKey: ['assignment', assignmentId],
@@ -78,10 +80,19 @@ export default function AssignmentDetailsPage({ params }: Props) {
   };
 
   const handleSubmit = () => {
-    if (!selectedFile) return;
     const fd = new FormData();
     fd.append('assignmentId', assignmentId);
-    fd.append('file', selectedFile);
+
+    if (submissionType === 'FILE') {
+      if (!selectedFile) return;
+      fd.append('file', selectedFile);
+    } else {
+      if (!githubLink) return;
+      fd.append('githubLink', githubLink);
+    }
+
+    fd.append('type', submissionType);
+
     mutation.mutate(fd);
   };
 
@@ -133,7 +144,6 @@ export default function AssignmentDetailsPage({ params }: Props) {
       </section>
     );
   }
- 
 
   return (
     <section className="mx-8 mt-7 mb-12 space-y-7">
@@ -197,62 +207,119 @@ export default function AssignmentDetailsPage({ params }: Props) {
           </h2>
         </div>
 
-        <div
-          onClick={() => fileInputRef.current?.click()}
-          onDragOver={e => {
-            e.preventDefault();
-            setDragOver(true);
-          }}
-          onDragLeave={() => setDragOver(false)}
-          onDrop={handleDrop}
-          className={`
-            relative flex flex-col items-center justify-center gap-2
-            rounded-xl border-2 border-dashed px-6 py-8 cursor-pointer
-            transition-all duration-200 select-none
-            ${
-              dragOver
-                ? 'border-indigo-400 bg-indigo-50 dark:bg-indigo-950/30'
-                : selectedFile
-                  ? 'border-emerald-400 bg-emerald-50/60 dark:bg-emerald-950/20'
-                  : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:bg-gray-50/50 dark:hover:bg-gray-900/30'
-            }
-          `}
-        >
-          {selectedFile ? (
-            <>
-              <HiCheckCircle className="text-2xl text-emerald-500" />
-              <p className="text-sm font-semibold text-emerald-700 dark:text-emerald-300 text-center">
-                {selectedFile.name}
-              </p>
-              <p className="text-[11px] text-gray-400 dark:text-gray-500">
-                {(selectedFile.size / 1024).toFixed(1)} KB · Click to change
-              </p>
-            </>
-          ) : (
-            <>
-              <HiOutlineCloudArrowUp className="text-2xl text-gray-300 dark:text-gray-600" />
-              <p className="text-sm font-medium text-gray-500 dark:text-gray-400 text-center">
-                Drag & drop a file here, or{' '}
-                <span className="text-indigo-500 dark:text-indigo-400 font-semibold">browse</span>
-              </p>
-              <p className="text-[11px] text-gray-400 dark:text-gray-500">{ACCEPTED_LABEL}</p>
-            </>
-          )}
+        <div className="flex gap-2 mb-2">
+          <button
+            onClick={() => setSubmissionType('FILE')}
+            className={`
+      px-4 py-1.5 text-xs font-semibold rounded-lg border transition-all duration-150
+      ${
+        submissionType === 'FILE'
+          ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-900'
+          : 'text-gray-500 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800'
+      }
+    `}
+          >
+            Upload File
+          </button>
 
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept={ACCEPTED}
-            onChange={handleFileChange}
-            className="sr-only"
-            disabled={mutation.isPending}
-          />
+          <button
+            onClick={() => setSubmissionType('LINK')}
+            className={`
+      px-4 py-1.5 text-xs font-semibold rounded-lg border transition-all duration-150
+      ${
+        submissionType === 'LINK'
+          ? 'bg-gray-900 text-white dark:bg-white dark:text-gray-900'
+          : 'text-gray-500 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800'
+      }
+    `}
+          >
+            GitHub Link
+          </button>
         </div>
+
+        {submissionType === 'FILE' ? (
+          <div
+            onClick={() => fileInputRef.current?.click()}
+            onDragOver={e => {
+              e.preventDefault();
+              setDragOver(true);
+            }}
+            onDragLeave={() => setDragOver(false)}
+            onDrop={handleDrop}
+            className={`
+      relative flex flex-col items-center justify-center gap-2
+      rounded-xl border-2 border-dashed px-6 py-8 cursor-pointer
+      transition-all duration-200 select-none
+      ${
+        dragOver
+          ? 'border-indigo-400 bg-indigo-50 dark:bg-indigo-950/30'
+          : selectedFile
+            ? 'border-emerald-400 bg-emerald-50/60 dark:bg-emerald-950/20'
+            : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 hover:bg-gray-50/50 dark:hover:bg-gray-900/30'
+      }
+    `}
+          >
+            {selectedFile ? (
+              <>
+                <HiCheckCircle className="text-2xl text-emerald-500" />
+                <p className="text-sm font-semibold text-emerald-700 dark:text-emerald-300 text-center">
+                  {selectedFile.name}
+                </p>
+                <p className="text-[11px] text-gray-400 dark:text-gray-500">
+                  {(selectedFile.size / 1024).toFixed(1)} KB · Click to change
+                </p>
+              </>
+            ) : (
+              <>
+                <HiOutlineCloudArrowUp className="text-2xl text-gray-300 dark:text-gray-600" />
+                <p className="text-sm font-medium text-gray-500 dark:text-gray-400 text-center">
+                  Drag & drop a file here, or{' '}
+                  <span className="text-indigo-500 dark:text-indigo-400 font-semibold">browse</span>
+                </p>
+                <p className="text-[11px] text-gray-400 dark:text-gray-500">{ACCEPTED_LABEL}</p>
+              </>
+            )}
+
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept={ACCEPTED}
+              onChange={handleFileChange}
+              className="sr-only"
+              disabled={mutation.isPending}
+            />
+          </div>
+        ) : (
+          <div className="flex flex-col gap-2">
+            <input
+              type="text"
+              value={githubLink}
+              onChange={e => setGithubLink(e.target.value)}
+              placeholder="https://github.com/username/repo"
+              className="
+        w-full rounded-xl border px-4 py-2.5 text-sm
+        bg-white dark:bg-gray-900
+        border-gray-200 dark:border-gray-700
+        text-gray-700 dark:text-gray-200
+        placeholder-gray-400
+        focus:outline-none focus:ring-2 focus:ring-indigo-500
+        transition-all
+      "
+            />
+            <p className="text-[11px] text-gray-400 dark:text-gray-500">
+              Paste your GitHub repository link here
+            </p>
+          </div>
+        )}
 
         <div className="flex items-center gap-3 flex-wrap">
           <button
             onClick={handleSubmit}
-            disabled={!selectedFile || mutation.isPending}
+            disabled={
+              mutation.isPending ||
+              (submissionType === 'FILE' && !selectedFile) ||
+              (submissionType === 'LINK' && !githubLink)
+            }
             className="
               inline-flex items-center gap-2 rounded-xl px-5 py-2.5
               text-xs font-semibold

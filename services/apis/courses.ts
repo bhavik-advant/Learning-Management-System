@@ -270,7 +270,7 @@ export const restrictCourse = async ({
 };
 
 export const approveCourse = async (courseId: string) => {
-  const res = await fetch(`/api/admin/courses/approve/${courseId}`, {
+  const res = await fetch(`/api/course/${courseId}/approve`, {
     method: 'PATCH',
   });
 

@@ -161,7 +161,8 @@ model Assignment {
 
 model Submission {
   id          String            @id @default(uuid())
-  fileUrl     String
+  fileUrl     String?
+  githubLink  String?
   score       Int?
   feedback    String?
   status      SubmissionStatus  @default(PENDING)

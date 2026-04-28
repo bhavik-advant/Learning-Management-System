@@ -10,40 +10,87 @@ export async function POST(req: NextRequest) {
 
     const formData = await req.formData();
     const assignmentId = formData.get('assignmentId') as string;
-    const file = formData.get('file') as File;
+    const file = formData.get('file') as File | null;
+    const githubLink = formData.get('githubLink') as string | null;
+    const type = formData.get('type') as 'FILE' | 'LINK';
 
-    if (!assignmentId || !file) {
+    if (!assignmentId || !type) {
       return NextResponse.json(new ApiResponse(400, 'Missing fields', {}), { status: 400 });
     }
 
-    const allowedTypes = [
-      'application/pdf',
-      'application/zip',
-      'image/png',
-      'image/jpeg',
-      'image/jpg',
-    ];
+    if (type === 'FILE') {
+      if (!file) {
+        return NextResponse.json(new ApiResponse(400, 'File is required', {}), {
+          status: 400,
+        });
+      }
 
-    if (!allowedTypes.includes(file.type)) {
-      return NextResponse.json(new ApiResponse(400, 'Invalid file type', {}), { status: 400 });
+      const allowedTypes = [
+        'application/pdf',
+        'application/zip',
+        'image/png',
+        'image/jpeg',
+        'image/jpg',
+      ];
+
+      if (!allowedTypes.includes(file.type)) {
+        return NextResponse.json(new ApiResponse(400, 'Invalid file type', {}), {
+          status: 400,
+        });
+      }
+
+      const upload = await uploadToCloudinary(file);
+
+      const submission = await prisma.submission.create({
+        data: {
+          assignmentId,
+          studentId: user.id,
+          fileUrl: upload.url,
+          githubLink: null,
+          submittedAt: new Date(),
+        },
+      });
+
+      return NextResponse.json(new ApiResponse(200, 'File submitted successfully', submission), {
+        status: 200,
+      });
     }
 
-    const upload = await uploadToCloudinary(file);
+    if (type === 'LINK') {
+      if (!githubLink || !githubLink.trim()) {
+        return NextResponse.json(new ApiResponse(400, 'GitHub link is required', {}), {
+          status: 400,
+        });
+      }
 
-    const submission = await prisma.submission.create({
-      data: {
-        assignmentId,
-        studentId: user.id,
-        fileUrl: upload.url,
-        submittedAt: new Date(),
-      },
-    });
+      if (!githubLink.includes('github.com')) {
+        return NextResponse.json(new ApiResponse(400, 'Invalid GitHub link', {}), {
+          status: 400,
+        });
+      }
 
-    return NextResponse.json(new ApiResponse(200, 'Submitted successfully', submission), {
-      status: 200,
+      const submission = await prisma.submission.create({
+        data: {
+          assignmentId,
+          studentId: user.id,
+          fileUrl: null,
+          githubLink: githubLink.trim(),
+          submittedAt: new Date(),
+        },
+      });
+
+      return NextResponse.json(new ApiResponse(200, 'Link submitted successfully', submission), {
+        status: 200,
+      });
+    }
+
+    return NextResponse.json(new ApiResponse(400, 'Invalid submission type', {}), {
+      status: 400,
     });
   } catch (error) {
     console.error(error);
-    return NextResponse.json(new ApiResponse(500, 'Submission failed', {}), { status: 500 });
+    return NextResponse.json(new ApiResponse(500, 'Submission failed', {}), {
+      status: 500,
+    });
   }
 }

@@ -2,7 +2,8 @@ import { SubmissionStatus } from '@/generated/prisma/enums';
 
 export type SubmissionType = {
   id: string;
-  fileUrl: string;
+  fileUrl?: string;
+  githubLink?: string;
   score?: number | null;
   feedback?: string | null;
   status: SubmissionStatus;

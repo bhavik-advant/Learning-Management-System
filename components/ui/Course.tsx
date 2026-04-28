@@ -15,7 +15,7 @@ const Course: React.FC<{
   modulesCount: number;
   authorInitials?: string;
   btnText: string;
-  progress?: number; // 0–100
+  progress?: number;
   btnVariant?: 'dark' | 'coral' | 'blue';
 }> = ({
   id,

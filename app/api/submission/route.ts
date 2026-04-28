@@ -73,6 +73,7 @@ export async function GET() {
       id: s.id,
       status: s.status,
       fileUrl: s.fileUrl,
+      githubLink: s.githubLink,
       score: s.score,
       maxScore: s.assignment.maxScore,
       submittedAt: s.submittedAt,

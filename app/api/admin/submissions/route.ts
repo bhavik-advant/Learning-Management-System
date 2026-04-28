@@ -49,6 +49,7 @@ export async function GET() {
     const submissions = submissionsRaw.map(s => ({
       id: s.id,
       fileUrl: s.fileUrl,
+      githubLink: s.githubLink,
       score: s.score,
       feedback: s.feedback,
       status: s.status,
