@@ -2,32 +2,19 @@ export const addLesson = async ({
   courseId,
   moduleId,
   title,
-  lesson,
-  url,
+  content,
 }: {
   courseId: string;
   moduleId: string;
   title: string;
-  lesson?: File | null;
-  url?: string;
+  content: string;
 }) => {
-  const maxSizeBytes = 100 * 1024 * 1024;
-  const formData = new FormData();
-  formData.append('title', title);
-  if (url) {
-    formData.append('url', url);
-  }
-  if (lesson) {
-    if (lesson.size > maxSizeBytes) {
-      const sizeInMB = (lesson.size / (1024 * 1024)).toFixed(2);
-      throw new Error(`File size (${sizeInMB} MB) exceeds the maximum allowed limit of 100 MB.`);
-    }
-    formData.append('lesson', lesson);
-  }
-
   const response = await fetch(`/api//course/${courseId}/module/${moduleId}/lesson`, {
     method: 'POST',
-    body: formData,
+    body: JSON.stringify({
+      title,
+      content,
+    }),
   });
 
   if (!response.ok) {
@@ -78,27 +65,17 @@ export const editLesoon = async ({
   moduleId,
   lessonId,
   title,
-  file,
-  url,
+  content,
 }: {
   courseId: string;
   moduleId: string;
   lessonId: string;
   title: string;
-  file?: File;
-  url?: string;
+  content: string;
 }) => {
-  const formData = new FormData();
-  formData.append('title', title);
-  if (file) {
-    formData.append('file', file);
-  }
-  if (url) {
-    formData.append('url', url);
-  }
   const response = await fetch(`/api/course/${courseId}/module/${moduleId}/lesson/${lessonId}`, {
     method: 'PATCH',
-    body: formData,
+    body: JSON.stringify({ title, content }),
   });
 
   if (!response.ok) {

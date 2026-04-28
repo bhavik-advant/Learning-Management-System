@@ -19,7 +19,7 @@ import { Bookmark, BookOpen } from 'lucide-react';
 type Lesson = {
   id: string;
   title: string;
-  url: string;
+  content: string;
 };
 
 type ModuleFormEditProps = {
@@ -86,7 +86,7 @@ const Modules: React.FC<ModuleFormEditProps> = ({ id, index, title, lessons }) =
           ) : (
             <>
               {formName == 'assignment' ? (
-                <AssignmentForm onClose={handleCloseForm} courseId={courseId} moduleId={id} />
+                <AssignmentForm  onClose={handleCloseForm} courseId={courseId} moduleId={id} />
               ) : (
                 <NewLesson onClose={handleCloseForm} key={id} moduleId={id} />
               )}

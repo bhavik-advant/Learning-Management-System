@@ -97,22 +97,20 @@ model Module {
   @@unique([courseId, order]) // Ensures unique ordering within a course
 }
 
-// Lesson Model
 model Lesson {
   id           String   @id @default(uuid())
   title        String
+  content      String
   order        Int
   moduleId     String
-  videoUrl     String?
-  videoFileId  String?
   createdAt    DateTime @default(now())
 
   // Relations
   module       Module   @relation(fields: [moduleId], references: [id], onDelete: Cascade)
-  videoFile    File?    @relation("LessonVideo", fields: [videoFileId], references: [id])
+  // videoFile    File?    @relation("LessonVideo", fields: [videoFileId], references: [id])
 
   @@index([moduleId])
-  @@index([videoFileId])
+  // @@index([videoFileId])
   @@unique([moduleId, order])
 }
 
@@ -129,7 +127,7 @@ model File {
   // Relations
   uploader    User     @relation("UploadedFiles", fields: [uploadedBy], references: [id])
   thumbnails  Course[] @relation("CourseThumbnail")
-  lessonVideo Lesson[] @relation("LessonVideo")
+  // lessonVideo Lesson[] @relation("LessonVideo")
 
   @@index([uploadedBy])
 }
@@ -193,5 +191,5 @@ model Enrollment {
 
   @@index([studentId])
   @@index([courseId])
-  @@unique([studentId, courseId]) // Prevents duplicate enrollments
+  @@unique([studentId, courseId]) 
 }

@@ -32,7 +32,7 @@ export const GET = async (
   });
 
   if (!courseDetails) {
-    return NextResponse.json(new ApiResponse(401, 'Course not founc', {}), { status: 401 });
+    return NextResponse.json(new ApiResponse(401, 'Course not found', {}), { status: 401 });
   }
 
   if (!courseDetails.enrollments.includes({ studentId: user.id }) && user.role == 'TRAINEE') {
@@ -59,10 +59,7 @@ export const GET = async (
             select: {
               id: true,
               title: true,
-              videoUrl: true,
-              videoFile: {
-                select: { url: true },
-              },
+              content: true,
             },
           },
 
@@ -111,7 +108,7 @@ export const GET = async (
       lessons: module.lessons.map(lesson => ({
         id: lesson.id,
         title: lesson.title,
-        url: lesson.videoFile?.url || lesson.videoUrl || null,
+        content: lesson.content,
       })),
 
       assignments: module.assignments.map(a => ({

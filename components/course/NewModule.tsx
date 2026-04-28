@@ -53,7 +53,7 @@ const NewModule = ({}) => {
   return (
     <div className="mt-4 flex  justify-center items-center">
       <form
-        className="flex-1 max-w-[700px] border border-gray-400/30 p-2 rounded-lg bg-white "
+        className="flex-1 max-w-[700px] border border-gray-400/30 p-2 rounded-lg bg-white  dark:bg-[#1e2939]"
         onSubmit={handleModuleSubmit}
       >
         <div className="flex-1 flex  gap-4">

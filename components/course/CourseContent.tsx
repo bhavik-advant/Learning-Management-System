@@ -3,16 +3,16 @@
 import Modules from '@/components/course/Modules';
 import NewModule from '@/components/course/NewModule';
 import { Role } from '@/generated/prisma/enums';
-import { getCourseById, saveCourse } from '@/services/apis/courses';
-import { useMutation, useQuery } from '@tanstack/react-query';
 import { useParams, useRouter } from 'next/navigation';
 import Loading from '../ui/loading';
 import Link from 'next/link';
+import { useCourse } from '@/hooks/courses/useCourse';
+import { useSaveCourse } from '@/hooks/courses/useSaveCourse';
 
 type Lesson = {
   id: string;
   title: string;
-  url: string;
+  content: string;
 };
 
 type Module = {
@@ -25,27 +25,24 @@ const AddContent = ({ role }: { role: Role }) => {
   const router = useRouter();
   const { id: courseId } = useParams<{ id: string }>();
 
-  const { mutateAsync, isPending } = useMutation({
-    mutationFn: saveCourse,
-    onSuccess: () => {
-      router.push(`/${role.toLowerCase()}/courses`);
-    },
-  });
+  const { saveCourse, isSaving } = useSaveCourse();
 
-  const { data, isLoading } = useQuery({
-    queryKey: ['courses', courseId],
-    queryFn: () => getCourseById(courseId),
-  });
+  const { course, isLoading } = useCourse(courseId);
 
-  console.log(data);
+  console.log(course);
+  
+
+  const handleSaveCourse = async () => {
+    await saveCourse(courseId, {
+      onSuccess: () => {
+        router.push(`/${role.toLowerCase()}/courses`);
+      },
+    });
+  };
 
   if (isLoading) {
     return <Loading text="Course Content" />;
   }
-
-  const handleSaveCourse = async () => {
-    await mutateAsync(courseId);
-  };
 
   return (
     <>
@@ -60,16 +57,16 @@ const AddContent = ({ role }: { role: Role }) => {
           <button
             onClick={handleSaveCourse}
             className="py-1 px-2 text-md border border-gray-600/80 text-gray-600/80 rounded-md "
-            disabled={isPending}
+            disabled={isSaving}
           >
-            {isPending ? 'Saving' : 'Save'}
+            {isSaving ? 'Saving' : 'Save'}
           </button>
         </div>
         <div className="absolute left-1/2 h-full -z-10 rounded-3xl border-l-2 border-dashed " />
         <div className="space-y-5 mt-4 overflow-auto">
-          {data &&
-            data.modules &&
-            data.modules.map((module: Module, index: number) => (
+          {course &&
+            course.modules &&
+            course.modules.map((module: Module, index: number) => (
               <Modules
                 key={module.id}
                 index={index}

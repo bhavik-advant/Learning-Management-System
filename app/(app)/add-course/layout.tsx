@@ -32,13 +32,13 @@ const CourseLayout: React.FC<{ children: React.ReactNode }> = ({ children }) => 
             </span>
           </li>
         </ul>
-        <div className="relative  h-1 bg-gray-200 rounded-full ">
+        <div className="relative  h-1 bg-gray-200 dark:bg-gray-500/30 rounded-full ">
           <div
             className="h-full rounded-full bg-blue-500 transition-all duration-300"
             style={{ width: `${isContent ? 100 : 50}%` }}
           />
 
-          <div className="absolute top-0 left-1/2 w-[4px] h-full bg-white z-10" />
+          <div className="absolute top-0 left-1/2 w-[4px] h-full bg-white dark:bg-[#1e2939] z-10" />
         </div>
       </nav>
 

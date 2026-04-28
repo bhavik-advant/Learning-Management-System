@@ -10,13 +10,13 @@ function EditLesson({
   lessonId,
   moduleId,
   onClose,
-  url,
+  content,
   title,
 }: {
   moduleId: string;
   lessonId: string;
   onClose: () => void;
-  url: string;
+  content: string;
   title: string;
 }) {
   const { id: courseId } = useParams<{ id: string }>();
@@ -28,6 +28,8 @@ function EditLesson({
         if (!old) {
           return old;
         }
+
+        console.log(old, ' and ', response);
 
         return {
           ...old,
@@ -47,29 +49,20 @@ function EditLesson({
     },
   });
 
-  const handleSubmit = async ({
-    title,
-    url,
-    file,
-  }: {
-    title: string;
-    url?: string | undefined;
-    file?: File | undefined;
-  }) => {
-    const result = await mutateAsync({ courseId, moduleId, lessonId, title, url, file });
+  const handleSubmit = async ({ title, content }: { title: string; content: string }) => {
+    const result = await mutateAsync({ courseId, moduleId, lessonId, title, content });
     console.log(result);
   };
 
   return (
     <LessonForm
-      formTitle="Edit Lesson"
+      submitText="Save"
       isPending={isPending}
       title={title}
       func={handleSubmit}
       moduleId={moduleId}
       onClose={onClose}
-      url={url}
-      stringForm={true}
+      content={content}
     />
   );
 }

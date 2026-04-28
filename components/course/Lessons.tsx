@@ -1,19 +1,19 @@
 import { deleteLesson } from '@/services/apis/lesson';
-import { getEmbedUrl } from '@/utils/embeded-url';
 import queryClient from '@/utils/query-client';
 import { useMutation } from '@tanstack/react-query';
 import { useParams } from 'next/navigation';
 import { useState } from 'react';
 import { BiTrash } from 'react-icons/bi';
 import { VscEdit } from 'react-icons/vsc';
-import EditLesson from './EditLesson';
 import { Course } from '@/types/types';
 import { Card } from '../ui/card';
+import { MarkdownEditor } from '../mdxEditor';
+import EditLesson from './EditLesson';
 
 type Lesson = {
   id: string;
   title: string;
-  url: string;
+  content: string;
 };
 
 type LessonEditFormProps = {
@@ -22,9 +22,9 @@ type LessonEditFormProps = {
 };
 
 const Lessons: React.FC<LessonEditFormProps> = ({ lesson, moduleId }) => {
-  const [showEditForm, setShowEditForm] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+
   const { id: courseId } = useParams<{ id: string }>();
-  const embedUrl = getEmbedUrl(lesson.url);
 
   const { isPending: deleting, mutateAsync: deleteAsync } = useMutation({
     mutationFn: deleteLesson,
@@ -36,7 +36,7 @@ const Lessons: React.FC<LessonEditFormProps> = ({ lesson, moduleId }) => {
           return {
             ...old,
             modules: old.modules.map(module => {
-              if (module.id !== deletedLesson.moduleId) {
+              if (module.id !== moduleId) {
                 return module;
               }
               return {
@@ -56,55 +56,60 @@ const Lessons: React.FC<LessonEditFormProps> = ({ lesson, moduleId }) => {
     await deleteAsync({ courseId, moduleId, lessonId: lesson.id });
   };
 
+  if (isEditing) {
+    return (
+      <EditLesson
+        title={lesson.title}
+        content={lesson.content}
+        lessonId={lesson.id}
+        moduleId={moduleId}
+        onClose={() => setIsEditing(false)}
+      />
+    );
+  }
+
   return (
     <div className="flex justify-center bg-white dark:bg-[#1e2939]  items-center">
-      <Card className="max-w-[500px] flex-1 border border-gray-400/30 p-4 ">
+      <Card className="max-w-150 flex-1 border border-gray-400/30 p-4 ">
         <div className="flex justify-between items-center px-2  ">
           <div className=" font-medium">{lesson.title}</div>
 
           <div className="flex gap-4">
-            <button
-              onClick={() => {
-                setShowEditForm(prev => !prev);
-              }}
-              className="bg-blue-500/20 dark:bg-blue-500/10 p-2 rounded-lg hover:bg-blue-500/30 dark:hover:bg-blue-500/20 transition"
-            >
-              <VscEdit className="text-blue-500 dark:text-blue-400" />
-            </button>
-            <button
-              onClick={handleDeleteLesson}
-              disabled={deleting}
-              aria-busy={deleting}
-              aria-label={deleting ? 'Deleting lesson' : 'Delete lesson'}
-              className={`relative flex items-center justify-center p-2 rounded-lg transition ${deleting ? 'bg-red-500/10 cursor-not-allowed opacity-70' : 'bg-red-500/20 hover:bg-red-500/30 dark:bg-red-500/10 dark:hover:bg-red-500/20'}`}
-            >
-              {deleting ? (
-                <span className="w-5 h-5 border-2 border-red-400 border-t-transparent rounded-full animate-spin"></span>
-              ) : (
-                <BiTrash className="text-red-500 dark:text-red-300" />
-              )}
-            </button>
+            {!isEditing && (
+              <>
+                <button
+                  onClick={() => setIsEditing(true)}
+                  className="bg-blue-500/20 dark:bg-blue-500/10 p-2 rounded-lg hover:bg-blue-500/30 dark:hover:bg-blue-500/20 transition"
+                >
+                  <VscEdit className="text-blue-500 dark:text-blue-400" />
+                </button>
+                <button
+                  onClick={handleDeleteLesson}
+                  disabled={deleting}
+                  className={`relative flex items-center justify-center p-2 rounded-lg transition ${deleting ? 'bg-red-500/10 cursor-not-allowed opacity-70' : 'bg-red-500/20 hover:bg-red-500/30 dark:bg-red-500/10 dark:hover:bg-red-500/20'}`}
+                >
+                  {deleting ? (
+                    <span className="w-5 h-5 border-2 border-red-400 border-t-transparent rounded-full animate-spin"></span>
+                  ) : (
+                    <BiTrash className="text-red-500 dark:text-red-300" />
+                  )}
+                </button>
+              </>
+            )}
           </div>
         </div>
 
-        {showEditForm ? (
-          <EditLesson
-            lessonId={lesson.id}
-            onClose={() => setShowEditForm(false)}
-            moduleId={moduleId}
-            title={lesson.title}
-            url={lesson.url}
-          />
-        ) : (
-          <div>
-            <iframe
-              src={embedUrl}
-              title={lesson.title}
-              className="w-full h-64 rounded-2xl"
-              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-              referrerPolicy="strict-origin-when-cross-origin"
-              allowFullScreen
-            ></iframe>
+        <MarkdownEditor
+          value={lesson.content ?? ''}
+          onChange={() => {}}
+          readOnly={!isEditing}
+          isEditing={isEditing}
+        />
+
+        {isEditing && (
+          <div className="flex justify-end gap-4 items-center">
+            <button onClick={() => setIsEditing(false)}>Cancel</button>
+            <button>Save</button>
           </div>
         )}
       </Card>

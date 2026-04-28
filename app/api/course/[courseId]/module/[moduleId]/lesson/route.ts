@@ -1,13 +1,11 @@
-import { FileType } from '@/generated/prisma/client';
 import getUserDetails from '@/lib/isAuth';
-import { uploadToCloudinary } from '@/services/external/cloudinary';
 import ApiResponse from '@/utils/api-response';
 import { prisma } from '@/utils/prisma-client';
 import { NextRequest, NextResponse } from 'next/server';
 
 export const POST = async (
   req: NextRequest,
-  { params }: { params: Promise<{ moduleId: string }> }
+  { params }: { params: Promise<{ moduleId: string; courseId: string }> }
 ) => {
   try {
     const user = await getUserDetails();
@@ -16,128 +14,67 @@ export const POST = async (
       return NextResponse.json(new ApiResponse(403, 'Unauthorised', {}), { status: 403 });
     }
 
-    const { moduleId } = await params;
-    const formData = await req.formData();
+    const { moduleId, courseId } = await params;
 
-    const title = (formData.get('title') as string)?.trim();
-    const lessonFile = formData.get('lesson');
-    const incomingUrl = (formData.get('url') as string)?.trim();
+    const courseDetails = await prisma.course.findUnique({
+      where: {
+        id: courseId,
+      },
+      select: {
+        authorId: true,
+      },
+    });
 
-    if (!moduleId || !title) {
-      return NextResponse.json(new ApiResponse(400, 'Module ID and title are required', {}), {
-        status: 400,
-      });
+    if (!courseDetails) {
+      return NextResponse.json(new ApiResponse(403, 'Course Not Found', {}), { status: 403 });
+    }
+
+    if (courseDetails?.authorId !== user.id && user.role == 'ADMIN') {
+      return NextResponse.json(new ApiResponse(403, 'Unauthorised', {}), { status: 403 });
     }
 
     const moduleDetails = await prisma.module.findUnique({
       where: { id: moduleId },
       select: {
-        course: {
-          select: {
-            authorId: true,
-          },
-        },
+        title: true,
       },
     });
 
     if (!moduleDetails) {
-      return NextResponse.json(new ApiResponse(404, 'Module not found', {}), {
-        status: 404,
+      return NextResponse.json(new ApiResponse(403, 'Module Not Found', {}), { status: 403 });
+    }
+
+    const body = await req.json();
+
+    const { title, content }: { title: string; content: string } = body;
+
+    if (title.trim() == '' && content.trim() == '') {
+      return NextResponse.json(new ApiResponse(403, 'Please Provide all Details', {}), {
+        status: 403,
       });
-    }
-
-    if (user.role !== 'ADMIN' && moduleDetails.course.authorId !== user.id) {
-      return NextResponse.json(
-        new ApiResponse(403, 'You do not have access to modify course content', {}),
-        { status: 403 }
-      );
-    }
-
-    const hasFile = lessonFile instanceof File;
-    const hasUrl = !!incomingUrl;
-
-    if (!hasFile && !hasUrl) {
-      return NextResponse.json(new ApiResponse(400, 'Provide either a file or a URL', {}), {
-        status: 400,
-      });
-    }
-
-    let fileId: string | null = null;
-    let lessonUrl: string | null = null;
-
-    if (hasFile) {
-      const result = await uploadToCloudinary(lessonFile as File);
-
-      if (!result) {
-        return NextResponse.json(new ApiResponse(400, 'Failed to upload resource', {}), {
-          status: 400,
-        });
-      }
-
-      const { public_id, bytes, url, resource_type } = result;
-
-      let fileType: FileType;
-
-      if (resource_type === 'image') {
-        fileType = FileType.IMAGE;
-      } else if (resource_type === 'video') {
-        fileType = FileType.VIDEO;
-      } else {
-        fileType = FileType.DOCUMENT;
-      }
-
-      const file = await prisma.file.create({
-        data: {
-          public_id,
-          size: bytes,
-          url,
-          type: fileType,
-          uploadedBy: user.id,
-        },
-      });
-
-      fileId = file.id;
-      lessonUrl = url;
-    }
-
-    if (hasUrl) {
-      try {
-        new URL(incomingUrl!);
-      } catch {
-        return NextResponse.json(new ApiResponse(400, 'Invalid URL provided', {}), { status: 400 });
-      }
-
-      lessonUrl = incomingUrl!;
     }
 
     const lastLesson = await prisma.lesson.findFirst({
-      where: { moduleId },
-      orderBy: { createdAt: 'desc' },
-      select: {
-        order: true,
+      where: {
+        moduleId,
+      },
+      orderBy: {
+        createdAt: 'desc',
       },
     });
 
-    const createdLesson = await prisma.lesson.create({
+    const newLesson = await prisma.lesson.create({
       data: {
+        content,
         title,
-        videoFileId: fileId,
-        videoUrl: fileId ? null : lessonUrl,
-        order: (lastLesson?.order ?? 0) + 1,
+        order: lastLesson?.order ? lastLesson.order + 1 : 1,
         moduleId,
       },
     });
 
-    const formattedLesson = {
-      id: createdLesson.id,
-      title: createdLesson.title,
-      url: lessonUrl,
-    };
-
-    return NextResponse.json(
-      new ApiResponse(201, 'Lesson Uploaded Successfully', formattedLesson),
-      { status: 201 }
-    );
+    return NextResponse.json(new ApiResponse(201, 'Lesson Uploaded Successfully', newLesson), {
+      status: 201,
+    });
   } catch (error) {
     console.error('Failed To Add Lesson', error);
     return NextResponse.json(new ApiResponse(500, 'Internal Server Error', {}), { status: 500 });

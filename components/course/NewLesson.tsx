@@ -22,7 +22,7 @@ const NewLesson: React.FC<LessonAddFormProps> = ({ moduleId, onClose }) => {
         const newLesson = {
           id: data.id,
           title: data.title,
-          url: data.url || null,
+          content: data.content,
         };
 
         queryClient.setQueryData(['courses', courseId], (oldData: Course) => {
@@ -47,22 +47,9 @@ const NewLesson: React.FC<LessonAddFormProps> = ({ moduleId, onClose }) => {
     },
   });
 
-  const handleAddLesson = async ({
-    title,
-    url,
-    file,
-  }: {
-    title: string;
-    url?: string;
-    file?: File;
-  }) => {
+  const handleAddLesson = async ({ title, content }: { title: string; content: string }) => {
     try {
-      if (url) {
-        await mutateAsync({ courseId, moduleId, title, url });
-      } else {
-        if (!file) return;
-        await mutateAsync({ courseId, moduleId, title, lesson: file });
-      }
+      await mutateAsync({ courseId, moduleId, title, content });
     } catch (error) {
       console.error('Upload error:', error);
     }
@@ -71,6 +58,7 @@ const NewLesson: React.FC<LessonAddFormProps> = ({ moduleId, onClose }) => {
   return (
     <>
       <LessonForm
+        submitText="Add"
         onClose={onClose}
         formTitle="Add new Lesson"
         func={handleAddLesson}

@@ -10,11 +10,7 @@ const page = async () => {
     select: { role: true },
   });
 
-  return (
-    <>
-      <AddContent role={user!.role} />
-    </>
-  );
+  return <AddContent role={user!.role} />;
 };
 
 export default page;

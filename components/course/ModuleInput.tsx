@@ -73,7 +73,7 @@ const ModuleInput: React.FC<{ title?: string; moduleId: string; index: number }>
   return (
     <div className="flex justify-center bg-white dark:bg-[#1e2939] items-center gap-4">
       <h4 className="text-md font-medium">{index + 1}</h4>
-      <div className="border flex-1 max-w-[710px] flex justify-between w-full border-gray-400/40 p-2 rounded-xl">
+      <div className="border flex-1 max-w-[800px] flex justify-between w-full border-gray-400/40 p-2 rounded-xl">
         <input
           className="flex-1 text-sm h-9 px-2 focus:outline-none transition disabled:cursor-not-allowed disabled:opacity-70"
           value={text}
