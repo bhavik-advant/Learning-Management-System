@@ -58,6 +58,7 @@ function TraineeDashBoard() {
       const avg = scores.reduce((sum, s) => sum + (s.score ?? 0), 0) / scores.length;
       return acc + avg;
     }, 0) / (assignments.length || 1);
+  console.log(courses);
 
   return (
     <div className="mx-4 sm:mx-8 space-y-6 pb-10">

@@ -63,7 +63,7 @@ const Sidebar: React.FC<SidebarProps> = ({ show, onClick, role, user }) => {
 
       <ul className="p-4 space-y-1">
         {menuItems.map((item, index) => {
-          const fullPath = `/${role}/${item.href}`;
+          const fullPath = `/${item.href}`;
 
           return <NavLink key={index} href={fullPath} icon={item.icon} label={item.label} />;
         })}
