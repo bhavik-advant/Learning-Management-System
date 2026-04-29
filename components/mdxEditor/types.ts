@@ -1,6 +1,6 @@
 export type MarkdownEditorProps = {
   value: string
-  onChange ?: (value: string) => void
+  onChange : (value: string) => void
   placeholder?: string
   className?: string
   contentEditableClassName?: string

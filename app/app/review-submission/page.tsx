@@ -36,8 +36,6 @@ const ReviewAssignment = () => {
     queryFn: getAllSubmissions,
   });
 
-  console.log(submissions);
-
   if (loading) {
     return <Loading text="Submissions" />;
   }
@@ -97,7 +95,7 @@ const ReviewAssignment = () => {
                   {new Date(submission.submittedAt).toLocaleDateString()}
                 </TableCell>
                 <TableCell className="text-gray-600 dark:text-gray-400">
-                  <Link href={`/mentor/review/${submission.id}`}>
+                  <Link href={`/app/review-submission/${submission.id}`}>
                     {submission.score ? 'View' : 'Review'}
                   </Link>
                 </TableCell>

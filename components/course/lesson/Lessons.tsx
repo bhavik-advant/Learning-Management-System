@@ -6,8 +6,8 @@ import { useState } from 'react';
 import { BiTrash } from 'react-icons/bi';
 import { VscEdit } from 'react-icons/vsc';
 import { Course } from '@/types/types';
-import { Card } from '../ui/card';
-import { MarkdownEditor } from '../mdxEditor';
+import { Card } from '@/components/ui/card';
+import { MarkdownEditor } from '@/components/mdxEditor';
 import EditLesson from './EditLesson';
 
 type Lesson = {
@@ -70,7 +70,7 @@ const Lessons: React.FC<LessonEditFormProps> = ({ lesson, moduleId }) => {
 
   return (
     <div className="flex justify-center bg-white dark:bg-[#1e2939]  items-center">
-      <Card className="max-w-150 flex-1 border border-gray-400/30 p-4 ">
+      <Card className="max-w-150 flex-1 border max-h-110  border-gray-400/30 p-4 ">
         <div className="flex justify-between items-center px-2  ">
           <div className=" font-medium">{lesson.title}</div>
 
@@ -104,6 +104,7 @@ const Lessons: React.FC<LessonEditFormProps> = ({ lesson, moduleId }) => {
           onChange={() => {}}
           readOnly={!isEditing}
           isEditing={isEditing}
+          className="overflow-auto no-scrollbar"
         />
 
         {isEditing && (

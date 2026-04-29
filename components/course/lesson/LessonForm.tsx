@@ -3,13 +3,13 @@
 import { Upload } from 'lucide-react';
 import { MarkdownEditor } from '@/components/mdxEditor';
 import React, { useState } from 'react';
-import { Card, CardContent } from '../ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { uploadFile } from '@/services/apis/file';
 import { useParams } from 'next/navigation';
 import { useMutation } from '@tanstack/react-query';
 import { RiLoader4Fill } from 'react-icons/ri';
-import { Input } from '../ui/input';
-import { Label } from '../ui/label';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 type LessonFormProps = {
   submitText: string;
@@ -64,7 +64,7 @@ const LessonForm: React.FC<LessonFormProps> = ({
     await func({ content: markDown, title });
   };
   return (
-    <div className="flex justify-center ">
+    <div className="flex justify-center mb-2 ">
       <Card className="max-w-200">
         <CardContent className="flex flex-col gap-4">
           <Label htmlFor="title">Title</Label>

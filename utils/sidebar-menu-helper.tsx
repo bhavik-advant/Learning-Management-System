@@ -59,12 +59,12 @@ export const sidebarMenu: Record<UserRole, MenuItem[]> = {
     },
     {
       label: 'Students',
-      href: 'app/students',
+      href: 'app/assign-course',
       icon: <HiUserGroup />,
     },
     {
       label: 'Reviews',
-      href: 'app/review',
+      href: 'app/review-submission',
       icon: <MdReviews />,
     },
   ],

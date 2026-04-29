@@ -50,6 +50,7 @@ const NewLesson: React.FC<LessonAddFormProps> = ({ moduleId, onClose }) => {
   const handleAddLesson = async ({ title, content }: { title: string; content: string }) => {
     try {
       await mutateAsync({ courseId, moduleId, title, content });
+      onClose();
     } catch (error) {
       console.error('Upload error:', error);
     }

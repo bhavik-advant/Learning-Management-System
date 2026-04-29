@@ -3,11 +3,9 @@ import { useQuery } from '@tanstack/react-query';
 
 export const useCourse = (courseId: string) => {
   const { data, isLoading } = useQuery({
-    queryKey: ['course', courseId],
+    queryKey: ['courses', courseId],
     queryFn: () => getCourseById(courseId),
   });
 
   return { course: data, isLoading };
 };
-
-

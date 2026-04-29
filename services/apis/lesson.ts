@@ -9,8 +9,11 @@ export const addLesson = async ({
   title: string;
   content: string;
 }) => {
-  const response = await fetch(`/api//course/${courseId}/module/${moduleId}/lesson`, {
+  const response = await fetch(`/api/course/${courseId}/module/${moduleId}/lesson`, {
     method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
     body: JSON.stringify({
       title,
       content,
@@ -20,12 +23,12 @@ export const addLesson = async ({
   if (!response.ok) {
     console.log(response);
 
-    throw new Error('Failed to create coursess');
+    throw new Error('Failed to create lesson');
   }
 
   const result = await response.json();
 
-  if (!result.success && result.statusCode != 201) {
+  if (!result.success) {
     throw new Error(result.message);
   }
 
@@ -48,7 +51,7 @@ export const deleteLesson = async ({
   if (!response.ok) {
     console.log(response);
 
-    throw new Error('Failed to create coursess');
+    throw new Error('Failed to delete lesson');
   }
 
   const result = await response.json();

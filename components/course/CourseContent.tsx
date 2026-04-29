@@ -1,7 +1,7 @@
 'use client';
 
-import Modules from '@/components/course/Modules';
-import NewModule from '@/components/course/NewModule';
+import Modules from '@/components/course/module/Modules';
+import NewModule from '@/components/course/module/NewModule';
 import { Role } from '@/generated/prisma/enums';
 import { useParams, useRouter } from 'next/navigation';
 import Loading from '../ui/loading';
@@ -15,10 +15,18 @@ type Lesson = {
   content: string;
 };
 
+type Assignment = {
+  id: string;
+  title: string;
+  description: string;
+  maxScore: number;
+};
+
 type Module = {
   id: string;
   title: string;
   lessons: Lesson[];
+  assignments: Assignment[];
 };
 
 const AddContent = ({ role }: { role: Role }) => {
@@ -30,7 +38,6 @@ const AddContent = ({ role }: { role: Role }) => {
   const { course, isLoading } = useCourse(courseId);
 
   console.log(course);
-  
 
   const handleSaveCourse = async () => {
     await saveCourse(courseId, {
@@ -73,6 +80,7 @@ const AddContent = ({ role }: { role: Role }) => {
                 id={module.id}
                 title={module.title}
                 lessons={module.lessons}
+                assignments={module.assignments}
               />
             ))}
         </div>

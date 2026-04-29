@@ -27,6 +27,14 @@ export type Module = {
   id: string;
   title: string;
   lessons: Lesson[];
+  assignments: Assignment[];
+};
+
+type Assignment = {
+  id: string;
+  title: string;
+  description: string;
+  maxScore: number;
 };
 
 export type Course = {
