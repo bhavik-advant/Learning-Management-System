@@ -24,6 +24,7 @@ import {
 } from 'react-icons/hi2';
 import { BsFileEarmarkText } from 'react-icons/bs';
 import Link from 'next/link';
+import { MarkdownEditor } from '@/components/mdxEditor';
 
 type Params = { assignmentId: string };
 type Props = { params: Promise<Params> };
@@ -194,9 +195,14 @@ export default function AssignmentDetailsPage({ params }: Props) {
             Description
           </h2>
         </div>
-        <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
-          {assignment.description}
-        </p>
+        <div className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+          <MarkdownEditor
+            value={assignment.description}
+            onChange={() => {}}
+            isEditing={false}
+            readOnly={true}
+          />
+        </div>
       </div>
 
       <div className="rounded-2xl border border-gray-200/70 dark:border-gray-800 bg-white dark:bg-gray-950/50 px-6 py-5 shadow-sm space-y-4">

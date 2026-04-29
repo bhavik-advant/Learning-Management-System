@@ -116,7 +116,7 @@ function AssignmentCard({ item, index }: { item: AssignmentType; index: number }
           )}
         </div>
 
-        <p className="text-xs text-gray-400 dark:text-gray-500 line-clamp-1">{item.description}</p>
+        {/* <p className="text-xs text-gray-400 dark:text-gray-500 line-clamp-1">{item.description}</p> */}
 
         <div className="flex flex-wrap items-center gap-3 text-[11px] text-gray-400 dark:text-gray-500">
           <span className="inline-flex items-center gap-1">

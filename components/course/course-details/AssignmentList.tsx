@@ -40,9 +40,10 @@ const AssignmentCard = ({
 }: AssignmentListProps & { assignment: Assignment }) => {
   const status = assignment.submission?.status;
   const statusColor = getStatusColor(status);
-  const href = showSubmission
-    ? `../assignments/${assignment.id}`
-    : `../assignment/${assignment.id}`;
+  const href = `/app/assignments/${assignment.id}`;
+  // if (showSubmission) {
+  //   href = `../assignments/${assignment.id}`;
+  // }
 
   return (
     <Link href={href}>

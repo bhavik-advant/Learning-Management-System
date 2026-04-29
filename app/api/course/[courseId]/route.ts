@@ -45,9 +45,9 @@ export const GET = async (
       title: true,
       description: true,
       status: true,
-      // thumbnail: {
-      //   select: { url: true },
-      // },
+      thumbnail: {
+        select: { url: true },
+      },
       modules: {
         orderBy: { order: 'asc' },
         select: {
@@ -98,7 +98,7 @@ export const GET = async (
     id: course.id,
     title: course.title,
     description: course.description,
-    // thumbnail: course.thumbnail?.url || null,
+    thumbnail: course.thumbnail?.url || null,
     status: course.status,
 
     modules: course.modules.map(module => ({

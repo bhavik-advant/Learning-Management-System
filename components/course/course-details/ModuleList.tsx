@@ -4,7 +4,7 @@ import { ModuleItem } from './ModuleItem';
 type Lesson = {
   id: string;
   title: string;
-  url: string | null;
+  content: string | null;
 };
 
 type Submission = {

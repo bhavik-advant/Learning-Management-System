@@ -22,6 +22,7 @@ export default function AdminSubmissionsPage() {
   if (isError) {
     return <p className="p-6 text-red-500">Failed to load submissions</p>;
   }
+  // console.log(submissions);
 
   return (
     <div className="mx-4 sm:mx-8 py-6 space-y-6">

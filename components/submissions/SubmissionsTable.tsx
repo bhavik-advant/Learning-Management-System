@@ -1,6 +1,3 @@
-// components/submissions/SubmissionsTable.tsx
-
-import Link from 'next/link';
 import React from 'react';
 
 type Submission = {
@@ -100,7 +97,9 @@ const SubmissionsTable: React.FC<{ submissions: Submission[] }> = ({ submissions
                   {new Date(s.submittedAt).toLocaleString()}
                 </td>
                 <td className=" text-blue-600 dark:text-blue-400 text-sm hover:underline">
-                  <Link href={`${s.fileUrl}`}>View File</Link>
+                  <a target="_blank" href={`${s.fileUrl}`}>
+                    View File
+                  </a>
                 </td>
               </tr>
             ))
