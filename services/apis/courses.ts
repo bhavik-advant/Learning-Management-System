@@ -30,8 +30,9 @@ export type Module = {
   title: string;
 };
 
-export async function fetchCourses(): Promise<Course[]> {
-  const res = await fetch('/api/course');
+export async function fetchCourses({ limit }: { limit?: number }): Promise<Course[]> {
+  const limitParam = limit ? `?limit=${limit}` : '';
+  const res = await fetch(`/api/course${limitParam}`);
   const json = await res.json();
 
   if (!res.ok || !json.success) {

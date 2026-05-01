@@ -1,8 +1,5 @@
-import RoleBased from '@/components/RoleBased';
 import getUserDetails from '@/lib/isAuth';
-import MentorCoursesPage from '@/components/course/MentorCourses';
-import AdminCourseDetailsPage from '@/components/course/AdminCourseDetailsPage';
-import TraineeCourseDetailsPage from '@/components/course/TraineeCourseDetailsPage';
+import CourseDetailsPage from '@/components/course/course-details/CourseDetailsPage';
 
 type PageProps = {
   params: {
@@ -13,14 +10,5 @@ type PageProps = {
 export default async function CoursesDetailsPage({ params }: PageProps) {
   const user = await getUserDetails();
 
-  return (
-    <RoleBased
-      role={user.role}
-      components={{
-        ADMIN: () => <AdminCourseDetailsPage params={Promise.resolve(params)} />,
-        MENTOR: () => <AdminCourseDetailsPage params={Promise.resolve(params)} />,
-        TRAINEE: () => <TraineeCourseDetailsPage params={Promise.resolve(params)} />,
-      }}
-    />
-  );
+  return <CourseDetailsPage role={user.role} userId={user.id} params={Promise.resolve(params)} />;
 }

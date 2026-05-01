@@ -5,6 +5,7 @@ import ApiResponse from '@/utils/api-response';
 import { FileTypeToResourceType } from '@/utils/file-type-map';
 import { prisma } from '@/utils/prisma-client';
 import { NextRequest, NextResponse } from 'next/server';
+import { getCourseById, getEnrolledStudentIds } from '@/services/repository/course';
 
 export const GET = async (
   req: NextRequest,
@@ -20,110 +21,17 @@ export const GET = async (
     });
   }
 
-  const courseDetails = await prisma.course.findUnique({
-    where: { id: courseId },
-    select: {
-      enrollments: {
-        select: {
-          studentId: true,
-        },
-      },
-    },
-  });
+  const enrollments = await getEnrolledStudentIds({ courseId });
+  if (enrollments instanceof Response) return enrollments;
 
-  if (!courseDetails) {
-    return NextResponse.json(new ApiResponse(401, 'Course not found', {}), { status: 401 });
+  const isEnrolled = enrollments.some(e => e.studentId === user.id);
+  if (!isEnrolled && user.role === 'TRAINEE') {
+    return NextResponse.json(new ApiResponse(401, 'Unauthorised', {}), { status: 401 });
   }
 
-  // if (!courseDetails.enrollments.includes({ studentId: user.id }) && user.role == 'TRAINEE') {
-  //   return NextResponse.json(new ApiResponse(401, 'Unauthorised', {}), { status: 401 });
-  // }
-  const course = await prisma.course.findUnique({
-    where: { id: courseId },
-    select: {
-      id: true,
-      title: true,
-      description: true,
-      status: true,
-      // thumbnail: {
-      //   select: { url: true },
-      // },
-      modules: {
-        orderBy: { order: 'asc' },
-        select: {
-          id: true,
-          title: true,
+  const course = await getCourseById({ courseId, userId: user.id });
 
-          lessons: {
-            orderBy: { order: 'asc' },
-            select: {
-              id: true,
-              title: true,
-              content: true,
-            },
-          },
-
-          assignments: {
-            select: {
-              id: true,
-              title: true,
-              description: true,
-              dueDate: true,
-              maxScore: true,
-
-              submissions: {
-                where: {
-                  studentId: user.id,
-                },
-                select: {
-                  status: true,
-                  score: true,
-                  submittedAt: true,
-                },
-              },
-            },
-          },
-        },
-      },
-    },
-  });
-
-  if (!course) {
-    return NextResponse.json(new ApiResponse(404, 'Course not found', {}), {
-      status: 404,
-    });
-  }
-
-  const formattedCourse = {
-    id: course.id,
-    title: course.title,
-    description: course.description,
-    // thumbnail: course.thumbnail?.url || null,
-    status: course.status,
-
-    modules: course.modules.map(module => ({
-      id: module.id,
-      title: module.title,
-
-      lessons: module.lessons.map(lesson => ({
-        id: lesson.id,
-        title: lesson.title,
-        content: lesson.content,
-      })),
-
-      assignments: module.assignments.map(a => ({
-        id: a.id,
-        title: a.title,
-        description: a.description,
-        dueDate: a.dueDate,
-        maxScore: a.maxScore,
-
-        submission: a.submissions[0] || null,
-      })),
-    })),
-  };
-
-  return NextResponse.json(new ApiResponse(200, 'Course fetched successfully', formattedCourse), {
+  return NextResponse.json(new ApiResponse(200, 'Course fetched successfully', course), {
     status: 200,
   });
 };

@@ -35,7 +35,7 @@ export type SubmissionType = {
   };
 };
 
-export const getAllSubmissions = async () => {
+export const getMyTraineeSubmissions = async () => {
   const res = await fetch(`/api/submission`);
   const data = await res.json();
   return data.data;

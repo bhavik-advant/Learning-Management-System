@@ -161,7 +161,6 @@ const Submissions: React.FC<{ submissions: SubmissionType[] }> = ({ submissions 
 
   return (
     <div className="space-y-3">
-    
       <div className="space-y-2.5">
         {submissions.map((item, i) => (
           <SubmissionCard key={item.id} item={item} index={i} />

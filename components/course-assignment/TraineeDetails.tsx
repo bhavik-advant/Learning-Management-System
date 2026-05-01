@@ -26,7 +26,7 @@ const TraineeDetails = ({ traineeDetails }: Props) => {
   return (
     <div className="lg:col-span-1">
       {traineeDetails ? (
-        <Card className="p-0 shadow-md border border-border">
+        <Card className="p-0 shadow-md border border-border  dark:bg-[#0b111f]">
           <CardHeader className="bg-linear-to-r from-blue-50 to-transparent dark:from-blue-950/30 dark:to-transparent border-b border-border p-0 m-0">
             <div className="flex items-start justify-between gap-3 p-4 pb-2">
               <div className="flex items-start gap-3  ">
@@ -60,7 +60,7 @@ const TraineeDetails = ({ traineeDetails }: Props) => {
           </CardContent>
         </Card>
       ) : (
-        <Card className="border border-dashed border-border shadow-sm flex items-center justify-center h-full">
+        <Card className="border  dark:bg-[#0b111f] border-dashed border-border shadow-sm flex items-center justify-center h-full">
           <CardContent className="text-center space-y-2 py-8">
             <Users className="w-10 h-10 text-muted-foreground mx-auto opacity-40" />
             <div>

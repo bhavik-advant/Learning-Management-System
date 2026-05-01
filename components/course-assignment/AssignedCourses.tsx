@@ -1,240 +1,50 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Users, AlertCircle } from 'lucide-react';
-import SelectableCourses from './SelectableCourses';
 import { useState } from 'react';
-import {
-  Pagination,
-  PaginationContent,
-  PaginationItem,
-  PaginationNext,
-  PaginationPrevious,
-} from '@/components/ui/pagination';
-import { getAssignedCourses, restrictCourse } from '@/services/apis/courses';
-import { useMutation, useQuery } from '@tanstack/react-query';
-import queryClient from '@/utils/query-client';
-import Summery from './Summery';
-
-type Course = {
-  id: string;
-  title: string;
-  description: string;
-  thumbnail: string;
-  author: string;
-  status: string;
-  authorId: string;
-  thumbnailId: string | null;
-  createdAt: string;
-  updatedAt: string;
-  modulesCount: number;
-};
+import CourseAssignGrid from './CourseAssignGrid';
+import useGetAssignedCourses from '@/hooks/courses/useGetAssignedCourses';
+import useRestrictCourse from '@/hooks/courses/useRestrictCourse';
 
 const AssignedCourses = ({ traineeId }: { traineeId: string }) => {
-  const [selectedCourses, setSelectedCourses] = useState<Course[]>([]);
   const [page, setPage] = useState(1);
   const limit = 4;
 
-  const {
-    data,
-    isLoading: courseFetching,
-    isError: courseHasError,
-    error: courseError,
-  } = useQuery({
-    queryKey: ['assigned-courses', traineeId, page],
-    queryFn: () => getAssignedCourses({ limit, page, traineeId }),
-    enabled: traineeId != '',
+  const { courseData, isLoading } = useGetAssignedCourses({
+    selectedTraineeId: traineeId,
+    limit,
+    page,
   });
+  const { restrictCourse, isTakingAccess } = useRestrictCourse({ traineeId });
 
-  const { mutateAsync } = useMutation({
-    mutationFn: getAssignedCourses,
-    onSuccess: (data: { courses: Course[] }) => {
-      queryClient.setQueryData(['assigned-courses', traineeId, page], old => {
-        if (!old) {
-          return old;
-        }
-        return data;
-      });
-    },
-  });
-
-  const handleSelectCourse = (course: Course) => {
-    setSelectedCourses(prev => {
-      const isSelected = prev.some(c => c.id === course.id);
-      if (isSelected) {
-        return prev.filter(c => c.id !== course.id);
-      }
-      return [...prev, course];
-    });
-  };
-
-  const handlePagination = async (ident: string) => {
-    if (ident === 'previous' && page >= 2) {
-      const newPage = page - 1;
-      setPage(newPage);
-      await mutateAsync({ limit, page: newPage, traineeId });
-    } else if (ident === 'next') {
-      if (!data?.pagination || page >= data.pagination.totalPages) {
-        return;
-      }
-      const newPage = page + 1;
-      setPage(newPage);
-      await mutateAsync({ limit, page: newPage, traineeId });
+  const handlePagination = (ident: 'previous' | 'next') => {
+    if (ident === 'previous') {
+      if (page <= 1) return;
+      setPage(prev => prev - 1);
+      return;
     }
+
+    if (!courseData?.pagination?.hasNextPage) return;
+    setPage(prev => prev + 1);
   };
 
-  const { mutateAsync: restrictCourseForTrainee, isPending } = useMutation({
-    mutationFn: restrictCourse,
-    onSuccess: (data, variable) => {
-      queryClient.setQueryData(
-        ['assigned-courses', traineeId, page],
-        (old: { courses: Course[] }) => {
-          if (!old?.courses) return old;
-
-          return {
-            ...old,
-            courses: old.courses.filter(course => !variable.courseIds.includes(course.id)),
-          };
-        }
-      );
-
-      queryClient.invalidateQueries({ queryKey: ['assignable-courses', traineeId] });
-      setSelectedCourses([]);
-    },
-  });
-
-  const handleRestrict = async () => {
-    const courseIds = selectedCourses.map(course => course.id);
-    await restrictCourseForTrainee({ courseIds, traineeId });
+  const handleRestrict = async (courseIds: string[]) => {
+    if (courseIds.length === 0) {
+      return;
+    }
+    await restrictCourse({ courseIds, traineeId });
   };
-
-  const isTraineeSelected = !!traineeId;
-  const isLoading = courseFetching;
-  const isError = courseHasError;
-  const hasNoCourses = !data?.courses || data.courses.length === 0;
-  const hasCoursesWithData = data?.courses && data.courses.length > 0;
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-      <div
-        className={` ${selectedCourses.length > 0 ? 'lg:col-span-2' : 'lg:col-span-3'}  space-y-4`}
-      >
-        {!isTraineeSelected && (
-          <Card className="shadow-md border border-dashed border-border">
-            <CardContent className="pt-16 pb-16 flex items-center justify-center min-h-64">
-              <div className="text-center space-y-2">
-                <Users className="w-12 h-12 text-muted-foreground mx-auto opacity-50" />
-                <div>
-                  <p className="text-sm font-semibold text-foreground">Select a trainee</p>
-                  <p className="text-xs text-muted-foreground">
-                    Choose a trainee from the left to view assigned courses
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {isTraineeSelected && isLoading && (
-          <Card className="shadow-md border border-border">
-            <CardHeader className="border-b border-border py-2 px-4">
-              <CardTitle className="text-sm">Assigned Courses</CardTitle>
-              <CardDescription className="text-xs">Loading courses...</CardDescription>
-            </CardHeader>
-            <CardContent className="h-24"></CardContent>
-          </Card>
-        )}
-
-        {isTraineeSelected && isError && (
-          <Card className="shadow-md border border-red-200 dark:border-red-900">
-            <CardHeader className="border-b border-border py-2 px-4">
-              <CardTitle className="text-sm">Unable to Load Courses</CardTitle>
-              <CardDescription className="text-xs">
-                {(courseError as Error)?.message || 'Something went wrong while fetching courses.'}
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="px-4 pb-4">
-              <div className="flex items-center gap-3 p-3 rounded-lg bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-900">
-                <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 shrink-0" />
-                <p className="text-sm text-red-700 dark:text-red-300">
-                  Please try refreshing the page or contact support.
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {isTraineeSelected && !isLoading && !isError && hasNoCourses && (
-          <Card className="shadow-md border border-border">
-            <CardHeader className="border-b border-border py-2 px-4">
-              <CardTitle className="text-sm"> Assigned Courses</CardTitle>
-              <CardDescription className="text-xs">Viewing 0 course(s)</CardDescription>
-            </CardHeader>
-            <CardContent className="px-4 pb-4 flex items-center justify-center min-h-64">
-              <div className="text-center space-y-2">
-                <Users className="w-10 h-10 text-muted-foreground mx-auto opacity-50" />
-                <div>
-                  <p className="text-sm font-semibold text-foreground">No courses assigned</p>
-                  <p className="text-xs text-muted-foreground">
-                    This trainee has no assigned courses yet.
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-
-        {isTraineeSelected && !isLoading && !isError && hasCoursesWithData && (
-          <Card className="shadow-md border border-border">
-            <CardHeader className="border-b border-border py-2 px-4">
-              <CardTitle className="text-sm">Already Assigned Courses</CardTitle>
-              <CardDescription className="text-xs">
-                Viewing {data?.courses.length} course(s)
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="px-4 pb-4">
-              <SelectableCourses
-                func={handleSelectCourse}
-                courses={data?.courses || []}
-                selectedCourses={selectedCourses}
-              />
-              <div className="mt-4">
-                <Pagination>
-                  <PaginationContent>
-                    {data?.pagination.hasPreviousPage && (
-                      <PaginationItem>
-                        <PaginationPrevious onClick={() => handlePagination('previous')} />
-                      </PaginationItem>
-                    )}
-
-                    <PaginationItem>
-                      <span className="text-xs">
-                        Page {data?.pagination.currentPage} of {data?.pagination.totalPages}
-                      </span>
-                    </PaginationItem>
-
-                    {data?.pagination.hasNextPage && (
-                      <PaginationItem>
-                        <PaginationNext onClick={() => handlePagination('next')} />
-                      </PaginationItem>
-                    )}
-                  </PaginationContent>
-                </Pagination>
-              </div>
-            </CardContent>
-          </Card>
-        )}
-      </div>
-
-      {selectedCourses.length > 0 && (
-        <Summery
-          isLoading={isPending}
-          pendingText="Taking Access.."
-          actionLabel="Restrict"
-          selectedTraineeId={traineeId}
-          selectedCourses={selectedCourses}
-          onAction={handleRestrict}
-        />
-      )}
-    </div>
+    <CourseAssignGrid
+      title={'Already Assigned Courses'}
+      submitText="Restrict"
+      pendingtext="Taking Access.."
+      isFetching={isLoading}
+      data={courseData}
+      isLoading={isTakingAccess}
+      getNextPage={handlePagination.bind(null, 'next')}
+      traineeId={traineeId}
+      getPreviousPage={handlePagination.bind(null, 'previous')}
+      func={handleRestrict}
+    />
   );
 };
 

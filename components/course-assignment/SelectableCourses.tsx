@@ -8,10 +8,6 @@ type Course = {
   thumbnail: string;
   author: string;
   status: string;
-  authorId: string;
-  thumbnailId: string | null;
-  createdAt: string;
-  updatedAt: string;
   modulesCount: number;
 };
 
@@ -24,10 +20,6 @@ const SelectableCourses = ({
   func: (course: Course) => void;
   selectedCourses?: Course[];
 }) => {
-  const handleSelectCourse = (course: Course) => {
-    func(course);
-  };
-
   return (
     <ul className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
       {courses &&
@@ -38,7 +30,7 @@ const SelectableCourses = ({
               <SelectableCourse
                 course={course}
                 isSelected={isSelected}
-                onCheckboxChange={() => handleSelectCourse(course)}
+                onCheckboxChange={func.bind(null, course)}
               />
             </li>
           );

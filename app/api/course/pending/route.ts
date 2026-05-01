@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
-import { prisma } from '@/utils/prisma-client';
 import ApiResponse from '@/utils/api-response';
 import getUserDetails from '@/lib/isAuth';
+import { getPendingCourses } from '@/services/apis/courses';
 
 export const GET = async () => {
   try {
@@ -11,48 +11,10 @@ export const GET = async () => {
       return NextResponse.json(new ApiResponse(401, 'Unauthorised', {}), { status: 401 });
     }
 
-    const courses = await prisma.course.findMany({
-      where: {
-        status: 'PENDING',
-      },
-      include: {
-        thumbnail: {
-          select: {
-            url: true,
-          },
-        },
-        author: {
-          select: {
-            username: true,
-          },
-        },
-        modules: {
-          select: {
-            _count: {
-              select: {
-                lessons: true,
-              },
-            },
-          },
-        },
-      },
-      orderBy: {
-        createdAt: 'desc',
-      },
-    });
+    const courses = await getPendingCourses();
 
-    const formattedCourses = courses.map(course => ({
-      id: course.id,
-      title: course.title,
-      description: course.description,
-      image: course.thumbnail?.url,
-      mentor: course.author?.username,
-      submittedAt: course.createdAt,
-      modules: course.modules.length,
-      lessons: course.modules.reduce((acc, module) => acc + module._count.lessons, 0),
-    }));
     return NextResponse.json(
-      new ApiResponse(200, 'Pending courses fetched successfully', formattedCourses),
+      new ApiResponse(200, 'Pending courses fetched successfully', courses),
       {
         status: 200,
       }

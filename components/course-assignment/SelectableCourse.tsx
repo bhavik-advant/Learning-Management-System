@@ -12,10 +12,6 @@ type Course = {
   thumbnail: string;
   author: string;
   status: string;
-  authorId: string;
-  thumbnailId: string | null;
-  createdAt: string;
-  updatedAt: string;
   modulesCount: number;
 };
 
@@ -39,7 +35,7 @@ function SelectableCourse({
   return (
     <Card
       onClick={handleCardClick}
-      className="flex flex-col h-full p-0 overflow-hidden hover:shadow-lg dark:hover:shadow-lg transition-all duration-200 cursor-pointer border border-border shadow-md dark:shadow-md"
+      className="flex flex-col h-full p-0 bg-gray-900/90 overflow-hidden hover:shadow-lg dark:hover:shadow-lg transition-all duration-200 cursor-pointer border border-border shadow-md dark:shadow-md"
     >
       <div className="relative w-full h-32 overflow-hidden bg-slate-200 dark:bg-slate-700">
         <Image

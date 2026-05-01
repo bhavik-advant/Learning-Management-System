@@ -65,7 +65,7 @@ const Course: React.FC<{
           alt={title}
           fill
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-black/0 via-black/0 to-black/60" />
+        <div className="absolute inset-0 bg-linear-to-b from-black/0 via-black/0 to-black/60" />
         <div className="absolute inset-0 ring-1 ring-inset ring-white/10" />
         <div className="absolute bottom-3 left-3">
           <span className="inline-flex items-center rounded-full border border-white/20 bg-black/20 backdrop-blur-md px-2.5 py-1 text-[11px] font-medium text-white">
@@ -102,7 +102,7 @@ const Course: React.FC<{
         </div>
 
         <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-2xl border border-gray-200/70 dark:border-gray-800 bg-white/60 dark:bg-gray-950/30 text-gray-900 dark:text-white flex items-center justify-center text-[10px] font-semibold flex-shrink-0">
+          <div className="w-8 h-8 rounded-2xl border border-gray-200/70 dark:border-gray-800 bg-white/60 dark:bg-gray-950/30 text-gray-900 dark:text-white flex items-center justify-center text-[10px] font-semibold shrink-0">
             <Image
               src={image}
               alt={author}
@@ -119,7 +119,7 @@ const Course: React.FC<{
         <h2 className="text-[18px] font-semibold leading-snug text-gray-900 dark:text-white line-clamp-2">
           {title}
         </h2>
-        <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2">{description}</p>
+        <p className="text-sm text-gray-600 dark:text-gray-300 line-clamp-2 ">{description}</p>
 
         {progress !== undefined && (
           <div>

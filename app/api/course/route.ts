@@ -2,67 +2,22 @@
 import { FileType } from '@/generated/prisma/enums';
 import getUserDetails from '@/lib/isAuth';
 import { uploadToCloudinary } from '@/services/external/cloudinary';
+import { getMyCourses } from '@/services/repository/course';
 import ApiResponse from '@/utils/api-response';
 import { prisma } from '@/utils/prisma-client';
 import { NextRequest, NextResponse } from 'next/server';
 
-export const GET = async () => {
+export const GET = async (req: NextRequest) => {
   try {
     const user = await getUserDetails();
 
-    const include = {
-      author: {
-        select: {
-          username: true,
-          image: true,
-        },
-      },
-      thumbnail: { select: { url: true } },
-      _count: {
-        select: {
-          modules: true,
-        },
-      },
-    } as const;
+    const searchParams = req.nextUrl.searchParams;
+    const limitParam = searchParams.get('limit');
+    const limit = limitParam === null ? undefined : Math.floor(Number(limitParam));
 
-    let courses;
+    const courses = await getMyCourses({ userId: user.id, userRole: user.role, limit });
 
-    if (user.role === 'ADMIN') {
-      courses = await prisma.course.findMany({
-        include,
-        orderBy: { createdAt: 'desc' },
-      });
-    } else if (user.role === 'MENTOR') {
-      courses = await prisma.course.findMany({
-        include,
-        orderBy: { createdAt: 'desc' },
-      });
-    } else {
-      courses = await prisma.course.findMany({
-        where: {
-          status: 'APPROVED',
-        },
-        include,
-        orderBy: { createdAt: 'desc' },
-      });
-    }
-
-    const payload = courses.map(c => ({
-      id: c.id,
-      title: c.title,
-      description: c.description,
-      thumbnail: c.thumbnail?.url ?? '',
-      author: c.author.username,
-      image: c.author.image,
-      status: c.status,
-      authorId: c.authorId,
-      thumbnailId: c.thumbnailId,
-      createdAt: c.createdAt,
-      updatedAt: c.updatedAt,
-      modulesCount: c._count.modules,
-    }));
-
-    return NextResponse.json(new ApiResponse(200, 'Courses fetched successfully', payload), {
+    return NextResponse.json(new ApiResponse(200, 'Courses fetched successfully', courses), {
       status: 200,
     });
   } catch (error) {

@@ -1,6 +1,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Users } from 'lucide-react';
 import Image from 'next/image';
+import { cn } from '@/lib/utils';
 
 type Course = {
   id: string;
@@ -9,10 +10,6 @@ type Course = {
   thumbnail: string;
   author: string;
   status: string;
-  authorId: string;
-  thumbnailId: string | null;
-  createdAt: string;
-  updatedAt: string;
   modulesCount: number;
 };
 
@@ -24,6 +21,7 @@ type SummeryProps = {
   title?: string;
   isLoading: boolean;
   pendingText: string;
+  className?: string;
 };
 
 const Summery = ({
@@ -33,14 +31,15 @@ const Summery = ({
   onAction,
   actionLabel = 'Assign',
   title = 'Selected',
+  className,
 }: SummeryProps) => {
   const handleAction = async () => {
     await onAction();
   };
 
   return (
-    <div className="lg:col-span-1">
-      <Card className=" h-fit shadow-md border border-border">
+    <div className={cn('lg:col-span-1 ', className)}>
+      <Card className=" h-fit shadow-md border border-border dark:bg-[#0b111f]">
         <CardHeader className="py-2 px-4 border-b border-border">
           <CardTitle className="text-sm">{title}</CardTitle>
           <CardDescription className="text-xs">{selectedCourses.length} course(s)</CardDescription>
@@ -73,6 +72,7 @@ const Summery = ({
 
               <button
                 onClick={handleAction}
+                disabled={isLoading}
                 className="w-full bg-blue-600 hover:bg-blue-700 shadow-md hover:shadow-lg text-white text-xs font-medium py-1.5 px-3 rounded transition-all mt-2"
               >
                 {isLoading ? pendingText : actionLabel}

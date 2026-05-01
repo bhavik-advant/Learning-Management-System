@@ -51,12 +51,12 @@ const AssignmentCards: React.FC<{
       `}
     >
       <div
-        className={`absolute left-0 top-0 bottom-0 w-[3px] rounded-r-full bg-gradient-to-b ${p.accent} opacity-80`}
+        className={`absolute left-0 top-0 bottom-0 w-[3px] rounded-r-full bg-linear-to-b ${p.accent} opacity-80`}
       />
 
       <div
         className={`
-          flex-shrink-0 w-11 h-11 rounded-xl
+          shrink-0 w-11 h-11 rounded-xl
           flex items-center justify-center text-lg
           ${p.icon}
           transition-transform duration-200 group-hover:scale-105

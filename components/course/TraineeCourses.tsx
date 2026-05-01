@@ -1,14 +1,14 @@
 'use client';
 
 import Courses from '@/components/ui/Courses';
-import { getTraineeCourses } from '@/services/apis/courses';
+import { fetchCourses } from '@/services/apis/courses';
 import { useQuery } from '@tanstack/react-query';
 import CoursesLayout from './CoursesLayout';
 
 export default function TraineeCoursesPage() {
   const { data: courses = [], isLoading } = useQuery({
     queryKey: ['trainee-courses'],
-    queryFn: getTraineeCourses,
+    queryFn: fetchCourses,
   });
 
   return (

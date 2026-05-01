@@ -1,4 +1,3 @@
-// api/course/[courseId]/module/route.ts
 import getUserDetails from '@/lib/isAuth';
 import ApiResponse from '@/utils/api-response';
 import { prisma } from '@/utils/prisma-client';

@@ -1,5 +1,4 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Users } from 'lucide-react';
 import SelectableCourses from './SelectableCourses';
 import { useState } from 'react';
 import {
@@ -9,8 +8,8 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from '@/components/ui/pagination';
-
 import Summery from './Summery';
+import NoCourses from './NoCourses';
 
 type Course = {
   id: string;
@@ -19,10 +18,6 @@ type Course = {
   thumbnail: string;
   author: string;
   status: string;
-  authorId: string;
-  thumbnailId: string | null;
-  createdAt: string;
-  updatedAt: string;
   modulesCount: number;
 };
 
@@ -75,45 +70,25 @@ const CourseAssignGrid = ({
     setSelectedCourses([]);
   };
 
-  if (isFetching) {
+  if (isFetching && (!data?.courses || data.courses.length === 0)) {
     return (
       <Card className="shadow-md border border-border">
         <CardHeader className="border-b border-border py-2 px-4">
-          <CardTitle className="text-sm">Assigned Courses</CardTitle>
-          <CardDescription className="text-xs">Loading courses...</CardDescription>
+          <CardTitle className="text-sm">{title}</CardTitle>
+          <CardDescription className="text-xs">Loading course..</CardDescription>
         </CardHeader>
-        <CardContent className="h-24"></CardContent>
+        <CardContent className="h-32"></CardContent>
       </Card>
     );
   }
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-      <div
-        className={` ${selectedCourses.length > 0 ? 'lg:col-span-2' : 'lg:col-span-3'}  space-y-4`}
-      >
-        {data.courses.length == 0 && (
-          <Card className="shadow-md border border-border">
-            <CardHeader className="border-b border-border py-2 px-4">
-              <CardTitle className="text-sm"> {title}</CardTitle>
-              <CardDescription className="text-xs">Viewing 0 course(s)</CardDescription>
-            </CardHeader>
-            <CardContent className="px-4 pb-4 flex items-center justify-center min-h-64">
-              <div className="text-center space-y-2">
-                <Users className="w-10 h-10 text-muted-foreground mx-auto opacity-50" />
-                <div>
-                  <p className="text-sm font-semibold text-foreground">No courses assigned</p>
-                  <p className="text-xs text-muted-foreground">
-                    This trainee has no assigned courses yet.
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        )}
+    <div className="grid  grid-cols-1 lg:grid-cols-3 gap-4">
+      <div className="lg:col-span-2 space-y-4">
+        {data.courses.length == 0 && <NoCourses title={title} />}
 
         {data.courses.length > 0 && (
-          <Card className="shadow-md border border-border">
+          <Card className="shadow-md border dark:bg-[#0b111f] border-border">
             <CardHeader className="border-b border-border py-2 px-4">
               <CardTitle className="text-sm">{title}</CardTitle>
               <CardDescription className="text-xs">
@@ -154,16 +129,14 @@ const CourseAssignGrid = ({
         )}
       </div>
 
-      {selectedCourses.length > 0 && (
-        <Summery
-          isLoading={isLoading}
-          pendingText={pendingtext}
-          actionLabel={submitText}
-          selectedTraineeId={traineeId}
-          selectedCourses={selectedCourses}
-          onAction={handleOperation}
-        />
-      )}
+      <Summery
+        isLoading={isLoading}
+        pendingText={pendingtext}
+        actionLabel={submitText}
+        selectedTraineeId={traineeId}
+        selectedCourses={selectedCourses}
+        onAction={handleOperation}
+      />
     </div>
   );
 };

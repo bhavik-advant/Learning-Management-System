@@ -83,7 +83,7 @@ const Page = () => {
   };
 
   return (
-    <div className="space-y-4 p-4">
+    <div className="space-y-4 dark:bg-[#101828] min-h-screen  p-8">
       <div className="space-y-1">
         <h1 className="text-2xl font-bold tracking-tight">My Trainees</h1>
         <p className="text-sm text-muted-foreground">
@@ -101,10 +101,18 @@ const Page = () => {
       </div>
 
       {!loading && !!selectedTraineeId && (
-        <AssignableCourses selectedTraineeId={selectedTraineeId} />
+        <AssignableCourses
+          key={`assignable-courses-${selectedTraineeId}`}
+          selectedTraineeId={selectedTraineeId}
+        />
       )}
 
-      {!loading && !!selectedTraineeId && <AssignedCourses traineeId={selectedTraineeId} />}
+      {!loading && !!selectedTraineeId && (
+        <AssignedCourses
+          key={`assigned-courses-${selectedTraineeId}`}
+          traineeId={selectedTraineeId}
+        />
+      )}
     </div>
   );
 };

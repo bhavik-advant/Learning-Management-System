@@ -18,7 +18,9 @@ export const GET = async () => {
       return NextResponse.json(new ApiResponse(401, 'Unauthorised', {}), { status: 401 });
     }
 
-    const allTrainees = await prisma.user.findMany({ where: { role: 'TRAINEE' } });
+    const allTrainees = await prisma.user.findMany({
+      where: { role: 'TRAINEE', mentorId: user.id },
+    });
 
     return NextResponse.json(
       new ApiResponse(200, 'All Trainne are fetched successfully', allTrainees),

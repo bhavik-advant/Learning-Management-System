@@ -2,6 +2,7 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import StatusBadge from '../assignments/StatusBadge';
+import getInitials from '@/utils/getInitials';
 
 type UserRow = {
   id: string;
@@ -12,14 +13,6 @@ type UserRow = {
 };
 
 const Users: React.FC<{ users: UserRow[] }> = ({ users }) => {
-  const getInitials = (value: string) =>
-    value
-      .split(' ')
-      .filter(Boolean)
-      .slice(0, 2)
-      .map(part => part[0]?.toUpperCase())
-      .join('');
-
   return (
     <div className="space-y-6">
       {users.length === 0 ? (
@@ -39,7 +32,7 @@ const Users: React.FC<{ users: UserRow[] }> = ({ users }) => {
       ) : (
         <div className="grid gap-5 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
           {users.map(item => {
-            const initials = getInitials(item.username || item.email);
+            const initials = getInitials(item.username || item.email, { fallback: 'U' });
             return (
               <div
                 key={item.id}
@@ -52,7 +45,7 @@ const Users: React.FC<{ users: UserRow[] }> = ({ users }) => {
                       {item.image ? (
                         <Image src={item.image} alt={item.username} fill className="object-cover" />
                       ) : (
-                        <div className="h-full w-full grid place-items-center text-sm font-bold text-gray-900 dark:text-white bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700">
+                        <div className="h-full w-full grid place-items-center text-sm font-bold text-gray-900 dark:text-white bg-linear-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-700">
                           {initials}
                         </div>
                       )}

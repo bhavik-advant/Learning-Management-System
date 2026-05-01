@@ -13,7 +13,6 @@ interface FeedbackSectionProps {
   feedback: string | null | undefined;
   submissionId: string;
   maxScore: number;
-  onFeedbackSubmitted?: () => void;
   score: number | null;
 }
 
@@ -21,7 +20,6 @@ const FeedbackSection = ({
   feedback,
   submissionId,
   maxScore,
-  onFeedbackSubmitted,
   score: incomingScore,
 }: FeedbackSectionProps) => {
   const [isEditing, setIsEditing] = useState(!feedback);
@@ -45,7 +43,7 @@ const FeedbackSection = ({
           score: score,
         };
       });
-      onFeedbackSubmitted?.();
+      queryClient.invalidateQueries({ queryKey: ['submission', submissionId] });
     },
     onError: error => {
       setFormError(error instanceof Error ? error.message : 'Failed to save feedback');
