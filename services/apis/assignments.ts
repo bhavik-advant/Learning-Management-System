@@ -7,6 +7,8 @@ export type AssignmentType = {
   status: 'Pending' | 'Submitted';
   maxScore: number;
   submissions: Submission[];
+  moduleTitle?: string;
+  courseTitle?: string;
 };
 
 type Submission = {

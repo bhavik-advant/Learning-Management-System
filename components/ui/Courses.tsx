@@ -7,13 +7,13 @@ type Course = {
   description: string;
   thumbnail: string;
   author: string;
-  image : string;
+  image: string;
   status: string;
   authorId: string;
   thumbnailId: string | null;
   createdAt: string;
-  updatedAt: string;
   modulesCount: number;
+  authorInitials?: string;
 };
 
 const Courses: React.FC<{ courses: Course[]; btnText: string }> = ({ courses, btnText }) => {

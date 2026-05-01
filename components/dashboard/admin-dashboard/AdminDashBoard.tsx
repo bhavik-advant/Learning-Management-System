@@ -53,7 +53,7 @@ function AdminDashBoard() {
               <div className="flex flex-wrap gap-3">
                 <Link
                   href="/admin/approvals"
-                  className="rounded-2xl bg-gray-900 text-white px-4 py-2 text-sm font-medium hover:opacity-90 transition"
+                  className="rounded-2xl bg-gray-900 dark:bg-white text-white dark:text-gray-900 px-4 py-2 text-sm font-medium hover:opacity-90 transition"
                 >
                   Review Approvals
                 </Link>
@@ -108,7 +108,7 @@ function AdminDashBoard() {
               </p>
             </div>
             <Link
-              href="/admin/courses"
+              href="/app/courses"
               className="text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:underline"
             >
               View all
@@ -131,7 +131,7 @@ function AdminDashBoard() {
               </p>
             </div>
             <Link
-              href="/admin/users"
+              href="/app/users"
               className="text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:underline"
             >
               View all

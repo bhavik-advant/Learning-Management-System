@@ -1,7 +1,7 @@
 'use client';
 
 import { useQuery } from '@tanstack/react-query';
-import { getAllSubmissions } from '@/services/apis/submissions';
+import { getAllSubmissionsAdmin } from '@/services/apis/submissions';
 import SubmissionsTable from '@/components/submissions/SubmissionsTable';
 import Loading from '@/components/ui/loading';
 
@@ -12,11 +12,14 @@ export default function AdminSubmissionsPage() {
     isError,
   } = useQuery({
     queryKey: ['submissions'],
-    queryFn: getAllSubmissions,
+    queryFn: getAllSubmissionsAdmin,
   });
 
   if (isLoading) {
     return <Loading text="Submissions" />;
+  }
+  if (submissions.length === 0) {
+    return <div>no submissions </div>;
   }
 
   if (isError) {
@@ -33,7 +36,7 @@ export default function AdminSubmissionsPage() {
         </p>
       </div>
 
-      <SubmissionsTable submissions={submissions} />
+      <SubmissionsTable submissions={submissions ?? []} />
     </div>
   );
 }

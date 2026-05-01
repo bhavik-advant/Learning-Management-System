@@ -6,6 +6,7 @@ import { getSubmissionsByTrainee, SubmissionType } from '@/services/apis/submiss
 import { useQuery } from '@tanstack/react-query';
 import { BsFileEarmarkCheck, BsClockHistory, BsCheckCircleFill } from 'react-icons/bs';
 import { useState } from 'react';
+import CustomSelect from '../ui/CustomSelect';
 
 export default function TraineeSubmissionsPage() {
   const { data: submission = [], isLoading } = useQuery<SubmissionType[]>({
@@ -110,7 +111,7 @@ export default function TraineeSubmissionsPage() {
         <span className="text-xs font-semibold tracking-wide text-gray-500 dark:text-gray-400 uppercase whitespace-nowrap">
           All submissions
         </span>
-        <div className="flex-1 h-px bg-gray-200 dark:bg-gray-800" />
+        <div className="flex-1 h-px bg-gray-200 dark:bg-gray-500" />
         <div className="flex flex-col md:flex-row gap-3 md:items-center md:justify-between">
           <input
             type="text"
@@ -122,17 +123,19 @@ export default function TraineeSubmissionsPage() {
                focus:ring-indigo-500"
           />
 
-          <select
+          <CustomSelect
             value={statusFilter}
-            onChange={e => setStatusFilter(e.target.value as typeof statusFilter)}
-            className="px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-800 
-               bg-white dark:bg-gray-900 text-sm focus:outline-none"
-          >
-            <option value="ALL">All</option>
-            <option value="PENDING">Pending</option>
-            <option value="GRADED">Completed</option>
-            <option value="RESUBMITTED">Resubmitted</option>
-          </select>
+            onChange={value =>
+              setStatusFilter(value as 'ALL' | 'PENDING' | 'GRADED' | 'RESUBMITTED')
+            }
+            options={[
+              { label: 'All', value: 'ALL' },
+              { label: 'Pending', value: 'PENDING' },
+              { label: 'Graded', value: 'GRADED' },
+              { label: 'Resubmitted', value: 'RESUBMITTED' },
+            ]}
+            className="min-w-[160px]"
+          />
         </div>
       </div>
 

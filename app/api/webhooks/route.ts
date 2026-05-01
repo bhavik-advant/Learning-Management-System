@@ -5,7 +5,7 @@ import { prisma } from '@/utils/prisma-client';
 
 export async function POST(req: NextRequest) {
   try {
-    console.log('Webhook triggered');
+    // console.log('Webhook triggered');
     const evt: WebhookEvent = await verifyWebhook(req);
     const { type, data } = evt;
 
@@ -20,7 +20,7 @@ export async function POST(req: NextRequest) {
           { status: 400 }
         );
       }
-  
+
       await prisma.user.create({
         data: {
           clerkId: id!,
@@ -29,7 +29,7 @@ export async function POST(req: NextRequest) {
           username: username!,
         },
       });
-      
+
       return NextResponse.json(
         { success: true, message: 'User synced successfully' },
         { status: 200 }

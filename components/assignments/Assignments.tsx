@@ -26,7 +26,7 @@ export type AssignmentType = {
   submission: {
     status: 'PENDING' | 'GRADED' | 'RESUBMITTED';
     score?: number | null;
-  } | null;
+  }[];
 };
 
 const statusConfig = {
@@ -77,9 +77,9 @@ function ScoreBar({ score, max }: { score: number; max: number }) {
 }
 
 function AssignmentCard({ item, index }: { item: AssignmentType; index: number }) {
-  const statusKey = (item.submission?.status ?? 'NOT_SUBMITTED') as keyof typeof statusConfig;
+  const statusKey = (item.submission[0]?.status ?? 'NOT_SUBMITTED') as keyof typeof statusConfig;
   const cfg = statusConfig[statusKey] ?? statusConfig.NOT_SUBMITTED;
-  const isGraded = item.submission?.status === 'GRADED';
+  const isGraded = item.submission[0]?.status === 'GRADED';
   const isOverdue = !isGraded && item.dueDate && new Date(item.dueDate) < new Date();
 
   return (
@@ -157,8 +157,8 @@ function AssignmentCard({ item, index }: { item: AssignmentType; index: number }
           {isGraded ? 'Score' : 'Max score'}
         </div>
 
-        {isGraded && item.submission?.score != null ? (
-          <ScoreBar score={item.submission.score} max={item.maxScore} />
+        {isGraded && item.submission[0]?.score != null ? (
+          <ScoreBar score={item.submission[0].score} max={item.maxScore} />
         ) : (
           <span className="text-xs font-semibold text-gray-300 dark:text-gray-600">
             — / {item.maxScore}

@@ -35,7 +35,7 @@ export function ContentViewer({ lesson }: ContentViewerProps) {
 }
 
 const PlayerHeader = ({ title }: { title: string }) => (
-  <div className="p-4 sm:p-6 bg-gray-100 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
+  <div className="p-4 sm:p-6 bg-gray-200 border-b border-gray-100 dark:border-gray-800 flex items-center justify-between">
     <div className="flex items-center gap-3">
       <div className="w-10 h-10 rounded-xl bg-indigo-100 dark:bg-gray-500/40 flex items-center justify-center">
         <DocIcon />

@@ -5,6 +5,7 @@ import Courses from '@/components/ui/Courses';
 import { fetchCourses } from '@/services/apis/courses';
 import { useQuery } from '@tanstack/react-query';
 import CoursesLayout from './CoursesLayout';
+import CustomSelect from '../ui/CustomSelect';
 
 type Course = {
   id: string;
@@ -53,39 +54,33 @@ export default function AdminCoursesPage() {
       isLoading={isLoading}
       isError={isError}
     >
-      <div className="bg-white border rounded-2xl p-4 mb-6 shadow-sm">
+      <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-2xl p-4 mb-6 shadow-sm">
         <div className="flex flex-col lg:flex-row gap-4 items-center justify-between">
           <input
             type="text"
             placeholder="Search courses..."
             value={search}
             onChange={e => setSearch(e.target.value)}
-            className="w-full lg:w-1/3 px-4 py-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full lg:w-1/3 px-4 py-2 
+      border border-gray-300 dark:border-gray-600 
+      rounded-lg outline-none 
+      bg-white dark:bg-gray-800 
+      text-gray-900 dark:text-gray-100 
+      placeholder-gray-400 dark:placeholder-gray-500
+      focus:ring-2 focus:ring-blue-500"
           />
 
-          <div className="flex flex-wrap gap-3 w-full lg:w-auto">
-            <select
-              value={status}
-              onChange={e => setStatus(e.target.value)}
-              className="px-4 py-2 border rounded-lg bg-white"
-            >
-              <option value="all">All Status</option>
-              <option value="DRAFT">Draft</option>
-              <option value="PENDING">Pending</option>
-              <option value="APPROVED">Approved</option>
-            </select>
-
-            <button
-              onClick={() => {
-                setSearch('');
-
-                setStatus('all');
-              }}
-              className="px-4 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-sm"
-            >
-              Reset
-            </button>
-          </div>
+          <CustomSelect
+            value={status}
+            onChange={setStatus}
+            options={[
+              { label: 'All Status', value: 'all' },
+              { label: 'Draft', value: 'DRAFT' },
+              { label: 'Pending', value: 'PENDING' },
+              { label: 'Approved', value: 'APPROVED' },
+            ]}
+            className="min-w-[160px]"
+          />
         </div>
       </div>
 

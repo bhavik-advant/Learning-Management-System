@@ -6,6 +6,7 @@ import { useQuery } from '@tanstack/react-query';
 import { getTraineeAssignments } from '@/services/apis/assignments';
 import { BsFileEarmarkText, BsClockHistory, BsCheckCircleFill } from 'react-icons/bs';
 import { useState } from 'react';
+import CustomSelect from '@/components/ui/CustomSelect';
 
 type AssignmentType = {
   id: string;
@@ -18,7 +19,7 @@ type AssignmentType = {
   submission: {
     status: 'PENDING' | 'GRADED' | 'RESUBMITTED';
     score?: number | null;
-  } | null;
+  }[];
 };
 
 export default function AssignmentPage() {
@@ -29,9 +30,9 @@ export default function AssignmentPage() {
 
   const total = assignments.length;
   const pending = assignments.filter(
-    a => !a.submission || a.submission.status === 'PENDING'
+    a => !a.submission[0] || a.submission[0].status === 'PENDING'
   ).length;
-  const completed = assignments.filter(a => a.submission?.status === 'GRADED').length;
+  const completed = assignments.filter(a => a.submission[0]?.status === 'GRADED').length;
 
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<'ALL' | 'PENDING' | 'GRADED' | 'RESUBMITTED'>(
@@ -44,7 +45,7 @@ export default function AssignmentPage() {
       a.courseTitle.toLowerCase().includes(search.toLowerCase()) ||
       a.moduleTitle.toLowerCase().includes(search.toLowerCase());
 
-    const status = a.submission?.status ?? 'PENDING';
+    const status = a.submission[0]?.status ?? 'PENDING';
 
     const matchesFilter = statusFilter === 'ALL' ? true : status === statusFilter;
 
@@ -119,7 +120,7 @@ export default function AssignmentPage() {
           All assignments
         </span>
 
-        <div className="flex-1 h-px bg-gray-200 dark:bg-gray-800" />
+        <div className="flex-1 h-px bg-gray-200 dark:bg-gray-500" />
         <div className="flex flex-col md:flex-row gap-3 md:items-center md:justify-between">
           <input
             type="text"
@@ -131,17 +132,17 @@ export default function AssignmentPage() {
           focus:ring-indigo-500"
           />
 
-          <select
+          <CustomSelect
             value={statusFilter}
-            onChange={e => setStatusFilter(e.target.value as typeof statusFilter)}
-            className="px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-800 
-          bg-white dark:bg-gray-900 text-sm focus:outline-none"
-          >
-            <option value="ALL">All</option>
-            <option value="PENDING">Pending</option>
-            <option value="GRADED">Completed</option>
-            <option value="RESUBMITTED">Resubmitted</option>
-          </select>
+            onChange={val => setStatusFilter(val as 'ALL' | 'PENDING' | 'GRADED' | 'RESUBMITTED')}
+            options={[
+              { label: 'All', value: 'ALL' },
+              { label: 'Pending', value: 'PENDING' },
+              { label: 'Completed', value: 'GRADED' },
+              { label: 'Resubmitted', value: 'RESUBMITTED' },
+            ]}
+            className="min-w-[160px]"
+          />
         </div>
       </div>
 

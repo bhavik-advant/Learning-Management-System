@@ -9,7 +9,7 @@ import Assignments from '@/components/assignments/Assignments';
 import { useQuery } from '@tanstack/react-query';
 import { getTraineeCourses } from '@/services/apis/courses';
 
-import { AssignmentType, getTraineeAssignments } from '@/services/apis/assignments';
+import { getTraineeAssignments } from '@/services/apis/assignments';
 import Link from 'next/link';
 import Loading from '@/components/ui/loading';
 
@@ -19,6 +19,7 @@ type Course = {
   description: string;
   thumbnail: string;
   author: string;
+  image: string;
   status: string;
   authorId: string;
   thumbnailId: string | null;
@@ -26,6 +27,21 @@ type Course = {
   updatedAt: string;
   modulesCount: number;
 };
+
+type AssignmentType = {
+  id: string;
+  title: string;
+  description: string;
+  dueDate: string | null;
+  maxScore: number;
+  moduleTitle: string;
+  courseTitle: string;
+  submission: {
+    status: 'PENDING' | 'GRADED' | 'RESUBMITTED';
+    score?: number | null;
+  }[];
+};
+
 function TraineeDashBoard() {
   const { data: courses = [], isLoading: coursesLoading } = useQuery<Course[]>({
     queryKey: ['trainee-courses'],
@@ -41,23 +57,23 @@ function TraineeDashBoard() {
     return <Loading text="Dashboard Data" />;
   }
 
-  const totalCourses = courses.length;
+  // const totalCourses = courses.length;
 
-  const pendingAssignments = assignments.filter(a =>
-    a.submissions?.some(s => s.status === 'PENDING')
-  ).length;
+  // const pendingAssignments = assignments.filter(a =>
+  //   a.submission?.some(s => s.status === 'PENDING')
+  // ).length;
 
-  const completedAssignments = assignments.filter(a =>
-    a.submissions?.some(s => s.status === 'GRADED')
-  ).length;
+  // const completedAssignments = assignments.filter(a =>
+  //   a.submission?.some(s => s.status === 'GRADED')
+  // ).length;
 
-  const avgScore =
-    assignments.reduce((acc, a) => {
-      const scores = a.submissions?.filter(s => s.score !== null) || [];
-      if (!scores.length) return acc;
-      const avg = scores.reduce((sum, s) => sum + (s.score ?? 0), 0) / scores.length;
-      return acc + avg;
-    }, 0) / (assignments.length || 1);
+  // const avgScore =
+  //   assignments.reduce((acc, a) => {
+  //     const scores = a.submission?.filter(s => s.score !== null) || [];
+  //     if (!scores.length) return acc;
+  //     const avg = scores.reduce((sum, s) => sum + (s.score ?? 0), 0) / scores.length;
+  //     return acc + avg;
+  //   }, 0) / (assignments.length || 1);
   // console.log(assignments);
 
   return (
@@ -95,22 +111,22 @@ function TraineeDashBoard() {
             <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <DashBoardCard
                 title="Courses Enrolled"
-                value={totalCourses}
+                value={0}
                 icon={<BiBook className="text-[22px]" />}
               />
               <DashBoardCard
                 title="Pending Assignments"
-                value={pendingAssignments}
+                value={0}
                 icon={<FaRegFileAlt className="text-[20px]" />}
               />
               <DashBoardCard
                 title="Completed Assignments"
-                value={completedAssignments}
+                value={0}
                 icon={<IoMdCheckmarkCircleOutline className="text-[22px]" />}
               />
               <DashBoardCard
                 title="Average Score"
-                value={Math.round(avgScore || 0)}
+                value={0}
                 icon={<FaArrowTrendUp className="text-[20px]" />}
               />
             </div>
@@ -128,14 +144,14 @@ function TraineeDashBoard() {
               </p>
             </div>
             <Link
-              href="/trainee/courses"
+              href="/app/courses"
               className="text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:underline whitespace-nowrap"
             >
               View all
             </Link>
           </div>
           <div className="px-5 sm:px-6 pb-6">
-            <Courses btnText="Continue Learning" courses={courses} />
+            <Courses btnText="Continue Learning" courses={courses ?? []} />
           </div>
         </div>
       </section>
@@ -150,7 +166,7 @@ function TraineeDashBoard() {
               </p>
             </div>
             <Link
-              href="/trainee/assignments"
+              href="/app/assignments"
               className="text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:underline whitespace-nowrap"
             >
               View all

@@ -41,7 +41,7 @@ export default function UsersDetailsPage() {
           <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6">
             <div className="space-y-2">
               <div className="flex items-center gap-3">
-                <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/25">
+                <div className="w-12 h-12 rounded-2xl bg-linear-to-br from-blue-500 to-indigo-600 flex items-center justify-center shadow-lg shadow-blue-500/25">
                   <svg
                     className="w-6 h-6 text-white"
                     fill="none"

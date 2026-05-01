@@ -215,26 +215,14 @@ function MarkdownEditorImpl({
 
   if (!plugins) {
     return (
-      <div
-        className={cn(
-          'rounded-2xl border bg-input/50 p-2',
-          readOnly && 'cursor-not-allowed',
-          className
-        )}
-      >
+      <div className={cn('rounded-2xl border bg-input/50 p-2', readOnly, className)}>
         <div className="text-sm text-muted-foreground">Loading editor…</div>
       </div>
     );
   }
 
   return (
-    <div
-      className={cn(
-        'rounded-2xl border bg-gray-100/20 p-2',
-        readOnly && 'cursor-not-allowed',
-        className
-      )}
-    >
+    <div className={cn('rounded-2xl border bg-gray-100/20 p-2', readOnly, className)}>
       <MDXEditor
         key={editorKey}
         ref={editorRef}

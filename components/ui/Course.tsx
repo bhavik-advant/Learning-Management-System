@@ -54,7 +54,7 @@ const Course: React.FC<{
     coral: 'bg-orange-600 text-white hover:bg-orange-700',
     blue: 'bg-blue-700  text-white hover:bg-blue-800',
   };
-  console.log(image);
+  // console.log(image);
 
   return (
     <div className="group relative overflow-hidden rounded-3xl border-2 border-gray-400/50 dark:border-gray-800 bg-white/70 dark:bg-gray-950/40 backdrop-blur-xl shadow-sm transition hover:-translate-y-1 hover:shadow-md">
@@ -135,7 +135,7 @@ const Course: React.FC<{
             href={`/app/courses/${id}`}
             className={`text-sm font-medium px-4 py-2 rounded-2xl transition-colors duration-200 ${
               btnVariant === 'dark'
-                ? 'bg-gray-900 text-white hover:opacity-90'
+                ? 'bg-gray-900 dark:bg-white text-white dark:text-gray-900 hover:opacity-90'
                 : btnColors[btnVariant]
             }`}
           >
