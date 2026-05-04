@@ -37,9 +37,9 @@ type AssignmentType = {
   moduleTitle: string;
   courseTitle: string;
   submission: {
-    status: 'PENDING' | 'GRADED' | 'RESUBMITTED';
+    status: 'Not Submitted' | 'PENDING' | 'GRADED' | 'RESUBMITTED';
     score?: number | null;
-  }[];
+  } | null;
 };
 
 function TraineeDashBoard() {
@@ -57,24 +57,22 @@ function TraineeDashBoard() {
     return <Loading text="Dashboard Data" />;
   }
 
-  // const totalCourses = courses.length;
+  const totalCourses = courses.length;
 
-  // const pendingAssignments = assignments.filter(a =>
-  //   a.submission?.some(s => s.status === 'PENDING')
-  // ).length;
+  const pendingAssignments = assignments.filter(
+    a => !a.submission || a.submission?.status === 'Not Submitted'
+  ).length;
 
-  // const completedAssignments = assignments.filter(a =>
-  //   a.submission?.some(s => s.status === 'GRADED')
-  // ).length;
+  const completedAssignments = assignments.filter(a => a.submission?.status === 'GRADED').length;
 
-  // const avgScore =
-  //   assignments.reduce((acc, a) => {
-  //     const scores = a.submission?.filter(s => s.score !== null) || [];
-  //     if (!scores.length) return acc;
-  //     const avg = scores.reduce((sum, s) => sum + (s.score ?? 0), 0) / scores.length;
-  //     return acc + avg;
-  //   }, 0) / (assignments.length || 1);
-  // console.log(assignments);
+  const avgScore =
+    assignments.reduce((acc, a) => {
+      if (a.submission?.score != null) {
+        return acc + a.submission.score;
+      }
+      return acc;
+    }, 0) / (assignments.length || 1);
+  console.log(assignments);
 
   return (
     <div className="mx-4 sm:mx-8 space-y-6 pb-10">
@@ -111,22 +109,22 @@ function TraineeDashBoard() {
             <div className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
               <DashBoardCard
                 title="Courses Enrolled"
-                value={0}
+                value={totalCourses}
                 icon={<BiBook className="text-[22px]" />}
               />
               <DashBoardCard
                 title="Pending Assignments"
-                value={0}
+                value={pendingAssignments}
                 icon={<FaRegFileAlt className="text-[20px]" />}
               />
               <DashBoardCard
                 title="Completed Assignments"
-                value={0}
+                value={completedAssignments}
                 icon={<IoMdCheckmarkCircleOutline className="text-[22px]" />}
               />
               <DashBoardCard
                 title="Average Score"
-                value={0}
+                value={avgScore}
                 icon={<FaArrowTrendUp className="text-[20px]" />}
               />
             </div>

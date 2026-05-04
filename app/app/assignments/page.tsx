@@ -17,9 +17,9 @@ type AssignmentType = {
   moduleTitle: string;
   courseTitle: string;
   submission: {
-    status: 'PENDING' | 'GRADED' | 'RESUBMITTED';
+    status: 'Not Submitted' | 'PENDING' | 'GRADED' | 'RESUBMITTED';
     score?: number | null;
-  }[];
+  } | null;
 };
 
 export default function AssignmentPage() {
@@ -29,10 +29,8 @@ export default function AssignmentPage() {
   });
 
   const total = assignments.length;
-  const pending = assignments.filter(
-    a => !a.submission[0] || a.submission[0].status === 'PENDING'
-  ).length;
-  const completed = assignments.filter(a => a.submission[0]?.status === 'GRADED').length;
+  const pending = assignments.filter(a => a.submission?.status === 'PENDING').length;
+  const completed = assignments.filter(a => a.submission?.status === 'GRADED').length;
 
   const [search, setSearch] = useState('');
   const [statusFilter, setStatusFilter] = useState<'ALL' | 'PENDING' | 'GRADED' | 'RESUBMITTED'>(
@@ -45,7 +43,7 @@ export default function AssignmentPage() {
       a.courseTitle.toLowerCase().includes(search.toLowerCase()) ||
       a.moduleTitle.toLowerCase().includes(search.toLowerCase());
 
-    const status = a.submission[0]?.status ?? 'PENDING';
+    const status = a.submission?.status ?? 'PENDING';
 
     const matchesFilter = statusFilter === 'ALL' ? true : status === statusFilter;
 
@@ -68,6 +66,7 @@ export default function AssignmentPage() {
       </section>
     );
   }
+  console.log(assignments);
 
   return (
     <section className="mx-8 mt-7 mb-12 space-y-7">

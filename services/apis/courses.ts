@@ -80,7 +80,7 @@ export async function getAssignedCourses({
   role: 'TRAINEE' | 'MENTOR';
 }) {
   const res = await fetch(
-    `/api/course/assigned?limit=${limit}&page=${page}&userId=${userId}&role=${role}`
+    `/api/course/assigned-courses?limit=${limit}&page=${page}&userId=${userId}&role=${role}`
   );
 
   if (!res.ok) {

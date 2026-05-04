@@ -4,8 +4,6 @@ import { getFormattedAssignableCourses } from '@/services/repository/course';
 
 export const GET = async (req: NextRequest) => {
   try {
-    console.log('this ran 1');
-
     const searchParams = req.nextUrl.searchParams;
 
     const limit = Number(searchParams.get('limit')) || 3;
@@ -17,11 +15,7 @@ export const GET = async (req: NextRequest) => {
       return NextResponse.json(new ApiResponse(401, 'Trainee Id is required', {}), { status: 401 });
     }
 
-    console.log('this ran 2');
-
     const assignableCourses = await getFormattedAssignableCourses({ traineeId, page, limit, skip });
-
-    console.log('this ran 3');
 
     return NextResponse.json(
       new ApiResponse(200, 'Assignable courses fetched successfully', assignableCourses),
