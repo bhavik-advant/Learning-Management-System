@@ -1,24 +1,25 @@
 'use client';
 import Loading from '@/components/ui/loading';
 import Users from '@/components/users/UsersTable';
-import { fetchAdminUsersWithStats } from '@/services/apis/users';
+import { getUsers } from '@/services/apis/users';
 import { useQuery } from '@tanstack/react-query';
 
 export default function UsersPage() {
   const {
-    data: usersPayload,
+    data: users,
     isLoading: usersLoading,
     isError: usersError,
   } = useQuery({
     queryKey: ['admin', 'users-with-stats'],
-    queryFn: fetchAdminUsersWithStats,
+    queryFn: getUsers,
   });
 
-  const userCount = usersPayload?.users?.length ?? 0;
+  const userCount = users?.length ?? 0;
 
   if (usersLoading) {
     return <Loading text="Users" />;
   }
+  // console.log(user);
 
   if (usersError) {
     return (
@@ -77,7 +78,7 @@ export default function UsersPage() {
       </div>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Users users={usersPayload?.users ?? []} />
+        <Users users={users ?? []} />
       </div>
     </div>
   );

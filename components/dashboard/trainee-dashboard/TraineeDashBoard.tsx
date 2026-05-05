@@ -7,26 +7,11 @@ import { FaArrowTrendUp } from 'react-icons/fa6';
 import Courses from '@/components/ui/Courses';
 import Assignments from '@/components/assignments/Assignments';
 import { useQuery } from '@tanstack/react-query';
-import { getTraineeCourses } from '@/services/apis/courses';
 
 import { getTraineeAssignments } from '@/services/apis/assignments';
 import Link from 'next/link';
 import Loading from '@/components/ui/loading';
-
-type Course = {
-  id: string;
-  title: string;
-  description: string;
-  thumbnail: string;
-  author: string;
-  image: string;
-  status: string;
-  authorId: string;
-  thumbnailId: string | null;
-  createdAt: string;
-  updatedAt: string;
-  modulesCount: number;
-};
+import { useCourses } from '@/hooks/courses/useCourses';
 
 type AssignmentType = {
   id: string;
@@ -43,10 +28,7 @@ type AssignmentType = {
 };
 
 function TraineeDashBoard() {
-  const { data: courses = [], isLoading: coursesLoading } = useQuery<Course[]>({
-    queryKey: ['trainee-courses'],
-    queryFn: getTraineeCourses,
-  });
+  const { courses, isFetching: coursesLoading } = useCourses(3);
 
   const { data: assignments = [], isLoading: assignmentsLoading } = useQuery<AssignmentType[]>({
     queryKey: ['assignments'],

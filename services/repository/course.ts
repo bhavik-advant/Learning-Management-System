@@ -328,11 +328,11 @@ export const getCourseAuthorId = async ({ courseId }: { courseId: string }) => {
 //Course Assigning to Trainee Related Repository Functions
 
 export const getAssignableCourses = async ({
-  traineeId,
+  userId,
   limit,
   skip,
 }: {
-  traineeId: string;
+  userId: string;
   limit?: number;
   skip?: number;
 }) => {
@@ -341,7 +341,7 @@ export const getAssignableCourses = async ({
       status: 'APPROVED',
       enrollments: {
         none: {
-          studentId: traineeId,
+          studentId: userId,
         },
       },
     },
@@ -377,22 +377,23 @@ export const getAssignableCourses = async ({
     id: course.id,
     title: course.title,
     description: course.description,
-    thumbnail: course.thumbnail?.url ?? '',
-    author: course.author.username,
     status: course.status,
+    thumbnail: course.thumbnail?.url || '',
+    author: course.author?.username || 'Unknown',
     modulesCount: course.modules.length,
+    lessons: course.modules.reduce((acc, m) => acc + m._count.lessons, 0),
   }));
 
   return formattedCourses;
 };
 
-export const getAssignableCoursesCount = async ({ traineeId }: { traineeId: string }) => {
+export const getAssignableCoursesCount = async ({ userId }: { userId: string }) => {
   const totalCourses = await prisma.course.count({
     where: {
       status: 'APPROVED',
       enrollments: {
         none: {
-          studentId: traineeId,
+          studentId: userId,
         },
       },
     },
@@ -402,18 +403,18 @@ export const getAssignableCoursesCount = async ({ traineeId }: { traineeId: stri
 };
 
 export const getFormattedAssignableCourses = async ({
-  traineeId,
+  userId,
   page = 1,
   limit,
   skip,
 }: {
-  traineeId: string;
+  userId: string;
   page: number;
   limit: number;
   skip?: number;
 }) => {
-  const assignableCourseCount = await getAssignableCoursesCount({ traineeId });
-  const courses = await getAssignableCourses({ traineeId, limit, skip });
+  const assignableCourseCount = await getAssignableCoursesCount({ userId });
+  const courses = await getAssignableCourses({ userId, limit, skip });
   const totalPages = Math.ceil(assignableCourseCount / limit);
 
   const paginationData = {
@@ -431,79 +432,51 @@ export const getFormattedAssignableCourses = async ({
   return paginationData;
 };
 
-export const assignCoursesToTrainee = async ({
+export const assignCoursesToUser = async ({
   courseIds,
-  traineeId,
+  userId,
 }: {
   courseIds: string[];
-  traineeId: string;
+  userId: string;
 }) => {
-  await Promise.all(
-    courseIds.map(courseId => {
-      prisma.course.findUnique({
-        where: { id: courseId },
-        select: {
-          id: true,
-        },
-      });
-
-      if (!courseId) {
-        throw new Error(`Course with ID ${courseId} not found`);
-      }
-
-      return prisma.enrollment.create({
-        data: {
-          courseId,
-          studentId: traineeId,
-        },
-      });
-    })
-  );
+  const assign = await prisma.enrollment.createMany({
+    data: courseIds.map(courseId => ({
+      courseId,
+      studentId: userId,
+    })),
+    skipDuplicates: true,
+  });
+  return assign;
 };
 
 export const getAssignedCourses = async ({
-  traineeId,
+  userId,
   limit,
   skip,
 }: {
-  traineeId: string;
+  userId: string;
   limit: number;
   skip?: number;
 }) => {
   const courses = await prisma.course.findMany({
     where: {
-      status: 'APPROVED',
       enrollments: {
         some: {
-          studentId: traineeId,
+          studentId: userId,
         },
       },
     },
     include: {
-      thumbnail: {
-        select: {
-          url: true,
-        },
-      },
-      author: {
-        select: {
-          username: true,
-        },
-      },
+      thumbnail: { select: { url: true } },
+      author: { select: { username: true } },
       modules: {
         select: {
-          _count: {
-            select: {
-              lessons: true,
-            },
-          },
+          _count: { select: { lessons: true } },
         },
       },
     },
-    orderBy: {
-      createdAt: 'desc',
-    },
-    skip: skip,
+    orderBy: { createdAt: 'desc' },
+    skip,
     take: limit,
   });
 
@@ -511,21 +484,22 @@ export const getAssignedCourses = async ({
     id: course.id,
     title: course.title,
     description: course.description,
-    thumbnail: course.thumbnail?.url ?? '',
-    author: course.author.username,
     status: course.status,
+    thumbnail: course.thumbnail?.url,
+    author: course.author?.username,
     modulesCount: course.modules.length,
+    lessons: course.modules.reduce((acc, m) => acc + m._count.lessons, 0),
   }));
 
   return formattedCourses;
 };
 
-export const getAssignedCoursesCount = async ({ traineeId }: { traineeId: string }) => {
+export const getAssignedCoursesCount = async ({ userId }: { userId: string }) => {
   const totalCourses = await prisma.course.count({
     where: {
       enrollments: {
         some: {
-          studentId: traineeId,
+          studentId: userId,
         },
       },
     },
@@ -535,18 +509,18 @@ export const getAssignedCoursesCount = async ({ traineeId }: { traineeId: string
 };
 
 export const getFormattedAssignedCourses = async ({
-  traineeId,
+  userId,
   page = 1,
   limit,
   skip,
 }: {
-  traineeId: string;
+  userId: string;
   page: number;
   limit: number;
   skip?: number;
 }) => {
-  const assignedCourseCount = await getAssignedCoursesCount({ traineeId });
-  const courses = await getAssignedCourses({ traineeId, limit, skip });
+  const assignedCourseCount = await getAssignedCoursesCount({ userId });
+  const courses = await getAssignedCourses({ userId, limit, skip });
   const totalPages = Math.ceil(assignedCourseCount / limit);
 
   const paginationData = {
@@ -566,10 +540,10 @@ export const getFormattedAssignedCourses = async ({
 
 export const restrictCoursesForTrainee = async ({
   courseIds,
-  traineeId,
+  userId,
 }: {
   courseIds: string[];
-  traineeId: string;
+  userId: string;
 }) => {
   await Promise.all(
     courseIds.map(async courseId => {
@@ -584,7 +558,7 @@ export const restrictCoursesForTrainee = async ({
 
       return prisma.enrollment.deleteMany({
         where: {
-          studentId: traineeId,
+          studentId: userId,
           courseId: courseId,
         },
       });

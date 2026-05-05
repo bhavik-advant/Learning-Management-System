@@ -24,47 +24,19 @@ export type MentorOption = {
   email: string;
 };
 
-export type AdminUsersWithStatsResponse = {
-  users: AdminUserRow[];
-  stats: {
-    totalUsers: number;
-    totalTrainees: number;
-    totalMentors: number;
-  };
-  pendingCourseApprovals: number;
-};
-
-export async function fetchAdminUsersWithStats(): Promise<AdminUsersWithStatsResponse> {
-  const res = await fetch('/api/admin/users');
+export async function getUsers() {
+  const res = await fetch('/api/user/userlist');
   const json = await res.json();
 
   if (!res.ok || !json.success) {
     throw new Error(json.message ?? 'Failed to fetch users');
   }
 
-  return json.data as AdminUsersWithStatsResponse;
-}
-
-export async function updateUserRole(userId: string, role: string) {
-  const res = await fetch(`/api/admin/users/${userId}/role`, {
-    method: 'PATCH',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({ role }),
-  });
-
-  const json = await res.json();
-
-  if (!res.ok || !json.success) {
-    throw new Error(json.message ?? 'Failed to update role');
-  }
-
   return json.data;
 }
 
 export const getUserById = async (id: string) => {
-  const res = await fetch(`/api/admin/users/${id}`);
+  const res = await fetch(`/api/user/${id}`);
 
   const json = await res.json();
 
@@ -76,7 +48,7 @@ export const getUserById = async (id: string) => {
 };
 
 export const getMentors = async () => {
-  const res = await fetch('/api/admin/users/mentors');
+  const res = await fetch('/api/user/mentors');
   const json = await res.json();
 
   if (!res.ok || !json.success) {
@@ -95,7 +67,7 @@ export const updateUserDetails = async (
     mentorId: string | null;
   }
 ) => {
-  const res = await fetch(`/api/admin/users/${userId}`, {
+  const res = await fetch(`/api/user/${userId}`, {
     method: 'PATCH',
     headers: {
       'Content-Type': 'application/json',

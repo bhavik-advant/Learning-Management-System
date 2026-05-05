@@ -66,7 +66,7 @@ export default function UserDetails({ user }: { user: AdminUserDetails }) {
       setFormError('Username is required');
       return;
     }
-   
+
     if (isTrainee && !mentorId) {
       setFormError('Please assign a mentor for trainee');
       return;
@@ -172,9 +172,7 @@ export default function UserDetails({ user }: { user: AdminUserDetails }) {
                 onChange={e => setMentorId(e.target.value)}
                 className="w-full rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-950 px-3 py-2 text-sm"
               >
-                <option value="">
-                  {mentorsLoading ? 'Loading mentors...' : 'Select mentor'}
-                </option>
+                <option value="">{mentorsLoading ? 'Loading mentors...' : 'Select mentor'}</option>
                 {mentors.map(mentor => (
                   <option key={mentor.id} value={mentor.id}>
                     {mentor.username} ({mentor.email})
@@ -193,9 +191,7 @@ export default function UserDetails({ user }: { user: AdminUserDetails }) {
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
         <DetailItem label="User ID" value={user.id} />
 
-        {user.role === 'TRAINEE' ? (
-          <DetailItem label="Mentor" value={selectedMentorLabel} />
-        ) : null}
+        {user.role === 'TRAINEE' ? <DetailItem label="Mentor" value={selectedMentorLabel} /> : null}
 
         <DetailItem label="Created At" value={formatDate(user.createdAt)} />
 

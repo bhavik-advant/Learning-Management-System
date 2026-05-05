@@ -93,7 +93,7 @@ export const getSubmissionsByTrainee = async () => {
 };
 
 export const getAllSubmissionsAdmin = async () => {
-  const res = await fetch('/api/admin/submissions', {
+  const res = await fetch('/api/submission', {
     method: 'GET',
     credentials: 'include',
   });

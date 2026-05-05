@@ -8,14 +8,14 @@ export const GET = async (req: NextRequest) => {
 
     const limit = Number(searchParams.get('limit')) || 3;
     const page = Number(searchParams.get('page')) || 1;
-    const traineeId = searchParams.get('traineeId');
+    const userId = searchParams.get('traineeId');
     const skip = (page - 1) * limit;
 
-    if (!traineeId) {
+    if (!userId) {
       return NextResponse.json(new ApiResponse(401, 'Trainee Id is required', {}), { status: 401 });
     }
 
-    const assignableCourses = await getFormattedAssignableCourses({ traineeId, page, limit, skip });
+    const assignableCourses = await getFormattedAssignableCourses({ userId, page, limit, skip });
 
     return NextResponse.json(
       new ApiResponse(200, 'Assignable courses fetched successfully', assignableCourses),
