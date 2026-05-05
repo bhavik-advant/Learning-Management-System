@@ -1,6 +1,7 @@
 import getUserDetails from '@/lib/isAuth';
+import { assignCoursesToUser } from '@/services/repository/course';
+import { getTraineeMentorId } from '@/services/repository/user';
 import ApiResponse from '@/utils/api-response';
-import { prisma } from '@/utils/prisma-client';
 import { NextRequest, NextResponse } from 'next/server';
 
 export const POST = async (req: NextRequest) => {
@@ -26,12 +27,9 @@ export const POST = async (req: NextRequest) => {
         });
       }
 
-      const userDetails = await prisma.user.findUnique({
-        where: { id: userId },
-        select: { mentorId: true },
-      });
+      const mentorId = await getTraineeMentorId(userId);
 
-      if (userDetails?.mentorId !== user.id) {
+      if (mentorId !== user.id) {
         return NextResponse.json(new ApiResponse(401, 'Unauthorised', {}), { status: 401 });
       }
     }
@@ -40,15 +38,12 @@ export const POST = async (req: NextRequest) => {
       return NextResponse.json(new ApiResponse(401, 'Unauthorised', {}), { status: 401 });
     }
 
-    await prisma.enrollment.createMany({
-      data: courseIds.map(courseId => ({
-        courseId,
-        studentId: userId,
-      })),
-      skipDuplicates: true,
+    const assign = await assignCoursesToUser({
+      courseIds,
+      userId,
     });
 
-    return NextResponse.json(new ApiResponse(201, 'Courses assigned successfully', {}), {
+    return NextResponse.json(new ApiResponse(201, 'Courses assigned successfully', assign), {
       status: 201,
     });
   } catch (error) {

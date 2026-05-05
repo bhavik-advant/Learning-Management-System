@@ -1,7 +1,7 @@
 import getUserDetails from '@/lib/isAuth';
 import ApiResponse from '@/utils/api-response';
-import { prisma } from '@/utils/prisma-client';
 import { NextResponse } from 'next/server';
+import { getAdminDashboardData } from '@/services/repository/user';
 
 export const GET = async () => {
   try {
@@ -11,45 +11,14 @@ export const GET = async () => {
       return NextResponse.json(new ApiResponse(403, 'Forbidden', null), { status: 403 });
     }
 
-    const include = {
-      author: {
-        select: {
-          username: true,
-          image: true,
-        },
-      },
-      thumbnail: { select: { url: true } },
-      _count: {
-        select: {
-          modules: true,
-        },
-      },
-    } as const;
-
-    const [
+    const {
       totalUsers,
       totalTrainees,
       totalMentors,
       pendingCourseApprovals,
       latestUsers,
       latestCoursesRaw,
-    ] = await Promise.all([
-      prisma.user.count(),
-      prisma.user.count({ where: { role: 'TRAINEE' } }),
-      prisma.user.count({ where: { role: 'MENTOR' } }),
-      prisma.course.count({ where: { status: 'PENDING' } }),
-
-      prisma.user.findMany({
-        orderBy: { createdAt: 'desc' },
-        take: 3,
-      }),
-
-      prisma.course.findMany({
-        orderBy: { createdAt: 'desc' },
-        take: 3,
-        include,
-      }),
-    ]);
+    } = await getAdminDashboardData();
 
     const latestCourses = latestCoursesRaw.map(c => ({
       id: c.id,
@@ -76,12 +45,11 @@ export const GET = async () => {
       latestUsers,
       latestCourses,
     };
-    // console.log(data);
 
     return NextResponse.json(new ApiResponse(200, 'Dashboard data fetched successfully', data), {
       status: 200,
     });
-  } catch (error: unknown) {
+  } catch (error) {
     console.error('ADMIN DASHBOARD ERROR:', error);
 
     return NextResponse.json(new ApiResponse(500, 'Internal Server Error', null), { status: 500 });

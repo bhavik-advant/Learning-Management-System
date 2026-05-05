@@ -66,7 +66,6 @@ export default function AssignmentPage() {
       </section>
     );
   }
-  console.log(assignments);
 
   return (
     <section className="mx-8 mt-7 mb-12 space-y-7">

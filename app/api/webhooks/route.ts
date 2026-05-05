@@ -1,11 +1,10 @@
 import { verifyWebhook } from '@clerk/nextjs/webhooks';
 import type { WebhookEvent } from '@clerk/nextjs/server';
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/utils/prisma-client';
+import { createUserWebhook } from '@/services/repository/user';
 
 export async function POST(req: NextRequest) {
   try {
-    // console.log('Webhook triggered');
     const evt: WebhookEvent = await verifyWebhook(req);
     const { type, data } = evt;
 
@@ -21,13 +20,11 @@ export async function POST(req: NextRequest) {
         );
       }
 
-      await prisma.user.create({
-        data: {
-          clerkId: id!,
-          email,
-          image: image_url,
-          username: username!,
-        },
+      const createUser = await createUserWebhook({
+        id,
+        image_url,
+        email,
+        username: username ?? email.split('@')[0],
       });
 
       return NextResponse.json(

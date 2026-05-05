@@ -1,7 +1,11 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/utils/prisma-client';
 import getUserDetails from '@/lib/isAuth';
 import ApiResponse from '@/utils/api-response';
+
+import { getSubmissionsByAssignmentAndStudent } from '@/services/repository/submission';
+
+const sendResponse = (status: number, message: string, data: unknown) =>
+  NextResponse.json(new ApiResponse(status, message, data), { status });
 
 export async function GET(
   req: NextRequest,
@@ -9,27 +13,18 @@ export async function GET(
 ) {
   try {
     const user = await getUserDetails();
+
+    if (!user) {
+      return sendResponse(401, 'Please login first', {});
+    }
+
     const { assignmentId } = await params;
 
-    const submissions = await prisma.submission.findMany({
-      where: {
-        assignmentId,
-        studentId: user.id,
-      },
-      orderBy: {
-        submittedAt: 'desc',
-      },
-    });
-    // console.log(submissions);
+    const submissions = await getSubmissionsByAssignmentAndStudent(assignmentId, user.id);
 
-    return NextResponse.json(new ApiResponse(200, 'Submissions fetched', submissions), {
-      status: 200,
-    });
-  } catch (err) {
-    console.log(err);
-
-    return NextResponse.json(new ApiResponse(500, 'Error fetching submissions', {}), {
-      status: 500,
-    });
+    return sendResponse(200, 'Submissions fetched', submissions);
+  } catch (error) {
+    console.error('GET STUDENT SUBMISSIONS ERROR:', error);
+    return sendResponse(500, 'Error fetching submissions', {});
   }
 }
