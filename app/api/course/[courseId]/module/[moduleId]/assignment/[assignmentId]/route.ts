@@ -86,7 +86,7 @@ export const PATCH = async (
       return NextResponse.json(new ApiResponse(404, 'Assignment not found', {}), { status: 404 });
     }
 
-    let body = await req.json();
+    const body = await req.json();
 
     const { title, description, maxScore, dueDate } = body as {
       title?: string;

@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/utils/prisma-client';
 import getUserDetails from '@/lib/isAuth';
 import ApiResponse from '@/utils/api-response';
+import { getAssignmentWithSubmission } from '@/services/repository/submission';
 
 export async function GET(
   req: NextRequest,
@@ -12,26 +12,20 @@ export async function GET(
 
     const { assignmentId } = await params;
 
-    const assignment = await prisma.assignment.findUnique({
-      where: { id: assignmentId },
-      include: {
-        submissions: {
-          where: {
-            studentId: user.id,
-          },
-          orderBy: {
-            submittedAt: 'desc',
-          },
-        },
-      },
+    const assignment = await getAssignmentWithSubmission({
+      assignmentId,
+      studentId: user.id,
     });
 
     if (!assignment) {
       return NextResponse.json(new ApiResponse(404, 'Assignment not found', {}), { status: 404 });
     }
+
     let status = 'NOT_SUBMITTED';
+
     if (assignment.submissions.length > 0) {
       const latest = assignment.submissions[0];
+
       status = latest.score !== null ? 'GRADED' : latest.status;
     }
 
@@ -47,7 +41,9 @@ export async function GET(
     return NextResponse.json(new ApiResponse(200, 'Assignment fetched', formatted), {
       status: 200,
     });
-  } catch {
+  } catch (error) {
+    console.error(error);
+
     return NextResponse.json(new ApiResponse(500, 'Error fetching assignment', {}), {
       status: 500,
     });

@@ -1,14 +1,15 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { prisma } from '@/utils/prisma-client';
 import getUserDetails from '@/lib/isAuth';
 import ApiResponse from '@/utils/api-response';
-import { uploadToCloud   } from '@/services/external/cloudinary';
+import { uploadToCloud } from '@/services/external/cloudinary';
+import { createSubmission } from '@/services/repository/submission';
 
 export async function POST(req: NextRequest) {
   try {
     const user = await getUserDetails();
 
     const formData = await req.formData();
+
     const assignmentId = formData.get('assignmentId') as string;
     const file = formData.get('file') as File | null;
     const githubLink = formData.get('githubLink') as string | null;
@@ -20,9 +21,7 @@ export async function POST(req: NextRequest) {
 
     if (type === 'FILE') {
       if (!file) {
-        return NextResponse.json(new ApiResponse(400, 'File is required', {}), {
-          status: 400,
-        });
+        return NextResponse.json(new ApiResponse(400, 'File is required', {}), { status: 400 });
       }
 
       const allowedTypes = [
@@ -34,21 +33,15 @@ export async function POST(req: NextRequest) {
       ];
 
       if (!allowedTypes.includes(file.type)) {
-        return NextResponse.json(new ApiResponse(400, 'Invalid file type', {}), {
-          status: 400,
-        });
+        return NextResponse.json(new ApiResponse(400, 'Invalid file type', {}), { status: 400 });
       }
 
       const upload = await uploadToCloud(file);
 
-      const submission = await prisma.submission.create({
-        data: {
-          assignmentId,
-          studentId: user.id,
-          fileUrl: upload.url,
-          githubLink: null,
-          submittedAt: new Date(),
-        },
+      const submission = await createSubmission({
+        assignmentId,
+        studentId: user.id,
+        fileUrl: upload.url,
       });
 
       return NextResponse.json(new ApiResponse(200, 'File submitted successfully', submission), {
@@ -64,19 +57,13 @@ export async function POST(req: NextRequest) {
       }
 
       if (!githubLink.includes('github.com')) {
-        return NextResponse.json(new ApiResponse(400, 'Invalid GitHub link', {}), {
-          status: 400,
-        });
+        return NextResponse.json(new ApiResponse(400, 'Invalid GitHub link', {}), { status: 400 });
       }
 
-      const submission = await prisma.submission.create({
-        data: {
-          assignmentId,
-          studentId: user.id,
-          fileUrl: null,
-          githubLink: githubLink.trim(),
-          submittedAt: new Date(),
-        },
+      const submission = await createSubmission({
+        assignmentId,
+        studentId: user.id,
+        githubLink: githubLink.trim(),
       });
 
       return NextResponse.json(new ApiResponse(200, 'Link submitted successfully', submission), {
@@ -84,13 +71,10 @@ export async function POST(req: NextRequest) {
       });
     }
 
-    return NextResponse.json(new ApiResponse(400, 'Invalid submission type', {}), {
-      status: 400,
-    });
+    return NextResponse.json(new ApiResponse(400, 'Invalid submission type', {}), { status: 400 });
   } catch (error) {
     console.error(error);
-    return NextResponse.json(new ApiResponse(500, 'Submission failed', {}), {
-      status: 500,
-    });
+
+    return NextResponse.json(new ApiResponse(500, 'Submission failed', {}), { status: 500 });
   }
 }

@@ -3,26 +3,18 @@ import CourseAssignGrid from './CourseAssignGrid';
 import useGetAssignedCourses from '@/hooks/courses/useGetAssignedCourses';
 import useRestrictCourse from '@/hooks/courses/useRestrictCourse';
 
-const AssignedCourses = ({
-  selectedUserId,
-  role,
-}: {
-  selectedUserId: string;
-  role: 'TRAINEE' | 'MENTOR';
-}) => {
+const AssignedCourses = ({ selectedUserId }: { selectedUserId: string }) => {
   const [page, setPage] = useState(1);
   const limit = 4;
 
   const { courseData, isLoading } = useGetAssignedCourses({
     userId: selectedUserId,
-    role,
     limit,
     page,
   });
 
   const { restrictCourse, isTakingAccess } = useRestrictCourse({
     userId: selectedUserId,
-    role,
   });
 
   const handlePagination = (ident: 'previous' | 'next') => {
@@ -46,7 +38,7 @@ const AssignedCourses = ({
 
   return (
     <CourseAssignGrid
-      title={`Assigned Courses (${role})`}
+      title={`Assigned Courses User`}
       submitText="Restrict"
       pendingtext="Taking Access.."
       isFetching={isLoading}

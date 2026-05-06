@@ -71,7 +71,10 @@ export const updateAssignment = async ({
   return updatedAssignment;
 };
 
-export const getAssignmentsWithSubmissions = async (userId: string, role: string) => {
+export const getAssignmentsWithSubmissions = async (
+  userId: string,
+  role: string
+) => {
   const isAdmin = role === 'ADMIN';
 
   const whereCondition = isAdmin
@@ -90,6 +93,7 @@ export const getAssignmentsWithSubmissions = async (userId: string, role: string
 
   const assignments = await prisma.assignment.findMany({
     where: whereCondition,
+
     select: {
       id: true,
       title: true,
@@ -110,6 +114,12 @@ export const getAssignmentsWithSubmissions = async (userId: string, role: string
       },
 
       submissions: {
+        where: isAdmin
+          ? {}
+          : {
+              studentId: userId,
+            },
+
         select: {
           id: true,
           studentId: true,
@@ -117,11 +127,13 @@ export const getAssignmentsWithSubmissions = async (userId: string, role: string
           status: true,
           submittedAt: true,
         },
+
         orderBy: {
           submittedAt: 'desc',
         },
       },
     },
+
     orderBy: {
       createdAt: 'desc',
     },
@@ -136,7 +148,9 @@ export const getAssignmentsWithSubmissions = async (userId: string, role: string
     moduleTitle: a.module.title,
     courseTitle: a.module.course.title,
 
-    submission: isAdmin ? a.submissions : (a.submissions[0] ?? null),
+    submission: isAdmin
+      ? a.submissions
+      : (a.submissions[0] ?? null),
   }));
 
   return formatted;

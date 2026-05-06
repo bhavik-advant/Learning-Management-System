@@ -31,25 +31,22 @@ const emptyAssignableCoursesData = (page: number): AssignableCoursesData => ({
   },
 });
 
-const useGetAssignedCourses = ({
+const useGetAssignableCourses = ({
   userId,
-  role,
   limit,
   page,
 }: {
   userId: string;
-  role: 'TRAINEE' | 'MENTOR';
   limit: number;
   page: number;
 }) => {
   const { data, isLoading, isFetching } = useQuery<AssignableCoursesData>({
-    queryKey: ['assigned-courses', userId, role, page, limit],
+    queryKey: ['assigned-courses', userId, page, limit],
     queryFn: () =>
       getAssignableCourses({
         limit,
         page,
         userId,
-        role,
       }),
     enabled: userId !== '',
     placeholderData: keepPreviousData,
@@ -62,4 +59,4 @@ const useGetAssignedCourses = ({
   };
 };
 
-export default useGetAssignedCourses;
+export default useGetAssignableCourses;

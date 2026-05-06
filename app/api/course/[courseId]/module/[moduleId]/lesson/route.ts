@@ -19,9 +19,9 @@ export const POST = async (
       return NextResponse.json(new ApiResponse(401, 'Unauthorised', {}), { status: 401 });
     }
 
-    const module = await getModuleById({ moduleId });
+    const moduleDetails = await getModuleById({ moduleId });
 
-    if (!module) {
+    if (!moduleDetails) {
       return NextResponse.json(new ApiResponse(403, 'Module Not Found', {}), { status: 403 });
     }
 

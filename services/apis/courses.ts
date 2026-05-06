@@ -48,23 +48,19 @@ export async function getAssignableCourses({
   limit,
   page,
   userId,
-  role,
 }: {
   limit: number;
   page: number;
   userId: string;
-  role: 'TRAINEE' | 'MENTOR';
 }) {
-  const res = await fetch(
-    `/api/course/not-assigned?limit=${limit}&page=${page}&userId=${userId}&role=${role}`
-  );
+  const res = await fetch(`/api/course/not-assigned?limit=${limit}&page=${page}&userId=${userId}`);
 
   if (!res.ok) {
-    const text = await res.text();
     throw new Error('Something went wrong');
   }
 
   const result = await res.json();
+
   return result.data;
 }
 
@@ -72,15 +68,13 @@ export async function getAssignedCourses({
   limit,
   page,
   userId,
-  role,
 }: {
   limit: number;
   page: number;
   userId: string;
-  role: 'TRAINEE' | 'MENTOR';
 }) {
   const res = await fetch(
-    `/api/course/assigned-courses?limit=${limit}&page=${page}&userId=${userId}&role=${role}`
+    `/api/course/assigned-courses?limit=${limit}&page=${page}&userId=${userId}`
   );
 
   if (!res.ok) {
@@ -169,11 +163,9 @@ export const saveCourse = async ({ courseId }: { courseId: string }) => {
 export const assignCourse = async ({
   courseIds,
   userId,
-  role,
 }: {
   courseIds: string[];
   userId: string;
-  role: 'TRAINEE' | 'MENTOR';
 }) => {
   try {
     const res = await fetch('/api/course/assign-course', {
@@ -181,10 +173,10 @@ export const assignCourse = async ({
       headers: {
         'Content-Type': 'application/json',
       },
+
       body: JSON.stringify({
         courseIds,
         userId,
-        role,
       }),
     });
 
@@ -204,11 +196,9 @@ export const assignCourse = async ({
 export const restrictCourse = async ({
   courseIds,
   userId,
-  role,
 }: {
   courseIds: string[];
   userId: string;
-  role: 'TRAINEE' | 'MENTOR';
 }) => {
   try {
     const res = await fetch('/api/course/restrict-course', {
@@ -219,7 +209,6 @@ export const restrictCourse = async ({
       body: JSON.stringify({
         courseIds,
         userId,
-        role,
       }),
     });
 
@@ -262,4 +251,18 @@ export const getCourseDetails = async (courseId: string) => {
   const result = await response.json();
 
   return result.data;
+};
+
+export const inactiveCourse = async (courseId: string) => {
+  const response = await fetch(`/api/course/inactive/${courseId}`, {
+    method: 'PATCH',
+  });
+
+  const data = await response.json();
+
+  if (!response.ok) {
+    throw new Error(data.message || 'Failed to inactive course');
+  }
+
+  return data;
 };

@@ -22,6 +22,8 @@ enum CourseStatus {
   DRAFT
   PENDING
   APPROVED
+  REJECTED
+  INACTIVE
 }
 
 enum EnrollmentStatus {

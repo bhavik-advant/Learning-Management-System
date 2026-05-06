@@ -1,6 +1,6 @@
 'use client';
-import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
+import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { getAssignableUsers } from '@/services/apis/users';
 import { useQuery } from '@tanstack/react-query';
 import { useState } from 'react';
@@ -14,7 +14,7 @@ type UserType = {
   id: string;
   clerkId: string;
   mentorId: string | null;
-  role: 'TRAINEE' | 'MENTOR';
+  role: 'TRAINEE' | 'MENTOR' | 'ADMIN';
   username: string;
   email: string;
   image: string | null;
@@ -24,8 +24,9 @@ type UserType = {
 
 const AssignCoursePage = () => {
   const [selectedUserId, setSelectedUserId] = useState('');
+
   const [selectedUser, setSelectedUser] = useState<UserType | null>(null);
-  const [selectedUserRole, setSelectedUserRole] = useState<'TRAINEE' | 'MENTOR' | null>(null);
+
   const [loading, setLoading] = useState(false);
 
   const {
@@ -42,13 +43,16 @@ const AssignCoursePage = () => {
 
   if (isLoading) {
     return (
-      <div className="space-y-4 dark:bg-[#101828] min-h-screen  p-8">
+      <div className="space-y-4 dark:bg-[#101828] min-h-screen p-8">
         <div className="h-10 dark:bg-[#0b111f] w-64 animate-pulse rounded-md bg-muted" />
-        <div className="grid grid-cols-1  lg:grid-cols-3 gap-6 auto-rows-max">
-          <div className="lg:col-span-1  space-y-4">
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 auto-rows-max">
+          <div className="lg:col-span-1 space-y-4">
             <div className="h-12 w-full animate-pulse rounded-lg dark:bg-[#0b111f] bg-muted shadow-md" />
+
             <div className="h-64 animate-pulse rounded-lg dark:bg-[#0b111f] bg-muted shadow-md" />
           </div>
+
           <div className="lg:col-span-2 h-96 animate-pulse rounded-lg dark:bg-[#0b111f] bg-muted shadow-md" />
         </div>
       </div>
@@ -61,6 +65,7 @@ const AssignCoursePage = () => {
         <Card className="shadow-md border border-border">
           <CardHeader>
             <CardTitle>Unable to load users</CardTitle>
+
             <CardDescription>
               {error.message || 'Something went wrong while fetching users.'}
             </CardDescription>
@@ -76,18 +81,16 @@ const AssignCoursePage = () => {
     const user = users.find(u => u.id === value) ?? null;
 
     setSelectedUserId(value);
+
     setSelectedUser(user);
-    setSelectedUserRole(user?.role ?? null);
 
-    if (user?.role) {
-      queryClient.invalidateQueries({
-        queryKey: ['assignable-courses', value, user.role],
-      });
+    queryClient.invalidateQueries({
+      queryKey: ['assignable-courses', value],
+    });
 
-      queryClient.invalidateQueries({
-        queryKey: ['assigned-courses', value, user.role],
-      });
-    }
+    queryClient.invalidateQueries({
+      queryKey: ['assigned-courses', value],
+    });
 
     setLoading(false);
   };
@@ -96,6 +99,7 @@ const AssignCoursePage = () => {
     <div className="space-y-4 dark:bg-[#101828] min-h-screen p-8">
       <div className="space-y-1">
         <h1 className="text-2xl font-bold tracking-tight">Assign Courses</h1>
+
         <p className="text-sm text-muted-foreground">
           Select a user (trainee or mentor) to manage course assignments.
         </p>
@@ -111,20 +115,12 @@ const AssignCoursePage = () => {
         <TraineeDetails traineeDetails={selectedUser} />
       </div>
 
-      {!loading && selectedUserId && selectedUserRole && (
-        <AssignableCourses
-          key={`assignable-${selectedUserId}-${selectedUserRole}`}
-          selectedUserId={selectedUserId}
-          role={selectedUserRole}
-        />
+      {!loading && selectedUserId && (
+        <AssignableCourses key={`assignable-${selectedUserId}`} selectedUserId={selectedUserId} />
       )}
 
-      {!loading && selectedUserId && selectedUserRole && (
-        <AssignedCourses
-          key={`assigned-${selectedUserId}-${selectedUserRole}`}
-          selectedUserId={selectedUserId}
-          role={selectedUserRole}
-        />
+      {!loading && selectedUserId && (
+        <AssignedCourses key={`assigned-${selectedUserId}`} selectedUserId={selectedUserId} />
       )}
     </div>
   );

@@ -16,6 +16,10 @@ const nextConfig: NextConfig = {
         protocol: 'http',
         hostname: 'res.cloudinary.com', // Allow Cloudinary images/videos
       },
+      {
+        protocol: 'https',
+        hostname: 'cdn-icons-png.flaticon.com',
+      },
     ],
   },
 

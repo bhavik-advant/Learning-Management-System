@@ -305,3 +305,51 @@ export const updateSubmissionByMentor = async ({
     },
   });
 };
+
+type CreateSubmissionPayload = {
+  assignmentId: string;
+  studentId: string;
+  fileUrl?: string | null;
+  githubLink?: string | null;
+};
+
+export const createSubmission = async ({
+  assignmentId,
+  studentId,
+  fileUrl = null,
+  githubLink = null,
+}: CreateSubmissionPayload) => {
+  return prisma.submission.create({
+    data: {
+      assignmentId,
+      studentId,
+      fileUrl,
+      githubLink,
+      submittedAt: new Date(),
+    },
+  });
+};
+
+export const getAssignmentWithSubmission = async ({
+  assignmentId,
+  studentId,
+}: {
+  assignmentId: string;
+  studentId: string;
+}) => {
+  return prisma.assignment.findUnique({
+    where: {
+      id: assignmentId,
+    },
+    include: {
+      submissions: {
+        where: {
+          studentId,
+        },
+        orderBy: {
+          submittedAt: 'desc',
+        },
+      },
+    },
+  });
+};

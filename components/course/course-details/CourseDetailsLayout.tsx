@@ -5,6 +5,7 @@ import { CourseHeader } from './CourseHeader';
 import { ContentViewer } from './ContentViewer';
 import { CourseStats } from './CourseStats';
 import { ModuleList } from './ModuleList';
+import InactiveCourseButton from './InactiveCourseButton';
 
 type Lesson = {
   id: string;

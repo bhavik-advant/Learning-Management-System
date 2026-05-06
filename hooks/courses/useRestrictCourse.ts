@@ -12,13 +12,13 @@ type CoursesResponse = {
   };
 };
 
-const useRestrictCourse = ({ userId, role }: { userId: string; role: 'TRAINEE' | 'MENTOR' }) => {
+const useRestrictCourse = ({ userId }: { userId: string }) => {
   const { mutateAsync, isPending } = useMutation({
     mutationFn: restrictCourse,
 
     onSuccess: (data, variables) => {
       queryClient.setQueriesData(
-        { queryKey: ['assigned-courses', userId, role] },
+        { queryKey: ['assigned-courses', userId] },
         (old: CoursesResponse | undefined) => {
           if (!old?.courses) return old;
 
@@ -30,10 +30,10 @@ const useRestrictCourse = ({ userId, role }: { userId: string; role: 'TRAINEE' |
       );
 
       queryClient.invalidateQueries({
-        queryKey: ['assignable-courses', userId, role],
+        queryKey: ['assignable-courses', userId],
       });
       queryClient.invalidateQueries({
-        queryKey: ['assigned-courses', userId, role],
+        queryKey: ['assigned-courses', userId],
       });
     },
   });
@@ -42,7 +42,6 @@ const useRestrictCourse = ({ userId, role }: { userId: string; role: 'TRAINEE' |
     return mutateAsync({
       courseIds,
       userId,
-      role,
     });
   };
 

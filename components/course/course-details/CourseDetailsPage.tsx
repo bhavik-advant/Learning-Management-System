@@ -7,6 +7,7 @@ import Link from 'next/link';
 import { use } from 'react';
 import Loading from '../../ui/loading';
 import { Role } from '@/generated/prisma/enums';
+import InactiveCourseButton from './InactiveCourseButton';
 
 type Props = {
   role: Role;
@@ -69,6 +70,7 @@ export default function CourseDetailsPage({ role, userId, params }: Props) {
                   </svg>
                 </div>
               )}
+              {course.status !== 'INACTIVE' && <InactiveCourseButton courseId={course.id} />}
             </>
           )}
         </div>
