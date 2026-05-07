@@ -98,6 +98,8 @@ export const editAssignment = async ({
   description: string;
   maxScore: number;
 }) => {
+
+  
   const response = await fetch(
     `/api/course/${courseId}/module/${moduleId}/assignment/${assignmentId}`,
     {

@@ -3,6 +3,55 @@ import ApiResponse from '@/utils/api-response';
 import { prisma } from '@/utils/prisma-client';
 import { NextResponse } from 'next/server';
 
+type CourseWithModuleCount = {
+  id: string;
+  title: string;
+  description: string;
+  thumbnail?: { url: string } | null;
+  author: { username: string; image: string | null };
+  status: CourseStatus;
+  authorId: string;
+  thumbnailId: string | null;
+  createdAt: Date;
+  updatedAt: Date;
+  _count: { modules: number };
+};
+
+const formatCoursesWithModuleCount = (courses: CourseWithModuleCount[]) =>
+  courses.map(course => ({
+    id: course.id,
+    title: course.title,
+    description: course.description,
+    thumbnail: course.thumbnail?.url ?? '',
+    author: course.author.username,
+    image: course.author.image,
+    status: course.status,
+    authorId: course.authorId,
+    thumbnailId: course.thumbnailId,
+    createdAt: course.createdAt,
+    updatedAt: course.updatedAt,
+    modulesCount: course._count.modules,
+  }));
+
+const courseIncludeWithModuleCount = {
+  author: {
+    select: {
+      username: true,
+      image: true,
+    },
+  },
+  thumbnail: {
+    select: {
+      url: true,
+    },
+  },
+  _count: {
+    select: {
+      modules: true,
+    },
+  },
+} as const;
+
 //basic CRUD operations for course
 
 export const createCourse = async ({
@@ -209,28 +258,11 @@ export const getAllCourses = async ({
   search?: string;
   statusFilter?: CourseStatus | 'ALL';
 }) => {
-  const include = {
-    author: {
-      select: {
-        username: true,
-        image: true,
-      },
-    },
-    thumbnail: {
-      select: {
-        url: true,
-      },
-    },
-    _count: {
-      select: {
-        modules: true,
-      },
-    },
-  } as const;
+  const include = courseIncludeWithModuleCount;
 
   let courses;
 
-  if (userRole === 'ADMIN' || userRole === 'MENTOR') {
+  if (userRole === 'ADMIN') {
     const [courseData, pendingCourseApprovals] = await Promise.all([
       prisma.course.findMany({
         where: {
@@ -260,9 +292,61 @@ export const getAllCourses = async ({
         pendingCourseApprovals,
       },
     };
+  } else if (userRole === 'MENTOR') {
+    const [courseData, totalCourses, totalStudents, pendingSubmissions] = await Promise.all([
+      prisma.course.findMany({
+        where: {
+          title: {
+            contains: search,
+            mode: 'insensitive',
+          },
+          OR: [{ status: 'APPROVED' }, { authorId: userId }],
+          status: statusFilter !== 'ALL' ? statusFilter : undefined,
+        },
+        include,
+        orderBy: {
+          createdAt: 'desc',
+        },
+        ...(typeof limit === 'number' ? { take: limit } : {}),
+      }),
+
+      prisma.course.count({
+        where: {
+          authorId: userId,
+        },
+      }),
+
+      prisma.user.count({
+        where: {
+          mentorId: userId,
+        },
+      }),
+
+      prisma.submission.count({
+        where: {
+          student: {
+            mentorId: userId,
+          },
+          status: 'PENDING',
+        },
+      }),
+    ]);
+
+    courses = {
+      courses: courseData,
+      stats: {
+        totalCourses: totalCourses,
+        totalStudents: totalStudents,
+        pendingSubmissions: pendingSubmissions,
+      },
+    };
   } else {
     const courseData = await prisma.course.findMany({
       where: {
+        title: {
+          contains: search,
+          mode: 'insensitive',
+        },
         status: 'APPROVED',
         enrollments: {
           some: {
@@ -285,20 +369,7 @@ export const getAllCourses = async ({
     };
   }
 
-  const formattedCourses = courses.courses.map(c => ({
-    id: c.id,
-    title: c.title,
-    description: c.description,
-    thumbnail: c.thumbnail?.url ?? '',
-    author: c.author.username,
-    image: c.author.image,
-    status: c.status,
-    authorId: c.authorId,
-    thumbnailId: c.thumbnailId,
-    createdAt: c.createdAt,
-    updatedAt: c.updatedAt,
-    modulesCount: c._count.modules,
-  }));
+  const formattedCourses = formatCoursesWithModuleCount(courses.courses);
 
   return {
     courses: formattedCourses,
@@ -311,36 +382,10 @@ export const getMyCourses = async ({ userId }: { userId: string }) => {
     where: {
       authorId: userId,
     },
-    include: {
-      author: {
-        select: {
-          username: true,
-          image: true,
-        },
-      },
-      thumbnail: { select: { url: true } },
-      _count: {
-        select: {
-          modules: true,
-        },
-      },
-    },
+    include: courseIncludeWithModuleCount,
     orderBy: { createdAt: 'desc' },
   });
-  const formattedCourse = courses.map(c => ({
-    id: c.id,
-    title: c.title,
-    description: c.description,
-    thumbnail: c.thumbnail?.url ?? '',
-    author: c.author.username,
-    image: c.author.image,
-    status: c.status,
-    authorId: c.authorId,
-    thumbnailId: c.thumbnailId,
-    createdAt: c.createdAt,
-    updatedAt: c.updatedAt,
-    modulesCount: c._count.modules,
-  }));
+  const formattedCourse = formatCoursesWithModuleCount(courses);
   return formattedCourse;
 };
 
@@ -358,6 +403,7 @@ export const getPendingCourses = async () => {
       author: {
         select: {
           username: true,
+          image: true,
         },
       },
       modules: {
@@ -436,6 +482,8 @@ export const getAssignableCourses = async ({
   limit?: number;
   skip?: number;
 }) => {
+  const include = courseIncludeWithModuleCount;
+
   const courses = await prisma.course.findMany({
     where: {
       status: 'APPROVED',
@@ -445,27 +493,7 @@ export const getAssignableCourses = async ({
         },
       },
     },
-    include: {
-      thumbnail: {
-        select: {
-          url: true,
-        },
-      },
-      author: {
-        select: {
-          username: true,
-        },
-      },
-      modules: {
-        select: {
-          _count: {
-            select: {
-              lessons: true,
-            },
-          },
-        },
-      },
-    },
+    include,
     orderBy: {
       createdAt: 'desc',
     },
@@ -473,15 +501,7 @@ export const getAssignableCourses = async ({
     take: limit,
   });
 
-  const formattedCourses = courses.map(course => ({
-    id: course.id,
-    title: course.title,
-    description: course.description,
-    status: course.status,
-    thumbnail: course.thumbnail?.url || '',
-    author: course.author?.username || 'Unknown',
-    modulesCount: course.modules.length,
-  }));
+  const formattedCourses = formatCoursesWithModuleCount(courses);
 
   return formattedCourses;
 };
@@ -559,6 +579,8 @@ export const getAssignedCourses = async ({
 }) => {
   const take = limit == 0 ? undefined : limit;
 
+  const include = courseIncludeWithModuleCount;
+
   const courses = await prisma.course.findMany({
     where: {
       enrollments: {
@@ -567,33 +589,13 @@ export const getAssignedCourses = async ({
         },
       },
     },
-    include: {
-      thumbnail: { select: { url: true } },
-      author: { select: { username: true, image: true } },
-      modules: {
-        select: {
-          _count: { select: { lessons: true } },
-        },
-      },
-    },
+    include,
     orderBy: { createdAt: 'desc' },
     skip,
     take,
   });
 
-  const formattedCourses = courses.map(course => ({
-    id: course.id,
-    title: course.title,
-    description: course.description,
-    thumbnail: course.thumbnail?.url ?? '',
-    author: course.author?.username ?? 'Unknown',
-    image: course.author?.image ?? '',
-    status: course.status,
-    authorId: course.authorId,
-    thumbnailId: course.thumbnailId,
-    createdAt: course.createdAt,
-    modulesCount: course.modules.length,
-  }));
+  const formattedCourses = formatCoursesWithModuleCount(courses);
 
   return formattedCourses;
 };

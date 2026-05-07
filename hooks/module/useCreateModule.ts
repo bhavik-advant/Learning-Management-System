@@ -1,6 +1,7 @@
 import { createModule } from '@/services/apis/module';
 import { Course } from '@/types/types';
 import queryClient from '@/utils/query-client';
+import createToast from '@/utils/toast';
 import { useMutation } from '@tanstack/react-query';
 
 export const useCreateModule = ({ courseId }: { courseId: string }) => {
@@ -22,6 +23,7 @@ export const useCreateModule = ({ courseId }: { courseId: string }) => {
           modules: [...(oldData.modules ?? []), newModule],
         };
       });
+      createToast('Module Created Successfully', 'success');
     },
   });
 

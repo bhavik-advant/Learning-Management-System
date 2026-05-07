@@ -8,7 +8,7 @@ import { useCourses } from '@/hooks/courses/useCourses';
 import Loading from '@/components/ui/loading';
 
 function MentorDashBoard() {
-  const { courses, isFetching } = useCourses({ limit: 3 });
+  const { courses, isFetching, stats } = useCourses({ limit: 3 });
 
   if (isFetching) {
     return <Loading text="Fetching Courses" />;
@@ -25,9 +25,17 @@ function MentorDashBoard() {
         </div>
 
         <div className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-          <DashBoardCard title="Course Created" value={0} icon={<BiBook />} />
-          <DashBoardCard title="Total Students" value={0} icon={<PiStudent />} />
-          <DashBoardCard title="Pending Review" value={0} icon={<IoDocumentTextOutline />} />
+          <DashBoardCard title="Course Created" value={stats.totalCourses ?? 0} icon={<BiBook />} />
+          <DashBoardCard
+            title="Total Students"
+            value={stats.totalStudents ?? 0}
+            icon={<PiStudent />}
+          />
+          <DashBoardCard
+            title="Pending Review"
+            value={stats.pendingReviews ?? 0}
+            icon={<IoDocumentTextOutline />}
+          />
         </div>
       </section>
 

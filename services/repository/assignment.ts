@@ -106,13 +106,11 @@ export const getAssignmentsWithSubmissions = async ({
         contains: search,
         mode: 'insensitive',
       },
-
-      // only approved courses
+      // only  courses
       module: {
         course: {
           status: 'APPROVED',
 
-          // only enrolled student's assignments
           ...(isAdmin
             ? {}
             : {
@@ -125,22 +123,25 @@ export const getAssignmentsWithSubmissions = async ({
         },
       },
 
-      // filter submissions
-      ...(filter !== 'ALL'
-        ? {
-            submissions: {
-              some: {
-                status: filter == 'NOT_SUBMITTED' ? undefined : filter,
+      ...(filter == 'NOT_SUBMITTED'
+        ? { submissions: { none: { studentId: userId } } }
+        : {
+            ...(filter !== 'ALL'
+              ? {
+                  submissions: {
+                    some: {
+                      status: filter,
 
-                ...(isAdmin
-                  ? {}
-                  : {
-                      studentId: userId,
-                    }),
-              },
-            },
-          }
-        : {}),
+                      ...(isAdmin
+                        ? {}
+                        : {
+                            studentId: userId,
+                          }),
+                    },
+                  },
+                }
+              : {}),
+          }),
     },
 
     select: {
