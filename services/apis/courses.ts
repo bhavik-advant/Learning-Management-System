@@ -299,19 +299,6 @@ export const inactiveCourse = async (courseId: string) => {
   return data;
 };
 
-export const getMyCourses = async () => {
-  const response = await fetch(`/api/course/my-courses`);
-
-  if (!response.ok) {
-    const text = await response.text();
-    console.error('API ERROR:', text);
-    throw new Error('Something went wrong');
-  }
-
-  const result = await response.json();
-  return result.data;
-};
-
 export const reactivateCourse = async (courseId: string) => {
   const response = await fetch(`/api/course/reactivate/${courseId}`, {
     method: 'PATCH',

@@ -16,12 +16,13 @@ const traineeAccessRoutes = createRouteMatcher([
   '/app/courses(.*)',
   '/app/assignments(.*)',
   '/app/submissions(.*)',
-  '/api/courses',
-  '/api/courses/courseId',
+  '/api/course',
   '/api/assignments',
-  '/api/submissions',
-  '/api/assignments/assignmentId',
+  '/api/submission',
+  '/api/submission/([^/]+)',
+  '/api/assignments/([^/]+)',
   '/api/assignments/submit',
+  '/api/course/([^/]+)',
 ]);
 
 const mentorAccessRoutes = createRouteMatcher([
@@ -50,7 +51,7 @@ const AdminAccessRoutes = createRouteMatcher([
   '/api/(.*)',
 ]);
 
-const mentorProhibitedRoutes = createRouteMatcher(['/api/courses/courseId/approve']);
+const mentorProhibitedRoutes = createRouteMatcher(['/api/course/([^/]+)/approve']);
 
 export default clerkMiddleware(async (auth, req) => {
   const { userId } = await auth();

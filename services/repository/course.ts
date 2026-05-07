@@ -306,44 +306,6 @@ export const getAllCourses = async ({
   };
 };
 
-export const getMyCourses = async ({ userId }: { userId: string }) => {
-  const courses = await prisma.course.findMany({
-    where: {
-      authorId: userId,
-    },
-    include: {
-      author: {
-        select: {
-          username: true,
-          image: true,
-        },
-      },
-      thumbnail: { select: { url: true } },
-      _count: {
-        select: {
-          modules: true,
-        },
-      },
-    },
-    orderBy: { createdAt: 'desc' },
-  });
-  const formattedCourse = courses.map(c => ({
-    id: c.id,
-    title: c.title,
-    description: c.description,
-    thumbnail: c.thumbnail?.url ?? '',
-    author: c.author.username,
-    image: c.author.image,
-    status: c.status,
-    authorId: c.authorId,
-    thumbnailId: c.thumbnailId,
-    createdAt: c.createdAt,
-    updatedAt: c.updatedAt,
-    modulesCount: c._count.modules,
-  }));
-  return formattedCourse;
-};
-
 export const getPendingCourses = async () => {
   const courses = await prisma.course.findMany({
     where: {
