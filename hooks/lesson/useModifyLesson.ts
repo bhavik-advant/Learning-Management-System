@@ -1,6 +1,7 @@
 import { editLesoon } from '@/services/apis/lesson';
 import { Course } from '@/types/types';
 import queryClient from '@/utils/query-client';
+import createToast from '@/utils/toast';
 import { useMutation } from '@tanstack/react-query';
 
 export const useModifyLesson = ({
@@ -37,6 +38,10 @@ export const useModifyLesson = ({
           ),
         };
       });
+      createToast('Lesson updated successfully!', 'success');
+    },
+    onError: error => {
+      createToast(error.message || 'Failed to update Lesson!', 'error');
     },
   });
 

@@ -57,7 +57,9 @@ export default function CourseDetailsPage({ role, userId, params }: Props) {
                   Draft
                 </div>
               )}
-              {course.status === 'PENDING' && role =='ADMIN' && <ApproveButton courseId={course.id} />}
+              {course.status === 'PENDING' && role == 'ADMIN' && (
+                <ApproveButton courseId={course.id} />
+              )}
 
               {(userId == course.authorId || role == 'ADMIN') && course.status !== 'INACTIVE' ? (
                 <InactiveCourseButton courseId={course.id} />

@@ -1,4 +1,7 @@
+import Link from 'next/link';
 import React from 'react';
+import { HiArrowRight } from 'react-icons/hi';
+import { HiArrowTopRightOnSquare } from 'react-icons/hi2';
 
 type Submission = {
   id: string;
@@ -44,7 +47,7 @@ const SubmissionsTable: React.FC<{ submissions: Submission[] }> = ({ submissions
             <th className="p-4 text-left">Score</th>
             <th className="p-4 text-left">Status</th>
             <th className="p-4 text-left">Submitted</th>
-            <th className="p-4 text-left">Actions</th>
+            <th className="p-4 text-center">Actions</th>
           </tr>
         </thead>
 
@@ -96,10 +99,29 @@ const SubmissionsTable: React.FC<{ submissions: Submission[] }> = ({ submissions
                 <td className="p-4 text-gray-500 dark:text-gray-400 text-xs">
                   {new Date(s.submittedAt).toLocaleString()}
                 </td>
-                <td className=" text-blue-600 dark:text-blue-400 text-sm hover:underline">
-                  <a target="_blank" href={`${s.fileUrl}`}>
-                    View File
-                  </a>
+                <td className="flex justify-center items-center gap-2 p-2">
+                  <div>
+                    <a
+                      href={s.fileUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-150"
+                      title="View submitted file"
+                    >
+                      <HiArrowTopRightOnSquare className="text-sm" />
+                      File
+                    </a>
+                  </div>
+
+                  <div>
+                    <Link
+                      href={`/app/review-submission/${s.id}`}
+                      className="inline-flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-semibold bg-gray-900 dark:bg-white text-white dark:text-gray-900"
+                    >
+                      Details
+                      <HiArrowRight className="text-xs" />
+                    </Link>
+                  </div>
                 </td>
               </tr>
             ))

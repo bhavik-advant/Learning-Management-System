@@ -1,6 +1,5 @@
 import RoleBased from '@/components/RoleBased';
 import getUserDetails from '@/lib/isAuth';
-import MentorCoursesPage from '@/components/course/CoursesPage';
 import AdminSubmissionsPage from '@/components/submissions/AdminSubmissions';
 import TraineeSubmissionsPage from '@/components/submissions/TraineeSubmissions';
 

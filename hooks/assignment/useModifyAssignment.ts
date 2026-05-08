@@ -1,6 +1,7 @@
 import { editAssignment } from '@/services/apis/assignments';
 import { Course } from '@/types/types';
 import queryClient from '@/utils/query-client';
+import createToast from '@/utils/toast';
 import { useMutation } from '@tanstack/react-query';
 
 export const useModifyAssignment = (courseId: string, moduleId: string, assignmentId: string) => {
@@ -31,6 +32,10 @@ export const useModifyAssignment = (courseId: string, moduleId: string, assignme
           }),
         };
       });
+      createToast('Assignment modified successfully', 'success');
+    },
+    onError: (error: Error) => {
+      createToast(error.message || 'Failed to modify assignment', 'error');
     },
   });
 

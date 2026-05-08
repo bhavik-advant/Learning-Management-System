@@ -1,6 +1,7 @@
 import { assignCourse } from '@/services/apis/courses';
 import { Course } from '@/types/types';
 import queryClient from '@/utils/query-client';
+import createToast from '@/utils/toast';
 import { useMutation } from '@tanstack/react-query';
 
 export const useAssignCourse = ({ userId }: { userId: string }) => {
@@ -27,6 +28,10 @@ export const useAssignCourse = ({ userId }: { userId: string }) => {
       queryClient.invalidateQueries({
         queryKey: ['assignable-courses', userId],
       });
+      createToast('Course Assigned successfully!', 'success');
+    },
+    onError: (error: Error) => {
+      createToast(error.message || 'Course Assignment Failed!', 'error');
     },
   });
 

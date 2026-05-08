@@ -39,6 +39,7 @@ const mentorAccessRoutes = createRouteMatcher([
 ]);
 
 const AdminAccessRoutes = createRouteMatcher([
+  '/app/(.*)',
   '/app',
   '/app/assign-course(.*)',
   '/app/courses(.*)',

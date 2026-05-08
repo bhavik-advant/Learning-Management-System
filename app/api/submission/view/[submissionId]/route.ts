@@ -26,14 +26,16 @@ export async function GET(
       return sendResponse(403, 'Unauthorised', {});
     }
 
-    const validation = await getSubmissionMentorId(submissionId);
+    if (user.role === 'MENTOR') {
+      const validation = await getSubmissionMentorId(submissionId);
 
-    if (!validation) {
-      return sendResponse(404, 'Submission not found', {});
-    }
+      if (!validation) {
+        return sendResponse(404, 'Submission not found', {});
+      }
 
-    if (validation.student.mentorId !== user.id) {
-      return sendResponse(403, 'Not authorised to view Submission', {});
+      if (validation.student.mentorId !== user.id) {
+        return sendResponse(403, 'Not authorised to view Submission', {});
+      }
     }
 
     const submission = await getSubmissionById(submissionId);
@@ -58,14 +60,16 @@ export async function PATCH(
 
     if (!user) return sendResponse(401, 'Please login first', {});
 
-    const validation = await getSubmissionMentorId(submissionId);
+    if (user.role === 'MENTOR') {
+      const validation = await getSubmissionMentorId(submissionId);
 
-    if (!validation) {
-      return sendResponse(404, 'Submission not found', {});
-    }
+      if (!validation) {
+        return sendResponse(404, 'Submission not found', {});
+      }
 
-    if (validation.student.mentorId !== user.id) {
-      return sendResponse(403, 'Unauthorised', {});
+      if (validation.student.mentorId !== user.id) {
+        return sendResponse(403, 'Unauthorised', {});
+      }
     }
 
     const updatedSubmission = await updateSubmissionByMentor({

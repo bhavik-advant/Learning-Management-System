@@ -1,6 +1,7 @@
 import { addLesson } from '@/services/apis/lesson';
 import { Course } from '@/types/types';
 import queryClient from '@/utils/query-client';
+import createToast from '@/utils/toast';
 import { useMutation } from '@tanstack/react-query';
 
 export const useCreateLesson = ({ courseId, moduleId }: { courseId: string; moduleId: string }) => {
@@ -29,6 +30,10 @@ export const useCreateLesson = ({ courseId, moduleId }: { courseId: string; modu
           ),
         };
       });
+      createToast('Lesson created successfully!', 'success');
+    },
+    onError: error => {
+      createToast(error.message || 'Failed to create Lesson!', 'error');
     },
   });
 

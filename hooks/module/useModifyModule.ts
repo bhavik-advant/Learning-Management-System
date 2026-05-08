@@ -1,6 +1,7 @@
 import { editModule } from '@/services/apis/module';
 import { Course } from '@/types/types';
 import queryClient from '@/utils/query-client';
+import createToast from '@/utils/toast';
 import { useMutation } from '@tanstack/react-query';
 
 export const useModifyModule = ({ courseId, moduleId }: { courseId: string; moduleId: string }) => {
@@ -17,6 +18,10 @@ export const useModifyModule = ({ courseId, moduleId }: { courseId: string; modu
           ),
         };
       });
+      createToast('Module updated successfully!', 'success');
+    },
+    onError: error => {
+      createToast(error.message || 'Failed to update Module', 'error');
     },
   });
 

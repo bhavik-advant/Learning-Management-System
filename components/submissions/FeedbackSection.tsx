@@ -1,13 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { useMutation } from '@tanstack/react-query';
-import { updateFeedback } from '@/services/apis/submissions';
-import queryClient from '@/utils/query-client';
 import { Card, CardContent, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-
-import { SubmissionStatus } from '@/generated/prisma/enums';
+import { useUpdateFeedback } from '@/hooks/submission/useUpdateFeedback';
 
 interface FeedbackSectionProps {
   feedback: string | null | undefined;
@@ -27,28 +23,13 @@ const FeedbackSection = ({
   const [score, setScore] = useState<number | null>(incomingScore ?? null);
   const [formError, setFormError] = useState<string>('');
 
-  const { mutateAsync: submitFeedback, isPending } = useMutation({
-    mutationFn: updateFeedback,
-    onSuccess: () => {
-      setIsEditing(false);
-      queryClient.setQueryData(['submission', submissionId], old => {
-        if (!old) {
-          return old;
-        }
-
-        return {
-          ...old,
-          status: SubmissionStatus.GRADED,
-          feedback: feedbackText,
-          score: score,
-        };
-      });
-      queryClient.invalidateQueries({ queryKey: ['submission', submissionId] });
-    },
-    onError: error => {
-      setFormError(error instanceof Error ? error.message : 'Failed to save feedback');
-    },
-  });
+  const { submitFeedback, isPending } = useUpdateFeedback(
+    submissionId,
+    feedbackText,
+    score,
+    setIsEditing,
+    setFormError
+  );
 
   const handleSubmit = async () => {
     setFormError('');

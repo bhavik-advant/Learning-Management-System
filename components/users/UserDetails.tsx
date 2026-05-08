@@ -2,13 +2,10 @@
 
 import Image from 'next/image';
 import { useMemo, useState } from 'react';
-import {
-  type AdminUserDetails,
-  getMentors,
-  type MentorOption,
-  updateUserDetails,
-} from '@/services/apis/users';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { type AdminUserDetails, type MentorOption } from '@/services/apis/users';
+
+import { useUpdateUser } from '@/hooks/user/useUpdateUser';
+import { useMentors } from '@/hooks/user/useMentors';
 
 const roleStyles = {
   ADMIN: 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-300',
@@ -17,7 +14,6 @@ const roleStyles = {
 };
 
 export default function UserDetails({ user }: { user: AdminUserDetails }) {
-  const queryClient = useQueryClient();
   const [isEditing, setIsEditing] = useState(false);
   const [username, setUsername] = useState(() => user.username);
   const [image, setImage] = useState(() => user.image ?? '');
@@ -27,9 +23,7 @@ export default function UserDetails({ user }: { user: AdminUserDetails }) {
 
   const isTrainee = role === 'TRAINEE';
 
-  const { data: mentors = [], isLoading: mentorsLoading } = useQuery({
-    queryKey: ['admin', 'mentors'],
-    queryFn: getMentors,
+  const { data: mentors = [], isLoading: mentorsLoading } = useMentors({
     enabled: isEditing && isTrainee,
   });
 
@@ -39,45 +33,37 @@ export default function UserDetails({ user }: { user: AdminUserDetails }) {
     return mentor?.username ?? user.mentorName ?? 'Mentor assigned';
   }, [mentors, user.mentorId, user.mentorName]);
 
-  const updateMutation = useMutation({
-    mutationFn: (payload: {
-      username: string;
-      image: string;
-      role: 'ADMIN' | 'MENTOR' | 'TRAINEE';
-      mentorId: string | null;
-    }) => updateUserDetails(user.id, payload),
-    onSuccess: updated => {
-      queryClient.setQueryData(['admin', 'user', user.id], updated);
+  const updateMutation = useUpdateUser(user.id);
+
+  const handleSave = async () => {
+    try {
+      setFormError(null);
+
+      if (!username.trim()) {
+        setFormError('Username is required');
+        return;
+      }
+
+      if (isTrainee && !mentorId) {
+        setFormError('Please assign a mentor for trainee');
+        return;
+      }
+
+      const updated = await updateMutation.mutateAsync({
+        username: username.trim(),
+        image: image.trim(),
+        role,
+        mentorId: isTrainee ? mentorId : null,
+      });
+
       setUsername(updated.username);
       setImage(updated.image ?? '');
       setRole(updated.role);
       setMentorId(updated.mentorId ?? '');
       setIsEditing(false);
-      setFormError(null);
-    },
-    onError: error => {
+    } catch (error) {
       setFormError(error instanceof Error ? error.message : 'Failed to update user');
-    },
-  });
-
-  const handleSave = () => {
-    setFormError(null);
-    if (!username.trim()) {
-      setFormError('Username is required');
-      return;
     }
-
-    if (isTrainee && !mentorId) {
-      setFormError('Please assign a mentor for trainee');
-      return;
-    }
-
-    updateMutation.mutate({
-      username: username.trim(),
-      image: image.trim(),
-      role,
-      mentorId: isTrainee ? mentorId : null,
-    });
   };
 
   const handleCancel = () => {

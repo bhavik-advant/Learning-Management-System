@@ -1,6 +1,7 @@
 import { deleteLesson } from '@/services/apis/lesson';
 import { Course } from '@/types/types';
 import queryClient from '@/utils/query-client';
+import createToast from '@/utils/toast';
 import { useMutation } from '@tanstack/react-query';
 
 export const useDeleteLesson = ({
@@ -30,6 +31,10 @@ export const useDeleteLesson = ({
           }),
         };
       });
+      createToast('Lesson deleted successfully!', 'success');
+    },
+    onError: error => {
+      createToast(error.message || 'Failed to delete Lesson', 'error');
     },
   });
 

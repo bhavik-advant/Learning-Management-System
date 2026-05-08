@@ -12,7 +12,7 @@ function Navbar() {
 
   if (!isLoaded) return null;
   return (
-    <nav className="w-full border-b border-gray-300  backdrop-blur-md sticky top-0 z-50">
+    <nav className="w-full backdrop-blur-md bg-white dark:bg-black/80 dark:shadow-md shadow-lg shadow-cyan-400 sticky top-0 z-50">
       <div className="mx-4 xxl:mx-70 sm:mx-8 lg:mx-14 xl:mx-52 py-3 flex items-center justify-between">
         <div className="flex justify-center items-center gap-2 dark:hidden">
           <Image

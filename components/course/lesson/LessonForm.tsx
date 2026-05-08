@@ -4,15 +4,12 @@ import { Upload } from 'lucide-react';
 import { MarkdownEditor } from '@/components/mdxEditor';
 import React, { useState } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
-import { uploadFile } from '@/services/apis/file';
 import { useParams } from 'next/navigation';
-import { useMutation } from '@tanstack/react-query';
 import { RiLoader4Fill } from 'react-icons/ri';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import Pending from '../Pending';
 import { useUploadFile } from '@/hooks/file/useUploadFile';
-import CourseModal from '@/components/modal/CourseModal';
 
 type LessonFormProps = {
   submitText: string;
