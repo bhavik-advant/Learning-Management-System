@@ -95,16 +95,31 @@ export default function SubmissionCard({ item, index }: { item: SubmissionType; 
       </div>
 
       <div className="flex-linear-0 flex items-center gap-2">
-        <a
-          href={item.fileUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-150"
-          title="View submitted file"
-        >
-          <HiArrowTopRightOnSquare className="text-sm" />
-          File
-        </a>
+        <div>
+          {item.file ? (
+            <a
+              href={item.file.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-150"
+              title="View submitted file"
+            >
+              <HiArrowTopRightOnSquare className="text-sm" />
+              File
+            </a>
+          ) : item.githubLink ? (
+            <a
+              href={item.githubLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-150"
+              title="Open GitHub repository"
+            >
+              <HiArrowTopRightOnSquare className="text-sm" />
+              GitHub
+            </a>
+          ) : null}
+        </div>
         <Link
           href={`./assignments/${item.assignment.id}`}
           className="inline-flex items-center gap-1.5 rounded-xl px-4 py-2 text-xs font-semibold

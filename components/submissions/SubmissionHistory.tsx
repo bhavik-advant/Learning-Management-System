@@ -57,9 +57,8 @@ export default function SubmissionHistory({ submissions, maxScore }: Props) {
               </div>
 
               <div className="mt-3">
-                
                 <a
-                  href={submission.fileUrl || submission.githubLink}
+                  href={submission.file?.url || submission.githubLink}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-sm text-purple-600 hover:underline"

@@ -3,6 +3,8 @@ import getUserDetails from '@/lib/isAuth';
 import ApiResponse from '@/utils/api-response';
 import { uploadToCloud } from '@/services/external/cloudinary';
 import { createSubmission } from '@/services/repository/submission';
+import { createFile } from '@/services/repository/file';
+import { FileType } from '@/generated/prisma/enums';
 
 export async function POST(req: NextRequest) {
   try {
@@ -19,6 +21,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json(new ApiResponse(400, 'Missing fields', {}), { status: 400 });
     }
 
+    // FILE SUBMISSION
     if (type === 'FILE') {
       if (!file) {
         return NextResponse.json(new ApiResponse(400, 'File is required', {}), { status: 400 });
@@ -38,10 +41,20 @@ export async function POST(req: NextRequest) {
 
       const upload = await uploadToCloud(file);
 
+      // store in File table
+      const uploadedFile = await createFile({
+        url: upload.url,
+        public_id: upload.public_id,
+        size: file.size,
+        userId: user.id,
+        type: FileType.DOCUMENT,
+      });
+
+      // create submission
       const submission = await createSubmission({
         assignmentId,
         studentId: user.id,
-        fileUrl: upload.url,
+        fileId: uploadedFile.id,
       });
 
       return NextResponse.json(new ApiResponse(200, 'File submitted successfully', submission), {
@@ -49,6 +62,7 @@ export async function POST(req: NextRequest) {
       });
     }
 
+    // LINK SUBMISSION
     if (type === 'LINK') {
       if (!githubLink || !githubLink.trim()) {
         return NextResponse.json(new ApiResponse(400, 'GitHub link is required', {}), {

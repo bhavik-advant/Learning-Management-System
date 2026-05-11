@@ -6,7 +6,12 @@ import { HiArrowTopRightOnSquare } from 'react-icons/hi2';
 type Submission = {
   id: string;
   status: string;
-  fileUrl: string;
+  file: {
+    id: string;
+    url: string;
+    public_id: string;
+  } | null;
+  githubLink: string | null;
   score: number | null;
   submittedAt: string;
   student: {
@@ -101,16 +106,29 @@ const SubmissionsTable: React.FC<{ submissions: Submission[] }> = ({ submissions
                 </td>
                 <td className="flex justify-center items-center gap-2 p-2">
                   <div>
-                    <a
-                      href={s.fileUrl}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-150"
-                      title="View submitted file"
-                    >
-                      <HiArrowTopRightOnSquare className="text-sm" />
-                      File
-                    </a>
+                    {s.file ? (
+                      <a
+                        href={s.file.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-150"
+                        title="View submitted file"
+                      >
+                        <HiArrowTopRightOnSquare className="text-sm" />
+                        File
+                      </a>
+                    ) : s.githubLink ? (
+                      <a
+                        href={s.githubLink}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 rounded-xl px-3 py-2 text-xs font-semibold text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 transition-all duration-150"
+                        title="Open GitHub repository"
+                      >
+                        <HiArrowTopRightOnSquare className="text-sm" />
+                        GitHub
+                      </a>
+                    ) : null}
                   </div>
 
                   <div>

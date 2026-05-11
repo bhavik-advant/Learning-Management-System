@@ -11,7 +11,13 @@ type Role = 'ADMIN' | 'MENTOR';
 
 type SubmissionWithRelations = {
   id: string;
-  fileUrl: string | null;
+  fileId: string | null;
+
+  file: {
+    id: string;
+    url: string;
+    public_id: string;
+  } | null;
   githubLink: string | null;
   score: number | null;
   status: 'PENDING' | 'GRADED' | 'RESUBMITTED';
@@ -37,7 +43,11 @@ type SubmissionWithRelations = {
 
 type SubmissionResponse = {
   id: string;
-  fileUrl: string | null;
+  file: {
+    id: string;
+    url: string;
+    public_id: string;
+  } | null;
   githubLink: string | null;
   score: number | null;
   status: string;
@@ -68,7 +78,13 @@ const roleHandlers: Record<Role, (userId: string) => Promise<SubmissionWithRelat
 
 const mapSubmission = (s: SubmissionWithRelations): SubmissionResponse => ({
   id: s.id,
-  fileUrl: s.fileUrl,
+  file: s.file
+    ? {
+        id: s.file.id,
+        url: s.file.url,
+        public_id: s.file.public_id,
+      }
+    : null,
   githubLink: s.githubLink,
   score: s.score,
   status: s.status,

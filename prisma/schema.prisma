@@ -128,9 +128,10 @@ model File {
 
   // Relations
   uploader    User     @relation("UploadedFiles", fields: [uploadedBy], references: [id])
+
   thumbnails  Course[] @relation("CourseThumbnail")
 
-  // lessonVideo Lesson[] @relation("LessonVideo")
+  submissions Submission[]
 
   @@index([uploadedBy])
 }
@@ -164,8 +165,10 @@ model Assignment {
 
 model Submission {
   id          String            @id @default(uuid())
-  fileUrl     String?
+  
+  fileId      String?
   githubLink  String?
+
   score       Int?
   feedback    String?
   status      SubmissionStatus  @default(PENDING)
@@ -179,8 +182,11 @@ model Submission {
   assignment  Assignment @relation(fields: [assignmentId], references: [id], onDelete: Cascade)
   student     User       @relation("StudentSubmissions", fields: [studentId], references: [id], onDelete: Cascade)
 
+  file        File?      @relation(fields: [fileId], references: [id], onDelete: SetNull)
+
   @@index([assignmentId])
   @@index([studentId])
+  @@index([fileId])
 }
 
 

@@ -1,9 +1,11 @@
 import { prisma } from '@/utils/prisma-client';
+import { FileType } from '@/generated/prisma/enums';
 
 export const getAllSubmissionsForAdmin = async () => {
   return prisma.submission.findMany({
     orderBy: { submittedAt: 'desc' },
     include: {
+      file: true,
       student: {
         select: {
           id: true,
@@ -52,6 +54,7 @@ export const getSubmissionsForMentor = async (mentorId: string) => {
       },
     },
     include: {
+      file: true,
       assignment: {
         select: {
           id: true,
@@ -93,7 +96,16 @@ export type SubmissionEntity = {
   id: string;
   assignmentId: string;
   studentId: string;
-  fileUrl: string | null;
+
+  fileId: string | null;
+
+  file: {
+    id: string;
+    url: string;
+    public_id: string;
+    type: FileType;
+  } | null;
+
   githubLink: string | null;
   score: number | null;
   status: 'PENDING' | 'GRADED' | 'RESUBMITTED';
@@ -109,6 +121,9 @@ export const getSubmissionsByAssignmentAndStudent = async (
       assignmentId,
       studentId,
     },
+    include: {
+      file: true,
+    },
     orderBy: {
       submittedAt: 'desc',
     },
@@ -117,7 +132,14 @@ export const getSubmissionsByAssignmentAndStudent = async (
 
 export type StudentSubmissionWithAssignment = {
   id: string;
-  fileUrl: string | null;
+  fileId: string | null;
+
+  file: {
+    id: string;
+    url: string;
+    public_id: string;
+    type: FileType;
+  } | null;
   githubLink: string | null;
   score: number | null;
   status: 'PENDING' | 'GRADED' | 'RESUBMITTED';
@@ -148,6 +170,8 @@ export const getStudentSubmissions = async (
       submittedAt: 'desc',
     },
     include: {
+      file: true,
+
       assignment: {
         select: {
           id: true,
@@ -175,6 +199,15 @@ type SubmissionDetails = {
   score: number | null;
   status: 'PENDING' | 'GRADED' | 'RESUBMITTED';
   gradedAt: Date | null;
+  fileId: string | null;
+
+  file: {
+    id: string;
+    url: string;
+    public_id: string;
+    type: FileType;
+    size: number;
+  } | null;
 
   assignment: {
     id: string;
@@ -219,7 +252,10 @@ export const getSubmissionById = async (
 ): Promise<SubmissionDetails | null> => {
   return prisma.submission.findUnique({
     where: { id: submissionId },
+
     include: {
+      file: true,
+
       assignment: {
         select: {
           id: true,
@@ -273,6 +309,8 @@ export const updateSubmissionByMentor = async ({
       }),
     },
     include: {
+      file: true,
+
       assignment: {
         select: {
           id: true,
@@ -306,26 +344,49 @@ export const updateSubmissionByMentor = async ({
   });
 };
 
+type CreateFilePayload = {
+  url: string;
+  public_id: string;
+  size: number;
+  uploadedBy: string;
+  type: FileType;
+};
+
+export const createFile = async ({ url, public_id, size, uploadedBy, type }: CreateFilePayload) => {
+  return prisma.file.create({
+    data: {
+      url,
+      public_id,
+      size,
+      uploadedBy,
+      type,
+    },
+  });
+};
+
 type CreateSubmissionPayload = {
   assignmentId: string;
   studentId: string;
-  fileUrl?: string | null;
+  fileId?: string | null;
   githubLink?: string | null;
 };
 
 export const createSubmission = async ({
   assignmentId,
   studentId,
-  fileUrl = null,
+  fileId = null,
   githubLink = null,
 }: CreateSubmissionPayload) => {
   return prisma.submission.create({
     data: {
       assignmentId,
       studentId,
-      fileUrl,
+      fileId,
       githubLink,
       submittedAt: new Date(),
+    },
+    include: {
+      file: true,
     },
   });
 };
@@ -346,6 +407,11 @@ export const getAssignmentWithSubmission = async ({
         where: {
           studentId,
         },
+
+        include: {
+          file: true,
+        },
+
         orderBy: {
           submittedAt: 'desc',
         },
