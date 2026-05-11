@@ -1,7 +1,6 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { Users } from 'lucide-react';
+import { Users, X } from 'lucide-react';
 import Image from 'next/image';
-import { cn } from '@/lib/utils';
 
 type Course = {
   id: string;
@@ -22,24 +21,30 @@ type SummeryProps = {
   isLoading: boolean;
   pendingText: string;
   className?: string;
+  onClose: () => void;
 };
 
 const Summery = ({
+  onClose,
   selectedCourses,
   pendingText,
   isLoading,
   onAction,
   actionLabel = 'Assign',
-  title = 'Selected',
+  title = 'Selected Courses',
   className,
 }: SummeryProps) => {
   const handleAction = async () => {
     await onAction();
+    onClose();
   };
 
   return (
-    <div className={cn('lg:col-span-1', className)}>
-      <Card className=" h-fit shadow-md  border border-border dark:bg-[#0b111f]">
+    <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 ">
+      <Card className="relative h-fit shadow-md  border border-border min-w-120 dark:bg-[#0b111f]">
+        <button className="absolute top-4 right-4 cursor-pointer" onClick={onClose}>
+          <X />
+        </button>
         <CardHeader className="py-2 px-4 border-b border-border">
           <CardTitle className="text-sm">{title}</CardTitle>
           <CardDescription className="text-xs">{selectedCourses.length} course(s)</CardDescription>

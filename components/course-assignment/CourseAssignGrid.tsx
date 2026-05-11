@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Summery from './Summery';
 import NoCourses from './NoCourses';
 import CustomPagination from '../ui/CustomPagination';
+import { Button } from '../ui/button';
 
 type Course = {
   id: string;
@@ -52,6 +53,7 @@ const CourseAssignGrid = ({
   isLoading: boolean;
 }) => {
   const [selectedCourses, setSelectedCourses] = useState<Course[]>([]);
+  const [showSummery, setShowSummery] = useState(false);
 
   const handleSelectCourse = (course: Course) => {
     setSelectedCourses(prev => {
@@ -79,23 +81,27 @@ const CourseAssignGrid = ({
         <CardContent className="h-44 flex justify-center items-center">
           Loading Courses...
         </CardContent>
-
       </Card>
     );
   }
 
   return (
-    <div className="grid  grid-cols-1 lg:grid-cols-3 gap-4">
+    <div className="grid">
       <div className="lg:col-span-2 space-y-4">
         {data.courses.length == 0 && <NoCourses title={title} />}
 
         {data.courses.length > 0 && (
           <Card className="shadow-md border dark:bg-[#0b111f] border-border">
-            <CardHeader className="border-b border-border py-2 px-4">
-              <CardTitle className="text-sm">{title}</CardTitle>
-              <CardDescription className="text-xs">
-                Viewing {data?.courses.length} course(s)
-              </CardDescription>
+            <CardHeader className="border-b flex justify-between border-border py-2 px-4">
+              <div>
+                <CardTitle className="text-sm">{title}</CardTitle>
+                <CardDescription className="text-xs">
+                  Viewing {data?.courses.length} course(s)
+                </CardDescription>
+              </div>
+              <Button disabled={selectedCourses.length === 0} onClick={() => setShowSummery(true)}>
+                {submitText}
+              </Button>
             </CardHeader>
             <CardContent className="px-4 pb-4">
               <SelectableCourses
@@ -115,14 +121,17 @@ const CourseAssignGrid = ({
         )}
       </div>
 
-      <Summery
-        isLoading={isLoading}
-        pendingText={pendingtext}
-        actionLabel={submitText}
-        userId={userId}
-        selectedCourses={selectedCourses}
-        onAction={handleOperation}
-      />
+      {showSummery && (
+        <Summery
+          onClose={() => setShowSummery(false)}
+          isLoading={isLoading}
+          pendingText={pendingtext}
+          actionLabel={submitText}
+          userId={userId}
+          selectedCourses={selectedCourses}
+          onAction={handleOperation}
+        />
+      )}
     </div>
   );
 };

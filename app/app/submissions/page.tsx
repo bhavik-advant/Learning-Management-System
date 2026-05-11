@@ -1,7 +1,7 @@
 import RoleBased from '@/components/RoleBased';
 import getUserDetails from '@/lib/isAuth';
 import AdminSubmissionsPage from '@/components/submissions/AdminSubmissions';
-import TraineeSubmissionsPage from '@/components/submissions/TraineeSubmissions';
+import SubmissionsPage from '@/components/submissions/SubmissionsPage';
 
 export const metadata = {
   title: 'Submissions',
@@ -9,7 +9,7 @@ export const metadata = {
     'View and manage all your submissions in one place. Track the status of your assignments, review feedback, and stay organized with your personalized submissions dashboard.',
 };
 
-export default async function SubmissionsPage() {
+export default async function MySubmissions() {
   const user = await getUserDetails();
 
   return (
@@ -17,8 +17,8 @@ export default async function SubmissionsPage() {
       role={user.role}
       components={{
         ADMIN: AdminSubmissionsPage,
-        MENTOR: TraineeSubmissionsPage,
-        TRAINEE: TraineeSubmissionsPage,
+        MENTOR: SubmissionsPage,
+        TRAINEE: SubmissionsPage,
       }}
     />
   );

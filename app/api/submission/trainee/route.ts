@@ -1,21 +1,22 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import getUserDetails from '@/lib/isAuth';
 import ApiResponse from '@/utils/api-response';
 
 import { getStudentSubmissions } from '@/services/repository/submission';
+import { SubmissionStatus } from '@/generated/prisma/enums';
 
 const sendResponse = (status: number, message: string, data: unknown) =>
   NextResponse.json(new ApiResponse(status, message, data), { status });
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
     const user = await getUserDetails();
 
-    if (!user) {
-      return sendResponse(401, 'Please login first', {});
-    }
+    const searchParams = req.nextUrl.searchParams;
+    const search = searchParams.get('search') || '';
+    const status = (searchParams.get('status') as SubmissionStatus | 'ALL') || 'ALL';
 
-    const submissions = await getStudentSubmissions(user.id);
+    const submissions = await getStudentSubmissions({ studentId: user.id, search, status });
 
     return sendResponse(200, 'Submissions fetched', submissions);
   } catch (error) {

@@ -1,5 +1,5 @@
 import { prisma } from '@/utils/prisma-client';
-import { FileType } from '@/generated/prisma/enums';
+import { FileType, SubmissionStatus } from '@/generated/prisma/enums';
 
 export const getAllSubmissionsForAdmin = async () => {
   return prisma.submission.findMany({
@@ -159,12 +159,25 @@ export type StudentSubmissionWithAssignment = {
   };
 };
 
-export const getStudentSubmissions = async (
-  studentId: string
-): Promise<StudentSubmissionWithAssignment[]> => {
+export const getStudentSubmissions = async ({
+  studentId,
+  search = '',
+  status = 'ALL',
+}: {
+  studentId: string;
+  search?: string;
+  status?: SubmissionStatus | 'ALL';
+}): Promise<StudentSubmissionWithAssignment[]> => {
   return prisma.submission.findMany({
     where: {
       studentId,
+      assignment: {
+        title: {
+          contains: search,
+          mode: 'insensitive',
+        },
+      },
+      status: status === 'ALL' ? undefined : status,
     },
     orderBy: {
       submittedAt: 'desc',

@@ -6,7 +6,7 @@ import useRestrictCourse from '@/hooks/courses/useRestrictCourse';
 
 const AssignedCourses = ({ selectedUserId }: { selectedUserId: string }) => {
   const [page, setPage] = useState(1);
-  const limit = 1;
+  const limit = 5;
 
   const { courseData, isFetching } = useGetAssignedCourses({
     userId: selectedUserId,

@@ -2,6 +2,7 @@
 import CustomSelect from './CustomSelect';
 import { useEffect, useRef, useState } from 'react';
 import { AssignmentFilter, CourseStatus } from '@/types/types';
+import { SubmissionStatus } from '@/generated/prisma/enums';
 
 const SearchBar = ({
   searchTitle,
@@ -14,8 +15,10 @@ const SearchBar = ({
   searchTitle?: string;
   search: string;
   setSearch: (search: string) => void;
-  statusFilter: CourseStatus | 'ALL' | AssignmentFilter['statusFilter'];
-  setStatusFilter: (status: CourseStatus | 'ALL' | AssignmentFilter['statusFilter']) => void;
+  statusFilter: CourseStatus | 'ALL' | AssignmentFilter['statusFilter'] | SubmissionStatus;
+  setStatusFilter: (
+    status: CourseStatus | 'ALL' | AssignmentFilter['statusFilter'] | SubmissionStatus
+  ) => void;
   options: { label: string; value: string }[];
 }) => {
   const timerRef = useRef<NodeJS.Timeout | null>(null);

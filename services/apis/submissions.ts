@@ -77,8 +77,19 @@ export const updateFeedback = async ({
   return response.data;
 };
 
-export const getSubmissionsByTrainee = async () => {
-  const response = await sendRequest(`/api/submission/trainee`);
+export const getSubmissionsByTrainee = async ({
+  filters,
+}: {
+  filters: { search?: string; status?: string };
+}) => {
+  const queryParams = new URLSearchParams();
+  if (filters.search) {
+    queryParams.append('search', filters.search);
+  }
+  if (filters.status && filters.status !== 'ALL') {
+    queryParams.append('status', filters.status);
+  }
+  const response = await sendRequest(`/api/submission/trainee?${queryParams.toString()}`);
   return response.data;
 };
 

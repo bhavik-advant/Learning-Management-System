@@ -5,36 +5,25 @@ import Submissions from '@/components/submissions/Submissions';
 import { BsFileEarmarkCheck, BsClockHistory, BsCheckCircleFill } from 'react-icons/bs';
 import { useState } from 'react';
 import CustomSelect from '../ui/CustomSelect';
-import { useTraineeSubmissions } from '@/hooks/submission/useTraineeSubmissions';
+import { useSubmissions } from '@/hooks/submission/useSubmissions';
+import SearchBar from '../ui/SearchBar';
+import { SubmissionStatus } from '@/generated/prisma/enums';
 
-export default function TraineeSubmissionsPage() {
-  const { data: submission = [], isLoading } = useTraineeSubmissions();
-
-  const [search, setSearch] = useState('');
-  const [statusFilter, setStatusFilter] = useState<'ALL' | 'PENDING' | 'GRADED' | 'RESUBMITTED'>(
-    'ALL'
-  );
-
-  const filteredSubmissions = submission.filter(a => {
-    const matchesSearch =
-      a.assignment.title.toLowerCase().includes(search.toLowerCase()) ||
-      a.assignment.module.course.title.toLowerCase().includes(search.toLowerCase()) ||
-      a.assignment.module.title.toLowerCase().includes(search.toLowerCase());
-
-    const status = a?.status ?? 'PENDING';
-
-    const matchesFilter = statusFilter === 'ALL' ? true : status === statusFilter;
-
-    return matchesSearch && matchesFilter;
+export default function SubmissionsPage() {
+  const [filters, setFilters] = useState({
+    search: '',
+    status: 'ALL' as SubmissionStatus | 'ALL',
   });
 
-  const total = submission.length;
-  const pending = submission.filter(s => s.status === 'PENDING').length;
-  const completed = submission.filter(s => s.status === 'GRADED').length;
+  const { submissions, isLoading } = useSubmissions({ filters });
+
+  const total = submissions.length;
+  const pending = submissions.filter(s => s.status === 'PENDING').length;
+  const completed = submissions.filter(s => s.status === 'GRADED').length;
   const avgScore =
     completed > 0
       ? Math.round(
-          submission
+          submissions
             .filter(s => s.status === 'GRADED' && s.score != null)
             .reduce((sum, s) => sum + (s.score ?? 0), 0) / completed
         )
@@ -103,7 +92,7 @@ export default function TraineeSubmissionsPage() {
         />
       </div>
 
-      <div className="flex items-center gap-3">
+      {/* <div className="flex items-center gap-3">
         <span className="text-xs font-semibold tracking-wide text-gray-500 dark:text-gray-400 uppercase whitespace-nowrap">
           All submissions
         </span>
@@ -112,30 +101,48 @@ export default function TraineeSubmissionsPage() {
           <input
             type="text"
             placeholder="Search Submission..."
-            value={search}
-            onChange={e => setSearch(e.target.value)}
+            value={filters.search}
+            onChange={e => setFilters(prev => ({ ...prev, search: e.target.value }))}
             className="w-full md:w-92 px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-800 
                bg-white dark:bg-gray-900 text-sm focus:outline-none focus:ring-2 
                focus:ring-indigo-500"
           />
 
           <CustomSelect
-            value={statusFilter}
+            value={filters.status}
             onChange={value =>
-              setStatusFilter(value as 'ALL' | 'PENDING' | 'GRADED' | 'RESUBMITTED')
+              setFilters(prev => ({
+                ...prev,
+                status: value as 'ALL' | 'PENDING' | 'GRADED' | 'RESUBMITTED',
+              }))
             }
-            options={[
-              { label: 'All', value: 'ALL' },
-              { label: 'Pending', value: 'PENDING' },
-              { label: 'Graded', value: 'GRADED' },
-              { label: 'Resubmitted', value: 'RESUBMITTED' },
-            ]}
-            className="min-w-[160px]"
+              options={[
+                { label: 'All', value: 'ALL' },
+                { label: 'Pending', value: 'PENDING' },
+                { label: 'Graded', value: 'GRADED' },
+                { label: 'Resubmitted', value: 'RESUBMITTED' },
+              ]}
+            className="min-w-40"
           />
         </div>
-      </div>
+      </div> */}
+      <SearchBar
+        options={[
+          { label: 'All', value: 'ALL' },
+          { label: 'Pending', value: 'PENDING' },
+          { label: 'Graded', value: 'GRADED' },
+          { label: 'Resubmitted', value: 'RESUBMITTED' },
+        ]}
+        search={filters.search}
+        setSearch={search => setFilters(prev => ({ ...prev, search }))}
+        statusFilter={filters.status}
+        setStatusFilter={status =>
+          setFilters(prev => ({ ...prev, status: status as SubmissionStatus | 'ALL' }))
+        }
+        searchTitle="All Submissions"
+      />
 
-      <Submissions submissions={filteredSubmissions} />
+      <Submissions submissions={submissions} />
     </section>
   );
 }
