@@ -5,21 +5,27 @@ import { AssignmentFilter, CourseStatus } from '@/types/types';
 import { SubmissionStatus } from '@/generated/prisma/enums';
 
 const SearchBar = ({
+  inputPosition = 'right',
+  classes = '',
   searchTitle,
   search,
   setSearch,
-  statusFilter,
+  statusFilter = 'ALL',
   setStatusFilter,
-  options,
+  options = [],
+  children,
 }: {
+  inputPosition?: 'left' | 'right';
+  classes?: string;
   searchTitle?: string;
   search: string;
   setSearch: (search: string) => void;
-  statusFilter: CourseStatus | 'ALL' | AssignmentFilter['statusFilter'] | SubmissionStatus;
-  setStatusFilter: (
+  statusFilter?: CourseStatus | 'ALL' | AssignmentFilter['statusFilter'] | SubmissionStatus;
+  setStatusFilter?: (
     status: CourseStatus | 'ALL' | AssignmentFilter['statusFilter'] | SubmissionStatus
   ) => void;
-  options: { label: string; value: string }[];
+  options?: { label: string; value: string }[];
+  children?: React.ReactNode;
 }) => {
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const [searchText, setSearchText] = useState(search);
@@ -43,13 +49,13 @@ const SearchBar = ({
   };
 
   return (
-    <div className="flex items-center gap-3">
+    <div className={`flex items-center gap-3 ${classes}`}>
       {searchTitle && (
         <span className="text-xs font-semibold tracking-wide text-gray-500 dark:text-gray-400 uppercase whitespace-nowrap">
           {searchTitle}
         </span>
       )}
-      <div className="flex-1 h-px bg-gray-200 dark:bg-gray-500" />
+      {inputPosition === 'right' && <div className="flex-1 h-px bg-gray-200 dark:bg-gray-500" />}
       <div className="flex flex-col md:flex-row gap-3 md:items-center md:justify-between">
         <input
           type="text"
@@ -60,15 +66,19 @@ const SearchBar = ({
               bg-white dark:bg-gray-900 text-sm focus:outline-none focus:ring-2 
               focus:ring-indigo-500"
         />
-
-        <CustomSelect
-          value={statusFilter}
-          onChange={val =>
-            setStatusFilter(val as CourseStatus | 'ALL' | AssignmentFilter['statusFilter'])
-          }
-          options={options || [{ label: 'All', value: 'ALL' }]}
-          className="min-w-40"
-        />
+        {inputPosition === 'left' && <div className="flex-1 h-px bg-gray-200 dark:bg-gray-500" />}
+        {children}
+        {options.length > 0 && (
+          <CustomSelect
+            value={statusFilter}
+            onChange={val =>
+              setStatusFilter &&
+              setStatusFilter(val as CourseStatus | 'ALL' | AssignmentFilter['statusFilter'])
+            }
+            options={options || [{ label: 'All', value: 'ALL' }]}
+            className="min-w-40"
+          />
+        )}
       </div>
     </div>
   );

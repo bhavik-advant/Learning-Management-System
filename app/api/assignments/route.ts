@@ -11,17 +11,26 @@ export async function GET(req: NextRequest) {
     const searchParams = req.nextUrl.searchParams;
     const search = searchParams.get('search') || '';
     const filter = (searchParams.get('filter') as AssignmentFilter['statusFilter']) || 'ALL';
+    const page = parseInt(searchParams.get('page') || '1', 10);
+    const LIMIT = 10;
+    const skip = (page - 1) * LIMIT;
 
-    const assignments = await getAssignmentsWithSubmissions({
+    const assignmentsWithPagination = await getAssignmentsWithSubmissions({
       userId: user.id,
       role: user.role,
       search,
       filter,
+      limit: LIMIT,
+      skip,
+      page,
     });
 
-    return NextResponse.json(new ApiResponse(200, 'Assignments fetched', assignments), {
-      status: 200,
-    });
+    return NextResponse.json(
+      new ApiResponse(200, 'Assignments fetched', assignmentsWithPagination),
+      {
+        status: 200,
+      }
+    );
   } catch (error) {
     console.error('ASSIGNMENTS API ERROR:', error);
 

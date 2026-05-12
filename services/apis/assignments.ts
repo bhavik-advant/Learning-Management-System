@@ -46,8 +46,14 @@ export const createAssignment = async ({
   return response.data;
 };
 
-export const getTraineeAssignments = async ({ search, statusFilter }: AssignmentFilter) => {
-  const response = await sendRequest(`/api/assignments?search=${search}&filter=${statusFilter}`);
+export const getTraineeAssignments = async ({
+  search = '',
+  statusFilter = 'ALL',
+  page = 1,
+}: AssignmentFilter & { page: number }) => {
+  const response = await sendRequest(
+    `/api/assignments?search=${search}&filter=${statusFilter}&page=${page}`
+  );
 
   return response.data;
 };

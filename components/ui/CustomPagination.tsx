@@ -8,6 +8,7 @@ import {
 } from './pagination';
 
 const CustomPagination = ({
+  showPageInfo = true,
   paginationData,
   getPreviousPage,
   getNextPage,
@@ -20,6 +21,7 @@ const CustomPagination = ({
   };
   getPreviousPage: () => void;
   getNextPage: () => void;
+  showPageInfo?: boolean;
 }) => {
   const handlePagination = (ident: 'previous' | 'next') => {
     if (ident === 'previous') {
@@ -40,11 +42,13 @@ const CustomPagination = ({
           </PaginationItem>
         )}
 
-        <PaginationItem>
-          <span className="text-xs">
-            Page {paginationData?.currentPage} of {paginationData?.totalPages}
-          </span>
-        </PaginationItem>
+        {showPageInfo && (
+          <PaginationItem>
+            <span className="text-xs">
+              Page {paginationData?.currentPage} of {paginationData?.totalPages}
+            </span>
+          </PaginationItem>
+        )}
 
         {paginationData?.hasNextPage && (
           <PaginationItem>

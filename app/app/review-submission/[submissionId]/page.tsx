@@ -70,8 +70,8 @@ const SubmissionReviewPage = () => {
 
   return (
     <section className="relative mx-6 lg:mx-10 mt-8 mb-20 space-y-8">
-      <div className="pointer-events-none absolute -top-20 -left-20 h-[400px] w-[400px] rounded-full bg-violet-500/5 blur-3xl dark:bg-violet-500/10" />
-      <div className="pointer-events-none absolute top-40 right-0 h-[300px] w-[300px] rounded-full bg-indigo-500/5 blur-3xl dark:bg-indigo-500/8" />
+      <div className="pointer-events-none absolute -top-20 -left-20  w-100 rounded-full bg-violet-500/5 blur-3xl dark:bg-violet-500/10" />
+      <div className="pointer-events-none absolute top-40 right-0  w-100 rounded-full bg-indigo-500/5 blur-3xl dark:bg-indigo-500/8" />
 
       <div className="flex items-start justify-between gap-4 flex-wrap">
         <div className="space-y-2 min-w-0">
@@ -128,7 +128,7 @@ const SubmissionReviewPage = () => {
 
       <div className="rounded-2xl border border-gray-100 dark:border-gray-800/70 bg-white dark:bg-gray-950/60 shadow-sm overflow-hidden">
         <div className="relative border-b border-gray-100 dark:border-gray-800 px-6 py-5 flex items-center gap-3">
-          <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-violet-500 to-indigo-500 rounded-r-full" />
+          <div className="absolute left-0 top-0 bottom-0 w-1 bg-linear-to-b from-violet-500 to-indigo-500 rounded-r-full" />
           <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-violet-50 dark:bg-violet-950/50 ring-1 ring-violet-100 dark:ring-violet-900/50">
             <BsFileEarmarkText className="text-sm text-violet-600 dark:text-violet-400" />
           </div>
@@ -137,7 +137,7 @@ const SubmissionReviewPage = () => {
 
         <div className="p-6">
           <div className="grid sm:grid-cols-2 gap-4">
-            <div className="group rounded-xl bg-gradient-to-br from-gray-50 to-gray-50/50 dark:from-gray-900/60 dark:to-gray-900/30 border border-gray-100 dark:border-gray-800/60 p-5 hover:border-violet-200 dark:hover:border-violet-900 transition-colors duration-200">
+            <div className="group rounded-xl bg-linear-to-br from-gray-50 to-gray-50/50 dark:from-gray-900/60 dark:to-gray-900/30 border border-gray-100 dark:border-gray-800/60 p-5 hover:border-violet-200 dark:hover:border-violet-900 transition-colors duration-200">
               <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-gray-400 dark:text-gray-500">
                 Course
               </p>
@@ -146,7 +146,7 @@ const SubmissionReviewPage = () => {
               </p>
             </div>
 
-            <div className="group rounded-xl bg-gradient-to-br from-gray-50 to-gray-50/50 dark:from-gray-900/60 dark:to-gray-900/30 border border-gray-100 dark:border-gray-800/60 p-5 hover:border-violet-200 dark:hover:border-violet-900 transition-colors duration-200">
+            <div className="group rounded-xl bg-linear-to-br from-gray-50 to-gray-50/50 dark:from-gray-900/60 dark:to-gray-900/30 border border-gray-100 dark:border-gray-800/60 p-5 hover:border-violet-200 dark:hover:border-violet-900 transition-colors duration-200">
               <p className="text-[10px] font-bold uppercase tracking-[0.12em] text-gray-400 dark:text-gray-500">
                 Module
               </p>
@@ -161,7 +161,7 @@ const SubmissionReviewPage = () => {
       <div className="grid lg:grid-cols-2 gap-6">
         <div className="rounded-2xl border border-gray-100 dark:border-gray-800/70 bg-white dark:bg-gray-950/60 shadow-sm overflow-hidden">
           <div className="relative border-b border-gray-100 dark:border-gray-800 px-6 py-5 flex items-center gap-3">
-            <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-violet-500 to-indigo-500 rounded-r-full" />
+            <div className="absolute left-0 top-0 bottom-0 w-1 bg-linear-to-b from-violet-500 to-indigo-500 rounded-r-full" />
             <div className="flex h-7 w-7 items-center justify-center rounded-lg bg-violet-50 dark:bg-violet-950/50 ring-1 ring-violet-100 dark:ring-violet-900/50">
               <BsFileEarmarkText className="text-sm text-violet-600 dark:text-violet-400" />
             </div>
@@ -183,7 +183,7 @@ const SubmissionReviewPage = () => {
         <div className="space-y-6">
           <div className="rounded-2xl border border-gray-100 dark:border-gray-800/70 bg-white dark:bg-gray-950/60 shadow-sm overflow-hidden">
             <div className="relative border-b border-gray-100 dark:border-gray-800 px-6 py-5 flex items-center gap-3">
-              <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-emerald-400 to-teal-500 rounded-r-full" />
+              <div className="absolute left-0 top-0 bottom-0 w-1 bg-linear-to-b from-emerald-400 to-teal-500 rounded-r-full" />
               <h2 className="text-sm font-bold text-gray-900 dark:text-white">
                 Student Information
               </h2>
@@ -192,7 +192,7 @@ const SubmissionReviewPage = () => {
             <div className="p-6">
               <div className="flex items-center gap-5">
                 <div className="relative shrink-0">
-                  <div className="absolute inset-0 rounded-full bg-gradient-to-br from-violet-400 to-indigo-500 opacity-20 blur-sm scale-110" />
+                  <div className="absolute inset-0 rounded-full bg-linear-to-br from-violet-400 to-indigo-500 opacity-20 blur-sm scale-110" />
                   <Avatar size="lg" className="relative ring-2 ring-white dark:ring-gray-900">
                     {submission?.student?.image ? (
                       <AvatarImage
@@ -200,7 +200,7 @@ const SubmissionReviewPage = () => {
                         alt={submission.student.username}
                       />
                     ) : (
-                      <AvatarFallback className="bg-gradient-to-br from-violet-500 to-indigo-600 text-white font-bold">
+                      <AvatarFallback className="bg-linear-to-br from-violet-500 to-indigo-600 text-white font-bold">
                         {studentInitials}
                       </AvatarFallback>
                     )}
@@ -225,7 +225,7 @@ const SubmissionReviewPage = () => {
 
           <div className="rounded-2xl border border-gray-100 dark:border-gray-800/70 bg-white dark:bg-gray-950/60 shadow-sm overflow-hidden">
             <div className="relative border-b border-gray-100 dark:border-gray-800 px-6 py-5 flex items-center justify-between gap-3">
-              <div className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-indigo-400 to-violet-500 rounded-r-full" />
+              <div className="absolute left-0 top-0 bottom-0 w-1 bg-linear-to-b from-indigo-400 to-violet-500 rounded-r-full" />
               <h2 className="text-sm font-bold text-gray-900 dark:text-white">
                 Submission Preview
               </h2>
@@ -260,7 +260,7 @@ const SubmissionReviewPage = () => {
                       )}
 
                       {isPdf && (
-                        <div className="overflow-hidden rounded-xl border border-gray-100 dark:border-gray-800 h-[600px]">
+                        <div className="overflow-hidden rounded-xl border border-gray-100 dark:border-gray-800 h-150">
                           <iframe
                             src={submissionUrl}
                             className="w-full h-full"
@@ -298,7 +298,7 @@ const SubmissionReviewPage = () => {
                         href={submissionUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="inline-flex items-center justify-center gap-2 w-full rounded-xl px-5 py-3 text-xs font-bold bg-gradient-to-r from-violet-600 to-indigo-600 text-white shadow-md shadow-indigo-500/20 hover:shadow-indigo-500/30 hover:opacity-90 transition-all duration-150"
+                        className="inline-flex items-center justify-center gap-2 w-full rounded-xl px-5 py-3 text-xs font-bold bg-linear-to-r from-violet-600 to-indigo-600 text-white shadow-md shadow-indigo-500/20 hover:shadow-indigo-500/30 hover:opacity-90 transition-all duration-150"
                       >
                         Open submission ↗
                       </Link>

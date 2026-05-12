@@ -87,7 +87,7 @@ export type AssignmentFilter = {
   statusFilter: 'ALL' | 'NOT_SUBMITTED' | 'PENDING' | 'GRADED' | 'RESUBMITTED';
 };
 
-export type CourseStatus = 'DRAFT' | 'PENDING' | 'APPROVED' ;
+export type CourseStatus = 'DRAFT' | 'PENDING' | 'APPROVED';
 
 export type CoursesLayoutProps = {
   title: string;
@@ -99,3 +99,12 @@ export type CoursesLayoutProps = {
   children: React.ReactNode;
   role?: PrismaUserRole;
 };
+
+export type PaginationDataType = {
+  totalPages: number;
+  currentPage: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+};
+
+export type SubmissionStatus = 'PENDING' | 'GRADED' | 'RESUBMITTED';

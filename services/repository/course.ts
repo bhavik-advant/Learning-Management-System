@@ -640,7 +640,7 @@ export const getAssignedCoursesCount = async ({ userId }: { userId: string }) =>
 export const getFormattedAssignedCourses = async ({
   userId,
   page = 1,
-  limit,
+  limit = 6,
   skip,
 }: {
   userId: string;
@@ -650,14 +650,13 @@ export const getFormattedAssignedCourses = async ({
 }) => {
   const assignedCourseCount = await getAssignedCoursesCount({ userId });
   const courses = await getAssignedCourses({ userId, limit, skip });
+
   const totalPages = Math.ceil(assignedCourseCount / limit);
 
   const paginationData = {
     courses: courses,
     pagination: {
       currentPage: page,
-      pageSize: limit,
-      totalItems: assignedCourseCount,
       totalPages: totalPages,
       hasNextPage: page < totalPages,
       hasPreviousPage: page > 1,

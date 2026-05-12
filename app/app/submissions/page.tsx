@@ -1,6 +1,3 @@
-import RoleBased from '@/components/RoleBased';
-import getUserDetails from '@/lib/isAuth';
-import AdminSubmissionsPage from '@/components/submissions/AdminSubmissions';
 import SubmissionsPage from '@/components/submissions/SubmissionsPage';
 
 export const metadata = {

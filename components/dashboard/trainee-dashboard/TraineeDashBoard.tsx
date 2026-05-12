@@ -19,6 +19,7 @@ function TraineeDashBoard() {
       search: '',
       statusFilter: 'ALL',
     },
+    page: 1,
   });
 
   if (coursesLoading || assignmentsLoading) {

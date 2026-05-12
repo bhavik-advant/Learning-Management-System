@@ -7,6 +7,7 @@ import { useState } from 'react';
 import { useSubmissions } from '@/hooks/submission/useSubmissions';
 import SearchBar from '../ui/SearchBar';
 import { SubmissionStatus } from '@/generated/prisma/enums';
+import CustomPagination from '../ui/CustomPagination';
 
 export default function SubmissionsPage() {
   const [filters, setFilters] = useState({
@@ -14,7 +15,9 @@ export default function SubmissionsPage() {
     status: 'ALL' as SubmissionStatus | 'ALL',
   });
 
-  const { submissions, isLoading } = useSubmissions({ filters });
+  const [page, setPage] = useState(1);
+
+  const { submissions, paginationData, isLoading } = useSubmissions({ page, filters });
 
   const total = submissions.length;
   const pending = submissions.filter(s => s.status === 'PENDING').length;
@@ -90,41 +93,6 @@ export default function SubmissionsPage() {
           color="emerald"
         />
       </div>
-
-      {/* <div className="flex items-center gap-3">
-        <span className="text-xs font-semibold tracking-wide text-gray-500 dark:text-gray-400 uppercase whitespace-nowrap">
-          All submissions
-        </span>
-        <div className="flex-1 h-px bg-gray-200 dark:bg-gray-500" />
-        <div className="flex flex-col md:flex-row gap-3 md:items-center md:justify-between">
-          <input
-            type="text"
-            placeholder="Search Submission..."
-            value={filters.search}
-            onChange={e => setFilters(prev => ({ ...prev, search: e.target.value }))}
-            className="w-full md:w-92 px-4 py-2 rounded-xl border border-gray-200 dark:border-gray-800 
-               bg-white dark:bg-gray-900 text-sm focus:outline-none focus:ring-2 
-               focus:ring-indigo-500"
-          />
-
-          <CustomSelect
-            value={filters.status}
-            onChange={value =>
-              setFilters(prev => ({
-                ...prev,
-                status: value as 'ALL' | 'PENDING' | 'GRADED' | 'RESUBMITTED',
-              }))
-            }
-              options={[
-                { label: 'All', value: 'ALL' },
-                { label: 'Pending', value: 'PENDING' },
-                { label: 'Graded', value: 'GRADED' },
-                { label: 'Resubmitted', value: 'RESUBMITTED' },
-              ]}
-            className="min-w-40"
-          />
-        </div>
-      </div> */}
       <SearchBar
         options={[
           { label: 'All', value: 'ALL' },
@@ -142,6 +110,11 @@ export default function SubmissionsPage() {
       />
 
       <Submissions submissions={submissions} />
+      <CustomPagination
+        paginationData={paginationData}
+        getNextPage={() => setPage(prev => prev + 1)}
+        getPreviousPage={() => setPage(prev => prev - 1)}
+      />
     </section>
   );
 }

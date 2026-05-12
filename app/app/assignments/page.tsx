@@ -8,6 +8,7 @@ import { AssignmentFilter } from '@/types/types';
 import useAssignments from '@/hooks/assignment/useAssignments';
 import AssignmentStatsCards from '@/components/assignments/AssignmentStatsCards';
 import SearchBar from '@/components/ui/SearchBar';
+import CustomPagination from '@/components/ui/CustomPagination';
 
 export default function AssignmentPage() {
   const [filters, setFilters] = useState<AssignmentFilter>({
@@ -15,7 +16,9 @@ export default function AssignmentPage() {
     statusFilter: 'ALL',
   });
 
-  const { assignments, isLoading } = useAssignments({ filters });
+  const [page, setPage] = useState(1);
+
+  const { assignments, isLoading, paginationData } = useAssignments({ filters, page });
 
   const total = assignments.length;
   const pending = assignments.filter(a => a.submission?.status === 'PENDING').length;
@@ -92,7 +95,18 @@ export default function AssignmentPage() {
         }
       />
 
-      {isLoading ? <p>Loading...</p> : <Assignments assignments={assignments} />}
+      {isLoading ? (
+        <p>Loading...</p>
+      ) : (
+        <>
+          <Assignments assignments={assignments} />
+          <CustomPagination
+            paginationData={paginationData}
+            getNextPage={() => setPage(prev => prev + 1)}
+            getPreviousPage={() => setPage(prev => prev - 1)}
+          />
+        </>
+      )}
     </section>
   );
 }

@@ -1,86 +1,158 @@
 import { prisma } from '@/utils/prisma-client';
 import { FileType, SubmissionStatus } from '@/generated/prisma/enums';
+import { PaginationDataType } from '@/types/types';
+import { Prisma } from '@/generated/prisma/client';
+import { totalmem } from 'os';
 
-export const getAllSubmissionsForAdmin = async () => {
-  return prisma.submission.findMany({
-    orderBy: { submittedAt: 'desc' },
-    include: {
-      file: true,
-      student: {
-        select: {
-          id: true,
-          username: true,
-          mentor: { select: { username: true } },
-        },
-      },
-      assignment: {
-        select: {
-          id: true,
-          title: true,
-          module: {
-            select: {
-              course: {
-                select: {
-                  id: true,
-                  title: true,
-                },
-              },
+const whereClauseForStatus = (
+  status: SubmissionStatus[],
+  search: string
+): Prisma.SubmissionWhereInput => {
+  return {
+    OR: [
+      {
+        assignment: {
+          is: {
+            title: {
+              contains: search,
+              mode: Prisma.QueryMode.insensitive,
             },
           },
         },
       },
-    },
-  });
+      {
+        student: {
+          is: {
+            username: {
+              contains: search,
+              mode: Prisma.QueryMode.insensitive,
+            },
+          },
+        },
+      },
+    ],
+    status: status.length > 0 ? { in: status } : undefined,
+  };
 };
 
-export const getSubmissionsForMentor = async (mentorId: string) => {
-  return prisma.submission.findMany({
-    where: {
-      student: {
-        mentorId: mentorId,
-      },
-      assignment: {
-        module: {
+const getSubmissionsForReviewInclude = {
+  file: true,
+  student: {
+    select: {
+      id: true,
+      username: true,
+      mentor: { select: { username: true } },
+    },
+  },
+  assignment: {
+    select: {
+      id: true,
+      title: true,
+      module: {
+        select: {
           course: {
-            enrollments: {
-              some: {
-                student: {
-                  mentorId: mentorId,
-                },
-              },
-            },
-          },
-        },
-      },
-    },
-    include: {
-      file: true,
-      student: {
-        select: {
-          id: true,
-          username: true,
-          mentor: { select: { username: true } },
-        },
-      },
-      assignment: {
-        select: {
-          id: true,
-          title: true,
-          module: {
             select: {
-              course: {
-                select: {
-                  id: true,
-                  title: true,
-                },
+              id: true,
+              title: true,
+            },
+          },
+        },
+      },
+    },
+  },
+};
+
+export const getAllSubmissionsForAdmin = async ({
+  search,
+  status,
+  page,
+  limit,
+  skip,
+}: {
+  search: string;
+  status: SubmissionStatus[];
+  page: number;
+  limit: number;
+  skip: number;
+}) => {
+  const allSubmissions = await prisma.submission.findMany({
+    where: whereClauseForStatus(status, search),
+    orderBy: { submittedAt: 'desc' },
+    include: getSubmissionsForReviewInclude,
+    take: limit,
+    skip,
+  });
+
+  const allSubmissionsCount = await prisma.submission.count({
+    where: whereClauseForStatus(status, search),
+  });
+
+  const pagination = {
+    totalPages: Math.ceil(allSubmissionsCount / limit),
+    currentPage: page,
+    hasNextPage: allSubmissionsCount > skip + limit,
+    hasPreviousPage: skip > 0,
+  };
+
+  return { submissions: allSubmissions, pagination };
+};
+
+export const getSubmissionsForMentor = async ({
+  userId,
+  search,
+  status,
+  page,
+  limit,
+  skip,
+}: {
+  userId: string;
+  search: string;
+  status: SubmissionStatus[];
+  page: number;
+  limit: number;
+  skip: number;
+}) => {
+  const whereClause = {
+    student: {
+      mentorId: userId,
+    },
+    assignment: {
+      module: {
+        course: {
+          enrollments: {
+            some: {
+              student: {
+                mentorId: userId,
               },
             },
           },
         },
       },
     },
+    ...whereClauseForStatus(status, search),
+  };
+
+  const submissionsDetails = await prisma.submission.findMany({
+    where: whereClause,
+    include: getSubmissionsForReviewInclude,
     orderBy: { submittedAt: 'desc' },
+    take: limit,
+    skip,
   });
+
+  const allSubmissionsCount = await prisma.submission.count({
+    where: whereClause,
+  });
+
+  return {
+    submissions: submissionsDetails,
+    pagination: {
+      totalPages: Math.ceil(allSubmissionsCount / limit),
+      currentPage: page,
+      hasNextPage: allSubmissionsCount > skip + limit,
+      hasPreviousPage: skip > 0,
+    },
+  };
 };
 
 export type SubmissionEntity = {
@@ -154,12 +226,16 @@ export const getStudentSubmissions = async ({
   studentId,
   search = '',
   status = 'ALL',
+  limit,
+  skip,
 }: {
   studentId: string;
   search?: string;
   status?: SubmissionStatus | 'ALL';
-}): Promise<StudentSubmissionWithAssignment[]> => {
-  return prisma.submission.findMany({
+  limit: number;
+  skip: number;
+}): Promise<{ submissions: StudentSubmissionWithAssignment[]; pagination: PaginationDataType }> => {
+  const fetchedSubmissions = await prisma.submission.findMany({
     where: {
       studentId,
       assignment: {
@@ -194,7 +270,32 @@ export const getStudentSubmissions = async ({
         },
       },
     },
+    take: limit,
+    skip,
   });
+
+  const totalSubmissions = await prisma.submission.count({
+    where: {
+      studentId,
+      assignment: {
+        title: {
+          contains: search,
+          mode: 'insensitive',
+        },
+      },
+      status: status === 'ALL' ? undefined : status,
+    },
+  });
+
+  return {
+    submissions: fetchedSubmissions,
+    pagination: {
+      totalPages: Math.ceil(totalSubmissions / limit),
+      currentPage: Math.floor(skip / limit) + 1,
+      hasNextPage: totalSubmissions > skip + limit,
+      hasPreviousPage: skip > 0,
+    },
+  };
 };
 
 type SubmissionDetails = {

@@ -25,7 +25,7 @@ export default function SubmissionCard({ item, index }: { item: SubmissionType; 
       style={{ animationDelay: `${index * 40}ms` }}
     >
       <div
-        className={`absolute left-0 top-3 bottom-3 w-[3px] rounded-full ${
+        className={`absolute left-0 top-3 bottom-3 w-0.75 rounded-full ${
           isGraded ? 'bg-emerald-500' : 'bg-amber-500'
         }`}
       />

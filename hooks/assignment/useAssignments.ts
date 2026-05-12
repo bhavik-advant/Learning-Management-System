@@ -1,5 +1,6 @@
 import { getTraineeAssignments } from '@/services/apis/assignments';
-import { AssignmentFilter } from '@/types/types';
+import { AssignmentFilter, PaginationDataType } from '@/types/types';
+import { DEFAULT_PAGINATION_DATA } from '@/utils/constant';
 import { useQuery } from '@tanstack/react-query';
 
 type AssignmentType = {
@@ -16,17 +17,25 @@ type AssignmentType = {
   } | null;
 };
 
-const useAssignments = ({ filters }: { filters?: AssignmentFilter }) => {
-  const { data = [], isLoading } = useQuery<AssignmentType[]>({
-    queryKey: ['assignments', filters],
+const useAssignments = ({ filters, page }: { filters: AssignmentFilter; page: number }) => {
+  const { data, isLoading } = useQuery<{
+    assignments: AssignmentType[];
+    pagination: PaginationDataType;
+  }>({
+    queryKey: ['assignments', filters, page],
     queryFn: () =>
       getTraineeAssignments({
-        search: filters?.search || '',
-        statusFilter: filters?.statusFilter || 'ALL',
+        page,
+        search: filters.search,
+        statusFilter: filters.statusFilter,
       }),
   });
 
-  return { assignments: data, isLoading };
+  return {
+    assignments: data?.assignments ?? [],
+    isLoading,
+    paginationData: data?.pagination ?? DEFAULT_PAGINATION_DATA,
+  };
 };
 
 export default useAssignments;
