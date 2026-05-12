@@ -6,6 +6,7 @@ import { IoDocumentTextOutline } from 'react-icons/io5';
 import Courses from '@/components/ui/Courses';
 import { useCourses } from '@/hooks/courses/useCourses';
 import Loading from '@/components/ui/loading';
+import Link from 'next/link';
 
 function MentorDashBoard() {
   const { courses, isFetching, stats } = useCourses({ limit: 3 });
@@ -42,7 +43,9 @@ function MentorDashBoard() {
       <section className="space-y-3">
         <div className="flex justify-between items-center">
           <h2 className="text-2xl font-bold md:text-3xl">Your Courses</h2>
-          <p className="text-sm font-medium text-blue-500">View all</p>
+          <p className="text-sm font-medium text-blue-500">
+            <Link href="/courses">View all</Link>
+          </p>
         </div>
         {isFetching ? (
           <div className="rounded-2xl border border-dashed border-gray-300 py-14 text-center text-gray-500 dark:border-gray-700 dark:text-gray-400">

@@ -1,7 +1,11 @@
+import getStatusColor from '@/utils/getStatusColor';
 import Link from 'next/link';
 import React from 'react';
 import { HiArrowRight } from 'react-icons/hi';
 import { HiArrowTopRightOnSquare } from 'react-icons/hi2';
+import CustomPagination from '../ui/CustomPagination';
+import { PaginationDataType } from '@/types/types';
+import { DEFAULT_PAGINATION_DATA } from '@/utils/constant';
 
 type Submission = {
   id: string;
@@ -26,26 +30,24 @@ type Submission = {
   };
 };
 
-const getStatusStyle = (status: string) => {
-  switch (status.toLowerCase()) {
-    case 'graded':
-      return 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400';
-    case 'pending':
-      return 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/30 dark:text-yellow-400';
-    case 'late':
-      return 'bg-red-100 text-red-700 dark:bg-red-900/30 dark:text-red-400';
-    default:
-      return 'bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-300';
-  }
-};
-
-const SubmissionsTable: React.FC<{ submissions: Submission[]; showMentorColumn?: boolean }> = ({
+const SubmissionsTable: React.FC<{
+  getNextPage: () => void;
+  getPreviousPage: () => void;
+  submissions: Submission[];
+  showMentorColumn?: boolean;
+  isFetching?: boolean;
+  paginationData: PaginationDataType;
+}> = ({
+  getNextPage,
+  getPreviousPage,
   submissions,
   showMentorColumn = true,
+  isFetching,
+  paginationData = DEFAULT_PAGINATION_DATA,
 }) => {
   return (
     <div className="overflow-x-auto rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm">
-      <table className="w-full text-sm">
+      <table className={`w-full text-sm ${isFetching && 'animate-pulse'}`}>
         <thead className="sticky top-0 bg-gray-50 dark:bg-gray-900 backdrop-blur z-10">
           <tr className="text-gray-600 dark:text-gray-300 text-xs uppercase tracking-wide">
             <th className="p-4 text-left">Student</th>
@@ -98,7 +100,7 @@ const SubmissionsTable: React.FC<{ submissions: Submission[]; showMentorColumn?:
 
                 <td className="p-4">
                   <span
-                    className={`px-3 py-1 text-xs font-medium rounded-full ${getStatusStyle(
+                    className={`px-3 py-1 text-xs font-medium rounded-full ${getStatusColor(
                       s.status
                     )}`}
                   >
@@ -149,6 +151,18 @@ const SubmissionsTable: React.FC<{ submissions: Submission[]; showMentorColumn?:
               </tr>
             ))
           )}
+
+          <tr className="border-t border-gray-200 dark:border-gray-800">
+            <td colSpan={8} className="p-2 text-center text-gray-500 dark:text-gray-400">
+              <div className="flex justify-end">
+                <CustomPagination
+                  paginationData={paginationData}
+                  getNextPage={getNextPage}
+                  getPreviousPage={getPreviousPage}
+                />
+              </div>
+            </td>
+          </tr>
         </tbody>
       </table>
     </div>

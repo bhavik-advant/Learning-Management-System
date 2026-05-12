@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import getUserDetails from '@/lib/isAuth';
 import ApiResponse from '@/utils/api-response';
 
@@ -6,6 +6,7 @@ import {
   getAllSubmissionsForAdmin,
   getSubmissionsForMentor,
 } from '@/services/repository/submission';
+import { PaginationDataType, SubmissionStatus } from '@/types/types';
 
 type Role = 'ADMIN' | 'MENTOR';
 
@@ -71,9 +72,33 @@ type SubmissionResponse = {
 const sendResponse = (status: number, message: string, data: unknown) =>
   NextResponse.json(new ApiResponse(status, message, data), { status });
 
-const roleHandlers: Record<Role, (userId: string) => Promise<SubmissionWithRelations[]>> = {
-  ADMIN: async () => getAllSubmissionsForAdmin(),
-  MENTOR: async (userId: string) => getSubmissionsForMentor(userId),
+const roleHandlers: Record<
+  Role,
+  (
+    userId: string,
+    search: string,
+    status: SubmissionStatus[],
+    limit: number,
+    skip: number,
+    page: number
+  ) => Promise<{ submissions: SubmissionWithRelations[]; pagination: PaginationDataType }>
+> = {
+  ADMIN: async (
+    _userId: string,
+    search: string,
+    status: SubmissionStatus[],
+    limit: number,
+    skip: number,
+    page: number
+  ) => getAllSubmissionsForAdmin({ search, status, page, limit, skip }),
+  MENTOR: async (
+    userId: string,
+    search: string,
+    status: SubmissionStatus[],
+    limit: number,
+    skip: number,
+    page: number
+  ) => getSubmissionsForMentor({ userId, search, status, limit, skip, page }),
 };
 
 const mapSubmission = (s: SubmissionWithRelations): SubmissionResponse => ({
@@ -105,13 +130,9 @@ const mapSubmission = (s: SubmissionWithRelations): SubmissionResponse => ({
   },
 });
 
-export async function GET() {
+export async function GET(req: NextRequest) {
   try {
     const user = await getUserDetails();
-
-    if (!user) {
-      return sendResponse(401, 'Please login first', {});
-    }
 
     const handler = roleHandlers[user.role as Role];
 
@@ -119,10 +140,23 @@ export async function GET() {
       return sendResponse(403, 'Not authorised', {});
     }
 
-    const submissionsRaw = await handler(user.id);
-    const submissions = submissionsRaw.map(mapSubmission);
+    const searchParams = req.nextUrl.searchParams;
+    const search = searchParams.get('search') || '';
+    const page = searchParams.get('page') || '1';
+    const status = searchParams.getAll('status') as SubmissionStatus[];
 
-    return sendResponse(200, 'Submissions fetched successfully', submissions);
+    const pageNumber = parseInt(page, 10);
+    if (isNaN(pageNumber) || pageNumber < 1) {
+      return sendResponse(400, 'Invalid page number', {});
+    }
+    const LIMIT = 10;
+
+    const skip = (pageNumber - 1) * LIMIT;
+    const submissionsRaw = await handler(user.id, search, status, LIMIT, skip, pageNumber);
+    const submissions = submissionsRaw.submissions.map(mapSubmission);
+    const pagination = submissionsRaw.pagination;
+
+    return sendResponse(200, 'Submissions fetched successfully', { submissions, pagination });
   } catch (error) {
     console.error('GET SUBMISSIONS ERROR:', error);
     return sendResponse(500, 'Error fetching submissions', {});

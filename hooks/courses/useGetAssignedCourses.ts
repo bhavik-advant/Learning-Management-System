@@ -1,4 +1,6 @@
 import { getAssignedCourses } from '@/services/apis/courses';
+import { PaginationDataType } from '@/types/types';
+import { DEFAULT_PAGINATION_DATA } from '@/utils/constant';
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
 
 type Course = {
@@ -18,23 +20,8 @@ type Course = {
 
 type AssignableCoursesData = {
   courses: Course[];
-  pagination: {
-    currentPage: number;
-    totalPages: number;
-    hasPreviousPage: boolean;
-    hasNextPage: boolean;
-  };
+  pagination: PaginationDataType;
 };
-
-const emptyAssignableCoursesData = (page: number): AssignableCoursesData => ({
-  courses: [],
-  pagination: {
-    currentPage: page,
-    totalPages: 1,
-    hasPreviousPage: page > 1,
-    hasNextPage: false,
-  },
-});
 
 export const useGetAssignedCourses = ({
   userId,
@@ -56,8 +43,11 @@ export const useGetAssignedCourses = ({
     enabled: !!userId,
   });
 
+  console.log(data);
+
   return {
-    courseData: data ?? emptyAssignableCoursesData(page),
+    courses: data?.courses ?? [],
+    paginationData: data?.pagination ?? DEFAULT_PAGINATION_DATA,
     isFetching: isLoading,
   };
 };

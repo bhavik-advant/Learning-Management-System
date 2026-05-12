@@ -7,7 +7,7 @@ const AssignableCourses = ({ selectedUserId }: { selectedUserId: string }) => {
   const limit = 4;
   const [page, setPage] = useState(1);
 
-  const { courseData: data, isFetching } = useGetAssignableCourses({
+  const { courses, paginationData, isFetching } = useGetAssignableCourses({
     userId: selectedUserId,
     page,
     limit,
@@ -25,17 +25,6 @@ const AssignableCourses = ({ selectedUserId }: { selectedUserId: string }) => {
     });
   };
 
-  // const handlePagination = (ident: 'previous' | 'next') => {
-  //   if (ident === 'previous') {
-  //     if (page <= 1) return;
-  //     setPage(prev => prev - 1);
-  //     return;
-  //   }
-
-  //   if (!data?.pagination?.hasNextPage) return;
-  //   setPage(prev => prev + 1);
-  // };
-
   return (
     <CourseAssignGrid
       title={`Available Courses `}
@@ -43,7 +32,8 @@ const AssignableCourses = ({ selectedUserId }: { selectedUserId: string }) => {
       pendingtext="Assigning..."
       emptyText={`Available to assign`}
       isFetching={isFetching}
-      data={data}
+      courses={courses}
+      paginationData={paginationData}
       isLoading={isAssigning}
       getNextPage={() => setPage(prev => prev + 1)}
       userId={selectedUserId}

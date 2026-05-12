@@ -1,4 +1,4 @@
-import { SubmissionStatus } from '@/generated/prisma/enums';
+import { SubmissionStatus } from '@/types/types';
 import { sendRequest } from '@/utils/sendRequest';
 
 export type SubmissionType = {
@@ -79,21 +79,44 @@ export const updateFeedback = async ({
 
 export const getSubmissionsByTrainee = async ({
   filters,
+  page = 1,
 }: {
   filters: { search?: string; status?: string };
+  page?: number;
 }) => {
   const queryParams = new URLSearchParams();
+  if (page) {
+    queryParams.append('page', page.toString());
+  }
   if (filters.search) {
     queryParams.append('search', filters.search);
   }
   if (filters.status && filters.status !== 'ALL') {
     queryParams.append('status', filters.status);
   }
+
   const response = await sendRequest(`/api/submission/trainee?${queryParams.toString()}`);
   return response.data;
 };
 
-export const getAllSubmissionsForReview = async () => {
-  const response = await sendRequest(`/api/submission`);
+export const getAllSubmissionsForReview = async ({
+  filters,
+  page = 1,
+}: {
+  filters: { search: string; status: SubmissionStatus[] };
+  page?: number;
+}) => {
+  const queryParams = new URLSearchParams();
+  if (page) {
+    queryParams.append('page', page.toString());
+  }
+  if (filters.search) {
+    queryParams.append('search', filters.search);
+  }
+  if (filters.status.length > 0) {
+    filters.status.forEach(status => queryParams.append('status', status));
+  }
+
+  const response = await sendRequest(`/api/submission?${queryParams.toString()}`);
   return response.data;
 };

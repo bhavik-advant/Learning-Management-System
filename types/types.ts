@@ -99,3 +99,12 @@ export type CoursesLayoutProps = {
   children: React.ReactNode;
   role?: PrismaUserRole;
 };
+
+export type PaginationDataType = {
+  totalPages: number;
+  currentPage: number;
+  hasNextPage: boolean;
+  hasPreviousPage: boolean;
+};
+
+export type SubmissionStatus = 'PENDING' | 'GRADED' | 'RESUBMITTED';

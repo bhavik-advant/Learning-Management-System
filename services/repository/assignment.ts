@@ -93,58 +93,64 @@ export const getAssignmentsWithSubmissions = async ({
   role,
   search,
   filter,
+  limit,
+  skip,
+  page,
 }: {
   userId: string;
   role: PrismaUserRole;
   search: string;
   filter: AssignmentFilter['statusFilter'];
+  limit: number;
+  skip: number;
+  page: number;
 }) => {
-  const isAdmin =  userRoleCheck.isAdmin(role);
+  const isAdmin = userRoleCheck.isAdmin(role);
 
-  const assignments = await prisma.assignment.findMany({
-    where: {
-      title: {
-        contains: search,
-        mode: 'insensitive',
-      },
-      // only  courses
-      module: {
-        course: {
-          status: 'APPROVED',
+  const whereClause = {
+    title: {
+      contains: search,
+      mode: 'insensitive',
+    },
+    module: {
+      course: {
+        status: 'APPROVED',
 
-          ...(isAdmin
-            ? {}
-            : {
-                enrollments: {
-                  some: {
-                    studentId: userId,
-                  },
+        ...(isAdmin
+          ? {}
+          : {
+              enrollments: {
+                some: {
+                  studentId: userId,
                 },
-              }),
-        },
+              },
+            }),
       },
-
-      ...(filter == 'NOT_SUBMITTED'
-        ? { submissions: { none: { studentId: userId } } }
-        : {
-            ...(filter !== 'ALL'
-              ? {
-                  submissions: {
-                    some: {
-                      status: filter,
-
-                      ...(isAdmin
-                        ? {}
-                        : {
-                            studentId: userId,
-                          }),
-                    },
-                  },
-                }
-              : {}),
-          }),
     },
 
+    ...(filter == 'NOT_SUBMITTED'
+      ? { submissions: { none: { studentId: userId } } }
+      : {
+          ...(filter !== 'ALL'
+            ? {
+                submissions: {
+                  some: {
+                    status: filter,
+
+                    ...(isAdmin
+                      ? {}
+                      : {
+                          studentId: userId,
+                        }),
+                  },
+                },
+              }
+            : {}),
+        }),
+  } as const;
+
+  const assignments = await prisma.assignment.findMany({
+    where: whereClause,
     select: {
       id: true,
       title: true,
@@ -189,7 +195,19 @@ export const getAssignmentsWithSubmissions = async ({
     orderBy: {
       createdAt: 'desc',
     },
+    take: limit,
+    skip,
   });
+
+
+  const totalCount = await prisma.assignment.count({ where: whereClause });
+
+  const pagination = {
+    totalPages: Math.ceil(totalCount / limit),
+    currentPage: page,
+    hasNextPage: page * limit < totalCount,
+    hasPreviousPage: page > 1,
+  };
 
   const formatted = assignments.map(a => ({
     id: a.id,
@@ -203,5 +221,5 @@ export const getAssignmentsWithSubmissions = async ({
     submission: isAdmin ? a.submissions : (a.submissions[0] ?? null),
   }));
 
-  return formatted;
+  return { assignments: formatted, pagination };
 };

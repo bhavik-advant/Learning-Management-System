@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import ApiResponse from '@/utils/api-response';
 import getUserDetails from '@/lib/isAuth';
 import { getTraineeMentorId, getUserById } from '@/services/repository/user';
-import { getAssignedCourses, getAssignedCoursesCount } from '@/services/repository/course';
+import { getFormattedAssignedCourses } from '@/services/repository/course';
 import { userRoleCheck } from '@/utils/checkUserRole';
 
 export const GET = async (req: NextRequest) => {
@@ -12,11 +12,12 @@ export const GET = async (req: NextRequest) => {
     const searchParams = req.nextUrl.searchParams;
 
     const userId = searchParams.get('userId');
-    const limit = Number(searchParams.get('limit'));
+    const LIMIT = 6;
+
     const page = Number(searchParams.get('page'));
     let skip = 0;
-    if (typeof limit === 'number') {
-      skip = (page - 1) * limit;
+    if (page && page > 1) {
+      skip = (page - 1) * LIMIT;
     }
 
     if (!userId) {
@@ -39,30 +40,14 @@ export const GET = async (req: NextRequest) => {
       }
     }
 
-    const totalCourses = await getAssignedCoursesCount({
+    const formattedCourses = await getFormattedAssignedCourses({
       userId,
-    });
-
-    const formattedCourses = await getAssignedCourses({
-      userId,
-      limit,
+      limit: LIMIT,
       skip,
+      page,
     });
 
-    return NextResponse.json(
-      new ApiResponse(200, 'Assigned courses fetched', {
-        courses: formattedCourses,
-
-        pagination: {
-          currentPage: page,
-          totalPages: Math.ceil(totalCourses / limit),
-
-          hasNextPage: page * limit < totalCourses,
-
-          hasPreviousPage: page > 1,
-        },
-      })
-    );
+    return NextResponse.json(new ApiResponse(200, 'Assigned courses fetched', formattedCourses));
   } catch (error) {
     console.error(error);
 

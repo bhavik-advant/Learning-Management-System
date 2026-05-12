@@ -5,6 +5,7 @@ import Summery from './Summery';
 import NoCourses from './NoCourses';
 import CustomPagination from '../ui/CustomPagination';
 import { Button } from '../ui/button';
+import { PaginationDataType } from '@/types/types';
 
 type Course = {
   id: string;
@@ -29,7 +30,8 @@ const CourseAssignGrid = ({
   isFetching,
   userId,
   isLoading,
-  data,
+  courses = [],
+  paginationData,
   getNextPage,
   getPreviousPage,
   func,
@@ -40,15 +42,8 @@ const CourseAssignGrid = ({
   emptyText: string;
   submitText: string;
   isFetching: boolean;
-  data: {
-    courses: Course[];
-    pagination: {
-      currentPage: number;
-      totalPages: number;
-      hasPreviousPage: boolean;
-      hasNextPage: boolean;
-    };
-  };
+  courses: Course[];
+  paginationData: PaginationDataType;
   getNextPage: () => void;
   getPreviousPage: () => void;
   func: (courseIds: string[]) => Promise<void>;
@@ -90,15 +85,15 @@ const CourseAssignGrid = ({
   return (
     <div className="grid">
       <div className="lg:col-span-2 space-y-4">
-        {data.courses.length == 0 && <NoCourses title={title} emptyText={emptyText}/>}
+        {courses.length == 0 && <NoCourses title={title} emptyText={emptyText} />}
 
-        {data.courses.length > 0 && (
+        {courses.length > 0 && (
           <Card className="shadow-md border dark:bg-[#0b111f] border-border">
             <CardHeader className="border-b flex justify-between border-border py-2 px-4">
               <div>
                 <CardTitle className="text-sm">{title}</CardTitle>
                 <CardDescription className="text-xs">
-                  Viewing {data?.courses.length} course(s)
+                  Viewing {courses.length} course(s)
                 </CardDescription>
               </div>
               <Button disabled={selectedCourses.length === 0} onClick={() => setShowSummery(true)}>
@@ -108,12 +103,12 @@ const CourseAssignGrid = ({
             <CardContent className="px-4 pb-4">
               <SelectableCourses
                 func={handleSelectCourse}
-                courses={data.courses || []}
+                courses={courses || []}
                 selectedCourses={selectedCourses}
               />
               <div className="mt-4">
                 <CustomPagination
-                  paginationData={data.pagination}
+                  paginationData={paginationData}
                   getNextPage={getNextPage}
                   getPreviousPage={getPreviousPage}
                 />
