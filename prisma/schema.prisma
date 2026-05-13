@@ -59,6 +59,7 @@ model User {
   assignments Assignment[] @relation("MentorAssignments")
   submissions Submission[] @relation("StudentSubmissions")
   enrollments Enrollment[]
+  notifications Notification[]
 
   @@index([mentorId])
 }
@@ -202,4 +203,16 @@ model Enrollment {
   @@index([studentId])
   @@index([courseId])
   @@unique([studentId, courseId]) 
+}
+
+model Notification {
+  id          String   @id @default(uuid())
+  userId      String
+  message     String
+  link        String?
+  isRead      Boolean  @default(false)
+  createdAt   DateTime @default(now())
+
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  @@index([userId])
 }

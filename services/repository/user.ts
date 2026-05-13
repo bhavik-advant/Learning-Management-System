@@ -167,3 +167,15 @@ export const getUserRoleById = async (userId: string) => {
 
   return user?.role ?? null;
 };
+
+export const getAllAdminsID = async () => {
+  const admins = await prisma.user.findMany({
+    where: { role: 'ADMIN' },
+    orderBy: { username: 'asc' },
+    select: {
+      id: true,
+    },
+  });
+
+  return admins.map(admin => admin.id);
+};

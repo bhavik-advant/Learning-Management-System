@@ -1,5 +1,7 @@
 import getUserDetails from '@/lib/isAuth';
 import { changeCourseStatusToPending } from '@/services/repository/course';
+import { createNotification } from '@/services/repository/notification';
+import { getAllAdminsID } from '@/services/repository/user';
 import ApiResponse from '@/utils/api-response';
 import { checkCourseCrudAccess } from '@/utils/checkCourseCrudAccess';
 import { prisma } from '@/utils/prisma-client';
@@ -20,6 +22,18 @@ export const PATCH = async (
     }
 
     const updatedCourse = await changeCourseStatusToPending({ courseId });
+
+    const adminIds = await getAllAdminsID();
+
+    await Promise.all(
+      adminIds.map(adminId =>
+        createNotification({
+          userId: adminId,
+          message: `A course has been submitted for Approval: ${updatedCourse.title}`,
+          link: `/app/courses/${updatedCourse.id}`,
+        })
+      )
+    );
 
     return NextResponse.json(new ApiResponse(201, 'Course updated SuccessFully', updatedCourse), {
       status: 201,

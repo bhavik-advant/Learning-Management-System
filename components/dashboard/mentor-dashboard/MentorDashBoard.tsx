@@ -42,7 +42,7 @@ function MentorDashBoard() {
 
       <section className="space-y-3">
         <div className="flex justify-between items-center">
-          <h2 className="text-2xl font-bold md:text-3xl">Your Courses</h2>
+          <h2 className="text-2xl font-bold md:text-3xl">Recent Courses</h2>
           <p className="text-sm font-medium text-blue-500">
             <Link href="/courses">View all</Link>
           </p>

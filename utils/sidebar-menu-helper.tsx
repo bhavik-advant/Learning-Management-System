@@ -46,6 +46,11 @@ export const sidebarMenu: Record<UserRole, MenuItem[]> = {
       href: 'app/assign-course',
       icon: <FaChalkboardTeacher />,
     },
+    {
+      label: 'Notifications',
+      href: 'app/notification',
+      icon: <BiBell />,
+    },
   ],
 
   mentor: [

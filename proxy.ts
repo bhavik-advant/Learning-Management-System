@@ -49,6 +49,7 @@ const AdminAccessRoutes = createRouteMatcher([
   '/app/approvals(.*)',
   '/app/submissions(.*)',
   '/app/assignments(.*)',
+  '/app/notification(.*)',
   '/api/(.*)',
 ]);
 
