@@ -48,7 +48,7 @@ const SubmissionsTable: React.FC<{
   return (
     <div className="overflow-x-auto rounded-2xl border border-gray-200 dark:border-gray-800 shadow-sm">
       <table className={`w-full text-sm ${isFetching && 'animate-pulse'}`}>
-        <thead className="sticky top-0 bg-gray-50 dark:bg-gray-900 backdrop-blur z-10">
+        <thead className="sticky top-0 bg-gray-50 dark:bg-gray-800 backdrop-blur z-10">
           <tr className="text-gray-600 dark:text-gray-300 text-xs uppercase tracking-wide">
             <th className="p-4 text-left">Student</th>
             {showMentorColumn && <th className="p-4 text-left">Mentor</th>}

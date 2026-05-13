@@ -16,6 +16,7 @@ const traineeAccessRoutes = createRouteMatcher([
   '/app/courses(.*)',
   '/app/assignments(.*)',
   '/app/submissions(.*)',
+  '/app/notification(.*)',
   '/api/course',
   '/api/assignments',
   '/api/submission',
@@ -23,6 +24,7 @@ const traineeAccessRoutes = createRouteMatcher([
   '/api/assignments/([^/]+)',
   '/api/assignments/submit',
   '/api/course/([^/]+)',
+  '/api/notification(.*)'
 ]);
 
 const mentorAccessRoutes = createRouteMatcher([
@@ -35,6 +37,7 @@ const mentorAccessRoutes = createRouteMatcher([
   '/app/review-submission(.*)',
   '/app/submissions(.*)',
   '/app/assignments(.*)',
+  '/app/notification(.*)',
   '/api/(.*)',
 ]);
 

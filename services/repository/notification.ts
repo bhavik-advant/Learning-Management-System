@@ -18,9 +18,46 @@ export const createNotification = async ({
   });
 };
 
-export const getUserNotifications = async (userId: string) => {
-  return prisma.notification.findMany({
-    where: { userId },
-    orderBy: { createdAt: 'desc' },
-  });
-}
+export const getUserNotifications = async ({
+  userId,
+  isRead,
+}: {
+  userId: string;
+  isRead?: boolean;
+}) => {
+  const [notifications, unreadCount, readCount, totalCount] = await Promise.all([
+    prisma.notification.findMany({
+      where: { userId, isRead },
+      orderBy: { createdAt: 'desc' },
+    }),
+
+    prisma.notification.count({
+      where: {
+        userId,
+        isRead: false,
+      },
+    }),
+
+    prisma.notification.count({
+      where: {
+        userId,
+        isRead: true,
+      },
+    }),
+
+    prisma.notification.count({
+      where: {
+        userId,
+      },
+    }),
+  ]);
+
+  return {
+    notifications,
+    meta: {
+      unreadCount,
+      readCount,
+      totalCount,
+    },
+  };
+};

@@ -69,9 +69,9 @@ const Sidebar: React.FC<SidebarProps> = ({ show, onClick, role, user }) => {
         })}
       </ul>
 
-      <div className="mt-auto border-t border-gray-200 dark:border-gray-700 p-4 flex justify-between items-center">
+      <div className="mt-auto border-t border-gray-200 dark:border-gray-700 p-4 flex justify-between gap-2 items-center">
         {user && (
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-5">
             <Show when="signed-in">
               <UserButton />
             </Show>

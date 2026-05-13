@@ -89,6 +89,11 @@ export const sidebarMenu: Record<UserRole, MenuItem[]> = {
       href: 'app/review-submission',
       icon: <MdReviews />,
     },
+    {
+      label: 'Notifications',
+      href: 'app/notification',
+      icon: <BiBell />,
+    },
   ],
 
   trainee: [
@@ -113,9 +118,9 @@ export const sidebarMenu: Record<UserRole, MenuItem[]> = {
       icon: <BiTask />,
     },
     {
-      label: 'Profile',
-      href: 'app/profile',
-      icon: <FiUser />,
+      label: 'Notifications',
+      href: 'app/notification',
+      icon: <BiBell />,
     },
   ],
 };
