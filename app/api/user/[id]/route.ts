@@ -71,7 +71,7 @@ export const PATCH = async (req: NextRequest, { params }: { params: Promise<{ id
     }
 
     const body = await req.json();
-    const { image, role, mentorId } = body;
+    const { role, mentorId } = body;
 
     const existingUser = await getUserById(id);
 
@@ -95,7 +95,6 @@ export const PATCH = async (req: NextRequest, { params }: { params: Promise<{ id
     }
 
     const updatedUser = await updateUserById(id, {
-      image: image ?? existingUser.image,
       role: nextRole,
       mentorId: userRoleCheck.isTrainee(nextRole) ? (nextMentorId ?? existingUser.mentorId) : null,
     });
@@ -114,7 +113,7 @@ export const PATCH = async (req: NextRequest, { params }: { params: Promise<{ id
       await createNotification({
         userId: updatedUser.id,
         message: `Your role has been updated to ${role}`,
-        link: `/app/profile`,
+       
       });
     }
 

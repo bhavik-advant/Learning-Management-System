@@ -68,6 +68,11 @@ export async function POST(req: NextRequest) {
         studentId: user.id,
         fileId: uploadedFile.id,
       });
+        await createNotification({
+        userId: user.mentorId!,
+        message: `New Submission of Assignment ${assignemntDetails.title} for Review`,
+        link: `/app/review-submission/${submission.id}`,
+      });
 
       return NextResponse.json(new ApiResponse(200, 'File submitted successfully', submission), {
         status: 200,
@@ -95,7 +100,7 @@ export async function POST(req: NextRequest) {
       await createNotification({
         userId: user.mentorId!,
         message: `New Submission of Assignment ${assignemntDetails.title} for Review`,
-        link: `/app/submissions/${submission.id}`,
+        link: `/app/review-submission/${submission.id}`,
       });
 
       return NextResponse.json(new ApiResponse(200, 'Link submitted successfully', submission), {

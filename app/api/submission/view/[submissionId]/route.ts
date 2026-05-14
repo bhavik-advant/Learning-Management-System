@@ -95,7 +95,7 @@ export async function PATCH(
     await createNotification({
       userId: updatedSubmission.studentId,
       message: `Your submission for ${updatedSubmission.assignment.title} has been reviewed.`,
-      link: `/app/submissions/${updatedSubmission.id}`,
+      link: `/app/assignments/${updatedSubmission.assignment.id}`,
     });
 
     return sendResponse(200, 'Submission updated successfully', updatedSubmission);
