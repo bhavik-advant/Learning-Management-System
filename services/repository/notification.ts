@@ -61,3 +61,102 @@ export const getUserNotifications = async ({
     },
   };
 };
+
+export const markNotificationAsRead = async (notificationId: string) => {
+  return prisma.notification.update({
+    where: { id: notificationId },
+    data: { isRead: true },
+  });
+};
+
+export const markAllNotificationsAsRead = async (userId: string) => {
+  return prisma.notification.updateMany({
+    where: { userId, isRead: false },
+    data: { isRead: true },
+  });
+};
+
+export const markNotificationsAsRead = async ({
+  notificationIds,
+  userId,
+}: {
+  notificationIds: string[];
+  userId: string;
+}) => {
+  return Promise.all(
+    notificationIds.map(async id => {
+      const notification = await prisma.notification.findUnique({
+        where: { id },
+        select: { userId: true },
+      });
+
+      if (!notification) {
+        throw new Error('Notification not found');
+      }
+
+      if (notification.userId !== userId) {
+        throw new Error("You are not authorized to delete others' notifications");
+      }
+
+      return prisma.notification.update({
+        where: {
+          id,
+          userId,
+        },
+        data: {
+          isRead: true,
+        },
+      });
+    })
+  );
+};
+
+export const getNotificationById = async (notificationId: string) => {
+  return prisma.notification.findUnique({
+    where: { id: notificationId },
+  });
+};
+
+export const deleteNotification = async (notificationId: string) => {
+  return prisma.notification.delete({
+    where: { id: notificationId },
+  });
+};
+
+export const deleteAllNotifications = async (userId: string) => {
+  return prisma.notification.deleteMany({
+    where: { userId },
+  });
+};
+
+export const deleteNotifications = async ({
+  notificationIds,
+  userId,
+}: {
+  notificationIds: string[];
+  userId: string;
+}) => {
+  return Promise.all(
+    notificationIds.map(async id => {
+      const notification = await prisma.notification.findUnique({
+        where: { id },
+        select: { userId: true },
+      });
+
+      if (!notification) {
+        throw new Error('Notification not found');
+      }
+
+      if (notification.userId !== userId) {
+        throw new Error("You are not authorized to delete others' notifications");
+      }
+
+      return prisma.notification.deleteMany({
+        where: {
+          id,
+          userId,
+        },
+      });
+    })
+  );
+};

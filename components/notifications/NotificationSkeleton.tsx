@@ -1,6 +1,6 @@
 export const NotificationSkeleton = () => {
     return (
-      <div className="overflow-hidden rounded-3xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-900">
+      <div className="overflow-hidden mt-4 rounded-3xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-900">
         <div className="space-y-4 p-6">
           {[1, 2, 3].map((item) => (
             <div

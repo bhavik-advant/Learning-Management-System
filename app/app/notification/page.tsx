@@ -11,8 +11,20 @@ import { Notification } from '@/generated/prisma/client';
 
 const NotificationsPage = () => {
   const [selectedFilter, setSelectedFilter] = useState<NotificationFilterType>('all');
+  const [selectMultiple, setSelectMultiple] = useState(false);
+  const [selectedNotifications, setSelectedNotifications] = useState<string[]>([]);
   const apiFilter = selectedFilter === 'all' ? undefined : selectedFilter;
   const { notifications, meta, isLoading, isError } = useNotification(apiFilter);
+
+  const handleSelectNotification = (notificationId: string) => {
+    setSelectedNotifications(prev => {
+      if (prev.includes(notificationId)) {
+        return prev.filter(id => id !== notificationId);
+      } else {
+        return [...prev, notificationId];
+      }
+    });
+  };
 
   if (isError) {
     return (
@@ -35,13 +47,22 @@ const NotificationsPage = () => {
         </div>
 
         <NotificationFilters
+          selectedNotifications={selectedNotifications}
+          selectMultiple={selectMultiple}
+          enableMultipleSelect={() => setSelectMultiple(prev => !prev)}
           selectedFilter={selectedFilter}
           onFilterChange={setSelectedFilter}
           unreadCount={unreadCount}
           readCount={readCount}
         />
 
-        <NotificationList notifications={notifications} isLoading={isLoading} />
+        <NotificationList
+          selectedNotifications={selectedNotifications}
+          onSelectNotification={handleSelectNotification}
+          selectMultiple={selectMultiple}
+          notifications={notifications}
+          isLoading={isLoading}
+        />
       </div>
     </div>
   );

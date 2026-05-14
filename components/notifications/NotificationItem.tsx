@@ -1,16 +1,32 @@
 import Link from 'next/link';
-import { Bell, Clock3, CalendarDays, Link2, ExternalLink } from 'lucide-react';
+import { Bell, Clock3, CalendarDays, Link2, ExternalLink, CheckCheck } from 'lucide-react';
 import { Notification } from '@/generated/prisma/client';
+import { useMarkNotificationAsRead } from '@/hooks/notification/useMarkNotificationAsRead';
+import { Button } from '../ui/button';
+import { Checkbox } from '../ui/checkbox';
 
 type NotificationItemProps = {
+  isSelected: boolean;
   notification: Notification;
+  selectMultiple?: boolean;
+  onSelect: (notificationId: string) => void;
 };
 
-export const NotificationItem = ({ notification }: NotificationItemProps) => {
+export const NotificationItem = ({
+  isSelected,
+  notification,
+  selectMultiple,
+  onSelect,
+}: NotificationItemProps) => {
+  const { markAsRead, isPending } = useMarkNotificationAsRead({ notificationId: notification.id });
+
   return (
     <div className="rounded-3xl border border-gray-300 dark:border-gray-600 dark:bg-gray-800 px-6 py-7 shadow-sm transition-all hover:shadow-md">
       <div className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
         <div className="flex gap-5">
+          {selectMultiple && (
+            <Checkbox checked={isSelected} onClick={() => onSelect(notification.id)} />
+          )}
           <div className="relative mt-1">
             <div className="flex h-14 w-14 items-center justify-center rounded-2xl bg-[#f4f4f5] shadow-sm">
               <Bell className="h-6 w-6 text-[#444]" />
@@ -63,8 +79,19 @@ export const NotificationItem = ({ notification }: NotificationItemProps) => {
         </div>
 
         {!notification.isRead && (
-          <div className="w-fit rounded-full bg-black dark:bg-white px-4 py-1.5 text-sm font-semibold text-white dark:text-black shadow">
-            New
+          <div className="flex gap-4">
+            <div className="w-fit rounded-full bg-black dark:bg-white px-4 py-1.5 text-sm font-semibold text-white dark:text-black shadow">
+              New
+            </div>
+            <Button
+              content="Mark as Read"
+              disabled={isPending}
+              variant="outline"
+              onClick={() => markAsRead()}
+            >
+              <CheckCheck className="h-5 w-5 text-gray-500" />
+              Mark as Read
+            </Button>
           </div>
         )}
       </div>

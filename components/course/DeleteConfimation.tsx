@@ -8,7 +8,7 @@ const DeleteConfirmation: React.FC<{
     <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
       <div className="bg-white dark:bg-gray-700 p-6 rounded-lg shadow-lg">
         <h2 className="text-xl font-semibold mb-4">Confirm Deletion</h2>
-        <p className="mb-6">Are you sure you want to delete this {itemType}?</p>
+        <p className="mb-6">Are you sure you want to delete {itemType}?</p>
         <div className="flex justify-end gap-4">
           <button
             disabled={isPending}

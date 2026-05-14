@@ -60,6 +60,20 @@ export async function PATCH(
 
     if (!user) return sendResponse(401, 'Please login first', {});
 
+    const submission = await getSubmissionById(submissionId);
+
+    if (!submission) {
+      return sendResponse(404, 'Submission not found', {});
+    }
+
+    if (score && score > submission.assignment.maxScore) {
+      return sendResponse(
+        400,
+        `Score cannot be greater than ${submission.assignment.maxScore}`,
+        {}
+      );
+    }
+
     if (userRoleCheck.isMentor(user.role)) {
       const submissionDetails = await getSubmissionMentorId(submissionId);
 
