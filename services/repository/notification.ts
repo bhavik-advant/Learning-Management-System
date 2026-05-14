@@ -1,3 +1,4 @@
+import ApiError from '@/utils/api-error';
 import { prisma } from '@/utils/prisma-client';
 
 export const createNotification = async ({
@@ -91,11 +92,11 @@ export const markNotificationsAsRead = async ({
       });
 
       if (!notification) {
-        throw new Error('Notification not found');
+        throw new ApiError(404, 'Notification not found');
       }
 
       if (notification.userId !== userId) {
-        throw new Error("You are not authorized to delete others' notifications");
+        throw new ApiError(403, "You are not authorized to delete others' notifications");
       }
 
       return prisma.notification.update({
@@ -144,11 +145,11 @@ export const deleteNotifications = async ({
       });
 
       if (!notification) {
-        throw new Error('Notification not found');
+        throw new ApiError(404, 'Notification not found');
       }
 
       if (notification.userId !== userId) {
-        throw new Error("You are not authorized to delete others' notifications");
+        throw new ApiError(403, "You are not authorized to delete others' notifications");
       }
 
       return prisma.notification.deleteMany({

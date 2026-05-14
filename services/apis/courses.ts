@@ -59,8 +59,7 @@ export async function fetchCourses(
 }
 
 export async function getPendingCourses(): Promise<CourseType[]> {
-  const response = await sendRequest(`${process.env.NEXT_PUBLIC_BASE_URL}/api/course/pending`);
-
+  const response = await sendRequest(`/api/course/pending`);
   return response.data;
 }
 

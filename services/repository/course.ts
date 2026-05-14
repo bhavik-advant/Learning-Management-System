@@ -1,6 +1,7 @@
 
 import { CourseStatus } from '@/types/course';
 import { Role } from '@/types/user';
+import ApiError from '@/utils/api-error';
 import ApiResponse from '@/utils/api-response';
 import { userRoleCheck } from '@/utils/checkUserRole';
 import { prisma } from '@/utils/prisma-client';
@@ -216,7 +217,7 @@ export const getCourseDetails = async ({ courseId }: { courseId: string }) => {
   });
 
   if (!courseDetails) {
-    throw new Error('Course not found');
+    throw new ApiError(404, 'Course not found');
   }
 
   const formattedCourseDetails = {
@@ -242,7 +243,7 @@ export const getEnrolledStudentIds = async ({ courseId }: { courseId: string }) 
   });
 
   if (!courseDetails) {
-    throw new Error('Course not found');
+    throw new ApiError(404, 'Course not found');
   }
 
   return courseDetails.enrollments || [];
@@ -466,7 +467,7 @@ export const getCourseAuthorId = async ({ courseId }: { courseId: string }) => {
   });
 
   if (!course) {
-    throw new Error('Course not found');
+    throw new ApiError(404, 'Course not found');
   }
 
   return course.authorId;
@@ -700,7 +701,7 @@ export const restrictCoursesForTrainee = async ({
       });
 
       if (!course) {
-        throw new Error(`Course with ID ${courseId} not found`);
+        throw new ApiError(404, `Course with ID ${courseId} not found`);
       }
 
       return prisma.enrollment.deleteMany({

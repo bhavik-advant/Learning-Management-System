@@ -1,6 +1,7 @@
 
 import { prisma } from '@/utils/prisma-client';
 import { User } from '@/types/user';
+import ApiError from '@/utils/api-error';
 const Role = {
   ADMIN: 'ADMIN',
   MENTOR: 'MENTOR',
@@ -44,7 +45,7 @@ export const getTraineeMentor = async (traineeId: string) => {
   });
 
   if (!user) {
-    throw new Error(' Mentor not found');
+    throw new ApiError(404, ' Mentor not found');
   }
 
   return user.mentor;
@@ -59,12 +60,11 @@ export const getTraineeMentorId = async (traineeId: string) => {
   });
 
   if (!user) {
-    throw new Error('Mentor not found');
+    throw new ApiError(404, ' Mentor not found');
   }
 
   return user.mentorId;
 };
-
 
 
 export const getUsers = async (limit?: number) => {

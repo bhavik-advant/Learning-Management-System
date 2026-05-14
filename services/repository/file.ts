@@ -1,4 +1,5 @@
 import { FileType } from '@/types/file';
+import ApiError from '@/utils/api-error';
 import { prisma } from '@/utils/prisma-client';
 
 export const deleteFiles = async (fileIds: string[]) => {
@@ -36,7 +37,7 @@ export const deleteFile = async (fileId: string) => {
   });
 
   if (!file) {
-    throw new Error('File not found');
+    throw new ApiError(404, 'File not found');
   }
   await prisma.file.delete({
     where: { id: file.id },
