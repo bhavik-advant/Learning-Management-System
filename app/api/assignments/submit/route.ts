@@ -68,11 +68,14 @@ export async function POST(req: NextRequest) {
         studentId: user.id,
         fileId: uploadedFile.id,
       });
+
+      if (user.mentorId) {
         await createNotification({
-        userId: user.mentorId!,
-        message: `New Submission of Assignment ${assignemntDetails.title} for Review`,
-        link: `/app/review-submission/${submission.id}`,
-      });
+          userId: user.mentorId,
+          message: `New Submission of Assignment ${assignemntDetails.title} for Review`,
+          link: `/app/review-submission/${submission.id}`,
+        });
+      }
 
       return NextResponse.json(new ApiResponse(200, 'File submitted successfully', submission), {
         status: 200,
@@ -95,11 +98,13 @@ export async function POST(req: NextRequest) {
         githubLink: githubLink.trim(),
       });
 
-      await createNotification({
-        userId: user.mentorId!,
-        message: `New Submission of Assignment ${assignemntDetails.title} for Review`,
-        link: `/app/review-submission/${submission.id}`,
-      });
+      if (user.mentorId) {
+        await createNotification({
+          userId: user.mentorId!,
+          message: `New Submission of Assignment ${assignemntDetails.title} for Review`,
+          link: `/app/review-submission/${submission.id}`,
+        });
+      }
 
       return NextResponse.json(new ApiResponse(200, 'Link submitted successfully', submission), {
         status: 200,

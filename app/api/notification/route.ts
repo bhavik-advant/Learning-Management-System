@@ -2,6 +2,7 @@ import getUserDetails from '@/lib/isAuth';
 import {
   deleteAllNotifications,
   deleteNotifications,
+  getNotificationCount,
   getUserNotifications,
   markAllNotificationsAsRead,
   markNotificationsAsRead,
@@ -17,6 +18,18 @@ export const GET = async (request: NextRequest) => {
     const searchParams = request.nextUrl.searchParams;
 
     const status = searchParams.get('status');
+    const count = searchParams.get('count');
+
+    if (count === 'true') {
+      const unreadCount = await getNotificationCount(user.id);
+
+      return NextResponse.json(
+        new ApiResponse(200, 'Notification count fetched successfully', { unreadCount }),
+        {
+          status: 200,
+        }
+      );
+    }
 
     let isRead: boolean | undefined = undefined;
 
