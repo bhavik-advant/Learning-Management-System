@@ -9,6 +9,7 @@ import { sidebarMenu } from '@/utils/sidebar-menu-helper';
 import { UserRole } from '@/types/user';
 import { Show, UserButton } from '@clerk/nextjs';
 import ThemeButton from './ui/ThemeButton';
+import { useNotificationCount } from '@/hooks/notification/useNotificationCount';
 type SidebarProps = {
   show: boolean;
   onClick: () => void;
@@ -23,6 +24,8 @@ type SidebarProps = {
 
 const Sidebar: React.FC<SidebarProps> = ({ show, onClick, role, user }) => {
   const menuItems = sidebarMenu[role];
+
+  const { count } = useNotificationCount();
 
   return (
     <aside
@@ -65,7 +68,18 @@ const Sidebar: React.FC<SidebarProps> = ({ show, onClick, role, user }) => {
         {menuItems.map((item, index) => {
           const fullPath = `/${item.href}`;
 
-          return <NavLink key={index} href={fullPath} icon={item.icon} label={item.label} />;
+          return (
+            <NavLink
+              key={index}
+              href={fullPath}
+              icon={item.icon}
+              label={
+                item.label == 'Notifications'
+                  ? `Notifications  ${count == 0 ? '' : `(${count})`}`
+                  : item.label
+              }
+            />
+          );
         })}
       </ul>
 

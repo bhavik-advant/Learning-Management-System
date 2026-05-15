@@ -161,3 +161,9 @@ export const deleteNotifications = async ({
     })
   );
 };
+
+export const getNotificationCount = async (userId: string) => {
+  return prisma.notification.count({
+    where: { userId, isRead: false },
+  });
+};

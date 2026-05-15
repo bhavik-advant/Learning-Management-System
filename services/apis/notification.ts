@@ -52,3 +52,8 @@ export const markAllNotificationsAsRead = async ({
 
   return response.data;
 };
+
+export const getNotificationCount = async () => {
+  const response = await sendRequest('/api/notification?count=true');
+  return response.data;
+};
